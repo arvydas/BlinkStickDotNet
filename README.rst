@@ -27,6 +27,8 @@ Download the repository:
 
 https://github.com/arvydas/BlinkStickDotNet/archive/master.zip
 
+Extract it, open the solution file and build it.
+
 Documentation and examples
 ------------
 
