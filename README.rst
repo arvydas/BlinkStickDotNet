@@ -27,6 +27,13 @@ Download the repository:
 
 https://github.com/arvydas/BlinkStickDotNet/archive/master.zip
 
+Documentation and examples
+------------
+
+Please refer to Wiki:
+
+https://github.com/arvydas/BlinkStickDotNet/wiki
+
 
 Development
 -----------
