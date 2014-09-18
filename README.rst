@@ -18,8 +18,8 @@ Supported platforms
 How to build (Windows)
 ----------------------
 
-* Download and install [Microsoft .NET 4.0 Full](http://www.microsoft.com/en-gb/download/details.aspx?id=17718)
-* Download and install [Xamarin Studio](http://monodevelop.com/Download)
+* Download and install `Microsoft .NET 4.0 Full <http://www.microsoft.com/en-gb/download/details.aspx?id=17718>`_
+* Download and install `Xamarin Studio <http://monodevelop.com/Download>`_
 * Alternatively you can use Microsoft Visual Studio 2010 and later
 * All dependant libraries are inside the repository
 
