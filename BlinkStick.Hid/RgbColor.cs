@@ -22,14 +22,32 @@ namespace BlinkStick.Hid
 {
 	public class RgbColor
 	{
+        /// <summary>
+        /// The Red byte component.
+        /// </summary>
 		public Byte R;
-		public Byte G;
-		public Byte B;
+
+        /// <summary>
+        /// The Green byte component.
+        /// </summary>
+        public Byte G;
+
+        /// <summary>
+        /// The Blue byte component.
+        /// </summary>
+        public Byte B;
 
 		public RgbColor ()
 		{
 		}
 
+        /// <summary>
+        /// Froms the rgb value from int components.
+        /// </summary>
+        /// <returns>The rgb.</returns>
+        /// <param name="r">The red component.</param>
+        /// <param name="g">The green component.</param>
+        /// <param name="b">The blue component.</param>
 		public static RgbColor FromRgb(int r, int g, int b)
 		{
 			RgbColor color = new RgbColor();
@@ -40,6 +58,13 @@ namespace BlinkStick.Hid
 			return color;
 		}
 		
+        /// <summary>
+        /// Froms the color of the GDK color.
+        /// </summary>
+        /// <returns>The gdk color.</returns>
+        /// <param name="r">The red component.</param>
+        /// <param name="g">The green component.</param>
+        /// <param name="b">The blue component.</param>
 		public static RgbColor FromGdkColor(ushort r, ushort g, ushort b)
 		{
 			RgbColor color = new RgbColor();
@@ -51,6 +76,11 @@ namespace BlinkStick.Hid
 			return color;
 		}
 
+        /// <summary>
+        /// Converts HEX string to RGB color. For example #123456
+        /// </summary>
+        /// <returns>The string.</returns>
+        /// <param name="colorStr">Color string.</param>
 		public static RgbColor FromString (String colorStr)
 		{
 			RgbColor color = new RgbColor();
@@ -61,11 +91,19 @@ namespace BlinkStick.Hid
 			return color;
 		}
 
+        /// <summary>
+        /// Get black color.
+        /// </summary>
         public static RgbColor Black ()
         {
             return RgbColor.FromRgb(0, 0, 0);
         }
 
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
             return string.Format("{0:x2}{1:x2}{2:x2}", this.R, this.G, this.B);

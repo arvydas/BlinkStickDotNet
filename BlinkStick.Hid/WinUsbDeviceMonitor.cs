@@ -25,8 +25,14 @@ namespace BlinkStick.Hid
 {
 	public class WinUsbDeviceMonitor
 	{
+        /// <summary>
+        /// Occurs when device list changed.
+        /// </summary>
         public event EventHandler DeviceListChanged;
 		
+        /// <summary>
+        /// Raises the device list changed event.
+        /// </summary>
 		protected void OnDeviceListChanged()
 		{
 			if (DeviceListChanged != null)
@@ -35,6 +41,10 @@ namespace BlinkStick.Hid
 			}
 		}
 
+        /// <summary>
+        /// Private property to keep reference to Windows form for getting
+        /// notification from the OS about changes to USB devices
+        /// </summary>
 		MyForm form;
 
 		public class MyForm : Form

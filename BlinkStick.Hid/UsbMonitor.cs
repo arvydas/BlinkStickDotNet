@@ -23,8 +23,14 @@ namespace BlinkStick.Hid
 {
 	public class UsbMonitor
 	{
+        /// <summary>
+        /// Occurs when usb device added.
+        /// </summary>
 		public event EventHandler UsbDeviceAdded;
 		
+        /// <summary>
+        /// Raises the usb device added event.
+        /// </summary>
 		protected void OnUsbDeviceAdded()
 		{
 			if (UsbDeviceAdded != null)
@@ -56,11 +62,14 @@ namespace BlinkStick.Hid
             }
 		}
 
-		void HandleDeviceListChanged (object sender, EventArgs e)
+		private void HandleDeviceListChanged (object sender, EventArgs e)
 		{
 			OnUsbDeviceAdded();
 		}
 
+        /// <summary>
+        /// Start monitoring for added/removed BlinkStick devices.
+        /// </summary>
 		public void Start ()
 		{
             if (UsbDeviceNotifier != null) {
@@ -70,6 +79,9 @@ namespace BlinkStick.Hid
             Monitoring = true;
 		}
 
+        /// <summary>
+        /// Stop monitoring for added/removed BlinkStick devices.
+        /// </summary>
 		public void Stop ()
 		{
             if (UsbDeviceNotifier != null) {

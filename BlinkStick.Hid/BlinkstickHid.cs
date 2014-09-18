@@ -26,6 +26,9 @@ using HidSharp;
 
 namespace BlinkStick.Hid
 {
+    /// <summary>
+    /// Main class to access Blinkstick HID devices.
+    /// </summary>
 	public class BlinkstickHid : IDisposable
     {
         protected const int VendorId = 0x20A0;
@@ -38,18 +41,30 @@ namespace BlinkStick.Hid
 
         protected bool connectedToDriver = false;
 
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="BlinkStick.Hid.BlinkstickHid"/> is connected.
+        /// </summary>
+        /// <value><c>true</c> if connected; otherwise, <c>false</c>.</value>
         public Boolean Connected {
             get {
                 return connectedToDriver;
             }
         }
 
+        /// <summary>
+        /// Gets the serial number of BlinkStick.
+        /// </summary>
+        /// <value>The serial.</value>
         public String Serial {
             get {
                 return device.SerialNumber;
             }
         }
 
+        /// <summary>
+        /// Gets the name of the manufacturer.
+        /// </summary>
+        /// <value>The name of the manufacturer.</value>
         public String ManufacturerName {
             get {
                 return device.Manufacturer;
@@ -57,6 +72,9 @@ namespace BlinkStick.Hid
         }
 
         /// <summary>
+        /// Gets the product name of the device.
+        /// </summary>
+        /// <value>The name of the product.</value>
         public String ProductName {
             get {
                 return device.ProductName;
@@ -64,6 +82,10 @@ namespace BlinkStick.Hid
         }
 
         private String _Name;
+        /// <summary>
+        /// Gets or sets the name of the device (InfoBlock1).
+        /// </summary>
+        /// <value>The name.</value>
         public String Name {
             get {
                 if (_Name == null) {
@@ -82,6 +104,10 @@ namespace BlinkStick.Hid
         }
 
         private String _Data;
+        /// <summary>
+        /// Gets or sets the data of the device (InfoBlock2).
+        /// </summary>
+        /// <value>The data.</value>
         public String Data {
             get {
                 if (_Data == null) {
@@ -99,6 +125,11 @@ namespace BlinkStick.Hid
             }
         }
 
+        /// <summary>
+        /// Sets the info block.
+        /// </summary>
+        /// <param name="id">2 - InfoBlock1, 3 - InfoBlock2</param>
+        /// <param name="data">Maximum 32 bytes of data</param>
         public void SetInfoBlock (byte id, string data)
         {
             SetInfoBlock(id, Encoding.ASCII.GetBytes(data));
@@ -126,7 +157,7 @@ namespace BlinkStick.Hid
         }
 
         /// <summary>
-        /// Set LED color
+        /// Sets the color of the led.
         /// </summary>
         /// <param name="color">Must be in #rrggbb format</param>
         public void SetLedColor(String color)
@@ -140,6 +171,14 @@ namespace BlinkStick.Hid
                 Convert.ToByte(color.Substring(5, 2), 16));
         }
 
+        /// <summary>
+        /// Sets the color of the led.
+        /// </summary>
+        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
+        /// <param name="index">Index of the LED</param>
+        /// <param name="r">The red component.</param>
+        /// <param name="g">The green component.</param>
+        /// <param name="b">The blue component.</param>
         public void SetLedColor(byte channel, byte index, byte r, byte g, byte b)
         {
             if (connectedToDriver)
@@ -156,6 +195,12 @@ namespace BlinkStick.Hid
             }
         }
 
+        /// <summary>
+        /// Sets the color of the led.
+        /// </summary>
+        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
+        /// <param name="index">Index of the LED</param>
+        /// <param name="color">Must be in #rrggbb format</param>
         public void SetLedColor(byte channel, byte index, string color)
         {
             if (!IsValidColor(color))
@@ -169,6 +214,10 @@ namespace BlinkStick.Hid
                 Convert.ToByte(color.Substring(5, 2), 16));
         }
 
+        /// <summary>
+        /// Sets the mode for BlinkStick Pro.
+        /// </summary>
+        /// <param name="mode">0 - Normal, 1 - Inverse, 2 - WS2812</param>
         public void SetLedMode(byte mode)
         {
             if (connectedToDriver)
@@ -180,7 +229,11 @@ namespace BlinkStick.Hid
             }
         }
 
-
+        /// <summary>
+        /// Send a packet of data to LEDs
+        /// </summary>
+        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
+        /// <param name="reportData">Report data must be a byte array in the following format: [g0, r0, b0, g1, r1, b1, g2, r2, b2 ...]</param>
         public void SetLedColors(byte channel, byte[] reportData)
         {
             int max_leds = 64;
@@ -249,12 +302,18 @@ namespace BlinkStick.Hid
             }
         } 
 
+        /// <summary>
+        /// Determines if is valid color format of the specified string (#rrggbb).
+        /// </summary>
+        /// <returns><c>true</c> if is valid color the specified color; otherwise, <c>false</c>.</returns>
+        /// <param name="color">Color.</param>
         public static Boolean IsValidColor (String color)
         {
             return Regex.IsMatch(color, "^#[A-Fa-f0-9]{6}$");
         }
 
-        /// Occurs when a BlinkStick device is attached.
+        /// <summary>
+        /// Occurs when BlinkStick device is attached.
         /// </summary>
         public event EventHandler DeviceAttached;
 
@@ -287,6 +346,11 @@ namespace BlinkStick.Hid
 			}
         }
 
+        /// <summary>
+        /// Opens the device.
+        /// </summary>
+        /// <returns><c>true</c>, if device was opened, <c>false</c> otherwise.</returns>
+        /// <param name="adevice">Pass the parameter of HidDevice to open it directly</param>
         public bool OpenDevice(HidDevice adevice)
         {
             if (adevice != null)
@@ -299,6 +363,10 @@ namespace BlinkStick.Hid
             return false;
         }
 
+        /// <summary>
+        /// Opens the current device.
+        /// </summary>
+        /// <returns><c>true</c>, if current device was opened, <c>false</c> otherwise.</returns>
 		private bool OpenCurrentDevice()
 		{
             connectedToDriver = true;
@@ -310,6 +378,10 @@ namespace BlinkStick.Hid
 			return true;
 		}
 
+        /// <summary>
+        /// Find all BlinkStick devices.
+        /// </summary>
+        /// <returns>The devices.</returns>
         public static BlinkstickHid[] AllDevices ()
 		{
             List<BlinkstickHid> result = new List<BlinkstickHid>();
@@ -322,17 +394,7 @@ namespace BlinkStick.Hid
                 result.Add(hid);
             }
 
-            return result.ToArray();
-            /*
-			List<WindowsBlinkstickHid> result = new List<WindowsBlinkstickHid>();
-			foreach (HidDevice device in HidDevices.Enumerate(VendorId, ProductId).ToArray<HidDevice>()) {
-				WindowsBlinkstickHid hid = new WindowsBlinkstickHid();
-				hid.device = device;
-
-				result.Add(hid);
-			}
-			return result.ToArray();
-            */         
+            return result.ToArray();      
         }
 
         /// <summary>
@@ -353,7 +415,7 @@ namespace BlinkStick.Hid
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        
+
 		private void DeviceAttachedHandler()
         {
             if (DeviceAttached != null)
@@ -366,6 +428,12 @@ namespace BlinkStick.Hid
                 DeviceRemoved(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Sets the color of the led.
+        /// </summary>
+        /// <param name="r">The red component.</param>
+        /// <param name="g">The green component.</param>
+        /// <param name="b">The blue component.</param>
         public void SetLedColor(byte r, byte g, byte b)
         {
             if (connectedToDriver)
@@ -380,6 +448,13 @@ namespace BlinkStick.Hid
             }
         }
 
+        /// <summary>
+        /// Gets the color of the led.
+        /// </summary>
+        /// <returns><c>true</c>, if led color was gotten, <c>false</c> otherwise.</returns>
+        /// <param name="r">The red component.</param>
+        /// <param name="g">The green component.</param>
+        /// <param name="b">The blue component.</param>
 		public Boolean GetLedColor (out byte r, out byte g, out byte b)
 		{
             byte[] report = new byte[33]; 
@@ -402,6 +477,11 @@ namespace BlinkStick.Hid
 			}
 		}
 
+        /// <summary>
+        /// Gets the led data.
+        /// </summary>
+        /// <returns><c>true</c>, if led data was gotten, <c>false</c> otherwise.</returns>
+        /// <param name="data">Data.</param>
         public Boolean GetLedData (out byte[] data)
         {
             if (connectedToDriver)
@@ -419,7 +499,7 @@ namespace BlinkStick.Hid
 
         }
 
-		protected void SetInfoBlock (byte id, byte[] data)
+        protected void SetInfoBlock (byte id, byte[] data)
 		{
 			if (id == 2 || id == 3) {
 				if (data.Length > 32)
@@ -455,6 +535,12 @@ namespace BlinkStick.Hid
 			}
 		}
 
+        /// <summary>
+        /// Gets the info block.
+        /// </summary>
+        /// <returns><c>true</c>, if info block was gotten, <c>false</c> otherwise.</returns>
+        /// <param name="id">Identifier.</param>
+        /// <param name="data">Data.</param>
 		public Boolean GetInfoBlock (byte id, out byte[] data)
 		{
 			if (id == 2 || id == 3) {
