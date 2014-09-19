@@ -8,6 +8,11 @@ What is BlinkStick? It's smart USB LED pixel. More info about it here:
 
 http://www.blinkstick.com
 
+API Reference
+------------
+
+http://arvydas.github.io/BlinkStickDotNet
+
 Supported platforms
 ------------
 
