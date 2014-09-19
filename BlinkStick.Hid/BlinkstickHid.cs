@@ -230,6 +230,14 @@ namespace BlinkStick.Hid
         }
 
         /// <summary>
+        /// Turn BlinkStick off.
+        /// </summary>
+        public void TurnOff()
+        {
+            SetColor(0, 0, 0);
+        }
+
+        /// <summary>
         /// Send a packet of data to LEDs
         /// </summary>
         /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
