@@ -398,6 +398,34 @@ namespace BlinkStick.Hid
         }
 
         /// <summary>
+        /// Find first BlinkStick.
+        /// </summary>
+        /// <returns>BlinkStickHid device if found, otherwise null if no devices found</returns>
+        public static BlinkstickHid FirstDevice()
+        {
+            BlinkstickHid[] devices = AllDevices();
+
+            return devices.Length > 0 ? devices[0] : null;
+        }
+
+        /// <summary>
+        /// Finds BlinkStick by serial number.
+        /// </summary>
+        /// <returns>BlinkStickHid device if found, otherwise null if no devices found</returns>
+        /// <param name="serial">Serial number to search for</param>
+        public static BlinkstickHid FindBySerial(String serial)
+        {
+            foreach (BlinkstickHid device in AllDevices())
+            {
+                if (device.Serial == serial)
+                    return device;
+            }
+
+            return null;
+        }
+
+
+        /// <summary>
         /// Closes the connection to the device.
         /// </summary>
         public void CloseDevice()
