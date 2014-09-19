@@ -160,12 +160,12 @@ namespace BlinkStick.Hid
         /// Sets the color of the led.
         /// </summary>
         /// <param name="color">Must be in #rrggbb format</param>
-        public void SetLedColor(String color)
+        public void SetColor(String color)
         {
             if (!IsValidColor(color))
                 throw new Exception("Color value is invalid");
 
-            SetLedColor(
+            SetColor(
                 Convert.ToByte(color.Substring(1, 2), 16),
                 Convert.ToByte(color.Substring(3, 2), 16),
                 Convert.ToByte(color.Substring(5, 2), 16));
@@ -179,7 +179,7 @@ namespace BlinkStick.Hid
         /// <param name="r">The red component.</param>
         /// <param name="g">The green component.</param>
         /// <param name="b">The blue component.</param>
-        public void SetLedColor(byte channel, byte index, byte r, byte g, byte b)
+        public void SetColor(byte channel, byte index, byte r, byte g, byte b)
         {
             if (connectedToDriver)
             {
@@ -201,12 +201,12 @@ namespace BlinkStick.Hid
         /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
         /// <param name="index">Index of the LED</param>
         /// <param name="color">Must be in #rrggbb format</param>
-        public void SetLedColor(byte channel, byte index, string color)
+        public void SetColor(byte channel, byte index, string color)
         {
             if (!IsValidColor(color))
                 throw new Exception("Color value is invalid");
 
-            SetLedColor(
+            SetColor(
                 channel,
                 index,
                 Convert.ToByte(color.Substring(1, 2), 16),
@@ -218,7 +218,7 @@ namespace BlinkStick.Hid
         /// Sets the mode for BlinkStick Pro.
         /// </summary>
         /// <param name="mode">0 - Normal, 1 - Inverse, 2 - WS2812</param>
-        public void SetLedMode(byte mode)
+        public void SetMode(byte mode)
         {
             if (connectedToDriver)
             {
@@ -234,7 +234,7 @@ namespace BlinkStick.Hid
         /// </summary>
         /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
         /// <param name="reportData">Report data must be a byte array in the following format: [g0, r0, b0, g1, r1, b1, g2, r2, b2 ...]</param>
-        public void SetLedColors(byte channel, byte[] reportData)
+        public void SetColors(byte channel, byte[] reportData)
         {
             int max_leds = 64;
             byte reportId = 9;
@@ -434,7 +434,7 @@ namespace BlinkStick.Hid
         /// <param name="r">The red component.</param>
         /// <param name="g">The green component.</param>
         /// <param name="b">The blue component.</param>
-        public void SetLedColor(byte r, byte g, byte b)
+        public void SetColor(byte r, byte g, byte b)
         {
             if (connectedToDriver)
             {
@@ -455,7 +455,7 @@ namespace BlinkStick.Hid
         /// <param name="r">The red component.</param>
         /// <param name="g">The green component.</param>
         /// <param name="b">The blue component.</param>
-		public Boolean GetLedColor (out byte r, out byte g, out byte b)
+		public Boolean GetColor (out byte r, out byte g, out byte b)
 		{
             byte[] report = new byte[33]; 
             report[0] = 1;
@@ -482,7 +482,7 @@ namespace BlinkStick.Hid
         /// </summary>
         /// <returns><c>true</c>, if led data was gotten, <c>false</c> otherwise.</returns>
         /// <param name="data">Data.</param>
-        public Boolean GetLedData (out byte[] data)
+        public Boolean GetData (out byte[] data)
         {
             if (connectedToDriver)
             {
