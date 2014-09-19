@@ -81,46 +81,46 @@ namespace BlinkStick.Hid
             }
         }
 
-        private String _Name;
+        private String _InfoBlock1;
         /// <summary>
         /// Gets or sets the name of the device (InfoBlock1).
         /// </summary>
         /// <value>The name.</value>
-        public String Name {
+        public String InfoBlock1 {
             get {
-                if (_Name == null) {
-                    GetInfoBlock (2, out _Name);
+                if (_InfoBlock1 == null) {
+                    GetInfoBlock (2, out _InfoBlock1);
                 }
 
-                return _Name;
+                return _InfoBlock1;
             }
             set {
-                if (_Name != value)
+                if (_InfoBlock1 != value)
                 {
-                    _Name = value;
-                    SetInfoBlock(2, _Name);
+                    _InfoBlock1 = value;
+                    SetInfoBlock(2, _InfoBlock1);
                 }
             }
         }
 
-        private String _Data;
+        private String _InfoBlock2;
         /// <summary>
         /// Gets or sets the data of the device (InfoBlock2).
         /// </summary>
         /// <value>The data.</value>
-        public String Data {
+        public String InfoBlock2 {
             get {
-                if (_Data == null) {
-                    GetInfoBlock (3, out _Data);
+                if (_InfoBlock2 == null) {
+                    GetInfoBlock (3, out _InfoBlock2);
                 }
 
-                return _Data;
+                return _InfoBlock2;
             }
             set {
-                if (_Data != value)
+                if (_InfoBlock2 != value)
                 {
-                    _Data = value;
-                    SetInfoBlock(3, _Data);
+                    _InfoBlock2 = value;
+                    SetInfoBlock(3, _InfoBlock2);
                 }
             }
         }
@@ -130,12 +130,12 @@ namespace BlinkStick.Hid
         /// </summary>
         /// <param name="id">2 - InfoBlock1, 3 - InfoBlock2</param>
         /// <param name="data">Maximum 32 bytes of data</param>
-        public void SetInfoBlock (byte id, string data)
+        private void SetInfoBlock (byte id, string data)
         {
             SetInfoBlock(id, Encoding.ASCII.GetBytes(data));
         }
 
-        public Boolean GetInfoBlock (byte id, out string data)
+        private Boolean GetInfoBlock (byte id, out string data)
         {
             byte[] dataBytes;
             Boolean result = GetInfoBlock (id, out dataBytes);
