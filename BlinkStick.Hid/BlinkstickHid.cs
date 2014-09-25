@@ -41,6 +41,8 @@ namespace BlinkStick.Hid
 
         protected bool connectedToDriver = false;
 
+        private bool _RequiresSoftwareColorPatch = false;
+
         /// <summary>
         /// Gets a value indicating whether this <see cref="BlinkStick.Hid.BlinkstickHid"/> is connected.
         /// </summary>
@@ -58,6 +60,54 @@ namespace BlinkStick.Hid
         public String Serial {
             get {
                 return device.SerialNumber;
+            }
+        }
+
+        private int _VersionMajor = -1;
+
+        /// <summary>
+        /// Gets the major version number from serial number.
+        /// </summary>
+        /// <value>The major version  number.</value>
+        public int VersionMajor {
+            get {
+                if (_VersionMajor == -1)
+                {
+                    try
+                    {
+                        _VersionMajor = Convert.ToInt32(this.Serial.Substring(this.Serial.Length - 1, 1));
+                    }
+                    catch
+                    {
+                        _VersionMajor = 0;
+                    }
+                }
+
+                return _VersionMajor;
+            }
+        }
+
+        private int _VersionMinor = -1;
+
+        /// <summary>
+        /// Gets the minor version number from serial number.
+        /// </summary>
+        /// <value>The version minor.</value>
+        public int VersionMinor {
+            get {
+                if (_VersionMinor == -1)
+                {
+                    try
+                    {
+                        _VersionMinor = Convert.ToInt32(this.Serial.Substring(this.Serial.Length - 3, 1));
+                    }
+                    catch
+                    {
+                        _VersionMinor = 0;
+                    }
+                }
+
+                return _VersionMinor;
             }
         }
 
@@ -334,13 +384,31 @@ namespace BlinkStick.Hid
         /// <returns>True if a Blinkstick device is connected, False otherwise.</returns>
         public bool OpenDevice ()
 		{
-			if (this.device == null) {
+            bool result;
+
+            this._VersionMajor = -1;
+            this._VersionMinor = -1;
+
+            if (this.device == null) {
                 HidDeviceLoader loader = new HidDeviceLoader();
                 HidDevice adevice = loader.GetDevices(VendorId, ProductId).FirstOrDefault();
-				return OpenDevice (adevice);
+                result = OpenDevice (adevice);
 			} else {
-				return OpenCurrentDevice();
+                result = OpenCurrentDevice();
 			}
+
+            CheckRequiresSoftwareColorPatch();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Checks if BlinkStick requires software color patch due to hardware bug.
+        /// </summary>
+        /// <returns><c>true</c>, if requires software color patch, <c>false</c> otherwise.</returns>
+        private void CheckRequiresSoftwareColorPatch()
+        {
+            _RequiresSoftwareColorPatch = VersionMajor == 1 && VersionMinor >= 1 && VersionMinor <= 3;
         }
 
         /// <summary>
@@ -463,6 +531,24 @@ namespace BlinkStick.Hid
         {
             if (connectedToDriver)
             {
+                if (_RequiresSoftwareColorPatch)
+                {
+                    byte cr, cg, cb;
+                    if (GetColor(out cr, out cg, out cb))
+                    {
+                        if (r == cg && g == cr && b == cb)
+                        {
+                            if (cr > 0)
+                            {
+                                stream.SetFeature(new byte[4] { 1, (byte)(cr - 1), cg, cb });
+                            }
+                            else if (cg > 0)
+                            {
+                                stream.SetFeature(new byte[4] { 1, cr, (byte)(cg - 1), cb });
+                            }
+                        }
+                    }
+                }
 
                 stream.SetFeature(new byte[4] {1, r, g, b});
             }
