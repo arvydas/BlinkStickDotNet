@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using HidSharp;
 
 namespace BlinkStick.Hid
@@ -212,13 +211,16 @@ namespace BlinkStick.Hid
         /// <param name="color">Must be in #rrggbb format</param>
         public void SetColor(String color)
         {
-            if (!IsValidColor(color))
-                throw new Exception("Color value is invalid");
+            SetColor(RgbColor.FromString(color));
+        }
 
-            SetColor(
-                Convert.ToByte(color.Substring(1, 2), 16),
-                Convert.ToByte(color.Substring(3, 2), 16),
-                Convert.ToByte(color.Substring(5, 2), 16));
+        /// <summary>
+        /// Sets the color of the led.
+        /// </summary>
+        /// <param name="color">Color as RgbColor class.</param>
+        public void SetColor(RgbColor color)
+        {
+            SetColor(color.R, color.G, color.B);
         }
 
         /// <summary>
@@ -242,18 +244,21 @@ namespace BlinkStick.Hid
         /// </summary>
         /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
         /// <param name="index">Index of the LED</param>
-        /// <param name="color">Must be in #rrggbb format</param>
+        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
         public void SetColor(byte channel, byte index, string color)
         {
-            if (!IsValidColor(color))
-                throw new Exception("Color value is invalid");
+            SetColor(channel, index, RgbColor.FromString(color));
+        }
 
-            SetColor(
-                channel,
-                index,
-                Convert.ToByte(color.Substring(1, 2), 16),
-                Convert.ToByte(color.Substring(3, 2), 16),
-                Convert.ToByte(color.Substring(5, 2), 16));
+        /// <summary>
+        /// Sets the color of the led.
+        /// </summary>
+        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
+        /// <param name="index">Index of the LED</param>
+        /// <param name="color">Color parameter as RgbColor class instance</param>
+        public void SetColor(byte channel, byte index, RgbColor color)
+        {
+            SetColor(channel, index, color.R, color.B, color.G);
         }
 
         /// <summary>
@@ -348,16 +353,6 @@ namespace BlinkStick.Hid
                 stream.SetFeature(data);
             }
         } 
-
-        /// <summary>
-        /// Determines if is valid color format of the specified string (#rrggbb).
-        /// </summary>
-        /// <returns><c>true</c> if is valid color the specified color; otherwise, <c>false</c>.</returns>
-        /// <param name="color">Color.</param>
-        public static Boolean IsValidColor (String color)
-        {
-            return Regex.IsMatch(color, "^#[A-Fa-f0-9]{6}$");
-        }
 
         /// <summary>
         /// Occurs when BlinkStick device is attached.
