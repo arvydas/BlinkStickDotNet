@@ -183,15 +183,7 @@ namespace BlinkStick.Hid
         {
             if (connectedToDriver)
             {
-                byte [] data = new byte[6];
-                data[0] = 5;
-                data[1] = channel;
-                data[2] = index;
-                data[3] = r;
-                data[4] = g;
-                data[5] = b;
-
-                stream.SetFeature(data);
+                stream.SetFeature(new byte[6] {5, channel, index, r, g, b} );
             }
         }
 
@@ -222,10 +214,7 @@ namespace BlinkStick.Hid
         {
             if (connectedToDriver)
             {
-                byte [] data = new byte[2];
-                data[0] = 4;
-                data[1] = mode;
-                stream.SetFeature(data);
+                stream.SetFeature(new byte[2] {4, mode});
             }
         }
 
@@ -474,13 +463,8 @@ namespace BlinkStick.Hid
         {
             if (connectedToDriver)
             {
-                byte [] data = new byte[4];
-                data[0] = 1;
-                data[1] = r;
-                data[2] = g;
-                data[3] = b;
 
-                stream.SetFeature(data);
+                stream.SetFeature(new byte[4] {1, r, g, b});
             }
         }
 
