@@ -235,7 +235,7 @@ namespace BlinkStickDotNet
         /// Converts HEX string or name of the RGB color. For example #123456, blue, red, orange
         /// </summary>
         /// <returns>The string.</returns>
-        /// <param name="colorStr">Color string.</param>
+        /// <param name="color">Color string.</param>
         public static RgbColor FromString (String color)
         {
             RgbColor result = new RgbColor();

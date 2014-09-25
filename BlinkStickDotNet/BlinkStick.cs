@@ -27,7 +27,9 @@ using HidSharp;
 namespace BlinkStickDotNet
 {
     /// <summary>
-    /// Main class to access Blinkstick HID devices.
+    /// BlinkStick class is designed to control regular BlinkStick devices.<para/>
+    /// Code examples on how you can use this class are available
+    /// <a href="https://github.com/arvydas/BlinkStickDotNet/wiki">wiki</a>.
     /// </summary>
 	public class BlinkStick : IDisposable
     {
@@ -47,7 +49,7 @@ namespace BlinkStickDotNet
 
         #region Device Properties
         /// <summary>
-        /// Gets a value indicating whether this <see cref="BlinkStick.Hid.BlinkstickHid"/> is connected.
+        /// Gets a value indicating whether this <see cref="BlinkStickDotNet.BlinkStick"/> is connected.
         /// </summary>
         /// <value><c>true</c> if connected; otherwise, <c>false</c>.</value>
         public Boolean Connected {
@@ -57,16 +59,18 @@ namespace BlinkStickDotNet
         }
 
         /// <summary>
-        /// Returns the serial number of BlinkStick.
+        /// Returns the serial number of BlinkStick.<para/>
+        /// <pre>
         /// BSnnnnnn-1.0
         /// ||  |    | |- Software minor version
         /// ||  |    |--- Software major version
         /// ||  |-------- Denotes sequential number
         /// ||----------- Denotes BlinkStick device
+        /// </pre>
         /// 
         /// Software version defines the capabilities of the device
         /// </summary>
-        /// <value>The serial.</value>
+        /// <value>Returns the serial.</value>
         public String Serial {
             get {
                 return device.SerialNumber;
@@ -78,7 +82,7 @@ namespace BlinkStickDotNet
         /// <summary>
         /// Gets the major version number from serial number.
         /// </summary>
-        /// <value>The major version  number.</value>
+        /// <value>Returns the major version number.</value>
         public int VersionMajor {
             get {
                 if (_VersionMajor == -1)
@@ -102,7 +106,7 @@ namespace BlinkStickDotNet
         /// <summary>
         /// Gets the minor version number from serial number.
         /// </summary>
-        /// <value>The version minor.</value>
+        /// <value>Returns the version minor.</value>
         public int VersionMinor {
             get {
                 if (_VersionMinor == -1)
@@ -124,7 +128,7 @@ namespace BlinkStickDotNet
         /// <summary>
         /// Gets the name of the manufacturer.
         /// </summary>
-        /// <value>The name of the manufacturer.</value>
+        /// <value>Returns the name of the manufacturer.</value>
         public String ManufacturerName {
             get {
                 return device.Manufacturer;
@@ -134,7 +138,7 @@ namespace BlinkStickDotNet
         /// <summary>
         /// Gets the product name of the device.
         /// </summary>
-        /// <value>The name of the product.</value>
+        /// <value>Returns the name of the product.</value>
         public String ProductName {
             get {
                 return device.ProductName;
@@ -145,7 +149,7 @@ namespace BlinkStickDotNet
         /// <summary>
         /// Gets or sets the name of the device (InfoBlock1).
         /// </summary>
-        /// <value>The name.</value>
+        /// <value>String value of InfoBlock1</value>
         public String InfoBlock1 {
             get {
                 if (_InfoBlock1 == null) {
@@ -167,7 +171,7 @@ namespace BlinkStickDotNet
         /// <summary>
         /// Gets or sets the data of the device (InfoBlock2).
         /// </summary>
-        /// <value>The data.</value>
+        /// <value>String value of InfoBlock2</value>
         public String InfoBlock2 {
             get {
                 if (_InfoBlock2 == null) {
@@ -188,14 +192,14 @@ namespace BlinkStickDotNet
 
         #region Constructor/Destructor
         /// <summary>
-        /// Initializes a new instance of the BlinkstickHid class.
+        /// Initializes a new instance of the BlinkStick class.
         /// </summary>
         public BlinkStick()
         {
         }
 
         /// <summary>
-        /// Closes the connection to the device.
+        /// Disposes of the device and closes the connection.
         /// </summary>
         public void Dispose()
         {
@@ -930,7 +934,7 @@ namespace BlinkStickDotNet
         /// <summary>
         /// Find all BlinkStick devices.
         /// </summary>
-        /// <returns>The devices.</returns>
+        /// <returns>An array of BlinkStick devices</returns>
         public static BlinkStick[] FindAll ()
 		{
             List<BlinkStick> result = new List<BlinkStick>();
@@ -949,7 +953,7 @@ namespace BlinkStickDotNet
         /// <summary>
         /// Find first BlinkStick.
         /// </summary>
-        /// <returns>BlinkStickHid device if found, otherwise null if no devices found</returns>
+        /// <returns>BlinkStick device if found, otherwise null if no devices found</returns>
         public static BlinkStick FirstFirst()
         {
             BlinkStick[] devices = FindAll();
@@ -960,7 +964,7 @@ namespace BlinkStickDotNet
         /// <summary>
         /// Finds BlinkStick by serial number.
         /// </summary>
-        /// <returns>BlinkStickHid device if found, otherwise null if no devices found</returns>
+        /// <returns>BlinkStick device if found, otherwise null if no devices found</returns>
         /// <param name="serial">Serial number to search for</param>
         public static BlinkStick FindBySerial(String serial)
         {
@@ -984,6 +988,14 @@ namespace BlinkStickDotNet
             _RequiresSoftwareColorPatch = VersionMajor == 1 && VersionMinor >= 1 && VersionMinor <= 3;
         }
 
+        /// <summary>
+        /// Automatically sets the color of the device using either BlinkStick or BlinkStick Pro API
+        /// </summary>
+        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
+        /// <param name="index">Index of the LED</param>
+        /// <param name="r">The red component.</param>
+        /// <param name="g">The green component.</param>
+        /// <param name="b">The blue component.</param>
         private void InternalSetColor(byte channel, byte index, byte r, byte g, byte b)
         {
             if (channel == 0 && index == 0)
