@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace BlinkStick.Hid
+namespace BlinkStickDotNet
 {
     public class RgbColor
     {

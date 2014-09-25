@@ -23,12 +23,12 @@ using System.Text;
 using System.Runtime.InteropServices;
 using HidSharp;
 
-namespace BlinkStick.Hid
+namespace BlinkStickDotNet
 {
     /// <summary>
     /// Main class to access Blinkstick HID devices.
     /// </summary>
-	public class BlinkstickHid : IDisposable
+	public class BlinkStick : IDisposable
     {
         #region Private Properties
         protected const int VendorId = 0x20A0;
@@ -189,7 +189,7 @@ namespace BlinkStick.Hid
         /// <summary>
         /// Initializes a new instance of the BlinkstickHid class.
         /// </summary>
-        public BlinkstickHid()
+        public BlinkStick()
         {
         }
 
@@ -222,7 +222,7 @@ namespace BlinkStick.Hid
         /// <summary>
         /// Destroys instance and frees device resources (if not freed already)
         /// </summary>
-        ~BlinkstickHid()
+        ~BlinkStick()
         {
             Dispose(false);
         }
@@ -634,14 +634,14 @@ namespace BlinkStick.Hid
         /// Find all BlinkStick devices.
         /// </summary>
         /// <returns>The devices.</returns>
-        public static BlinkstickHid[] AllDevices ()
+        public static BlinkStick[] AllDevices ()
 		{
-            List<BlinkstickHid> result = new List<BlinkstickHid>();
+            List<BlinkStick> result = new List<BlinkStick>();
 
             HidDeviceLoader loader = new HidDeviceLoader();
             foreach (HidDevice adevice in loader.GetDevices(VendorId, ProductId).ToArray())
             {
-                BlinkstickHid hid = new BlinkstickHid();
+                BlinkStick hid = new BlinkStick();
                 hid.device = adevice;
                 result.Add(hid);
             }
@@ -653,9 +653,9 @@ namespace BlinkStick.Hid
         /// Find first BlinkStick.
         /// </summary>
         /// <returns>BlinkStickHid device if found, otherwise null if no devices found</returns>
-        public static BlinkstickHid FirstDevice()
+        public static BlinkStick FirstDevice()
         {
-            BlinkstickHid[] devices = AllDevices();
+            BlinkStick[] devices = AllDevices();
 
             return devices.Length > 0 ? devices[0] : null;
         }
@@ -665,9 +665,9 @@ namespace BlinkStick.Hid
         /// </summary>
         /// <returns>BlinkStickHid device if found, otherwise null if no devices found</returns>
         /// <param name="serial">Serial number to search for</param>
-        public static BlinkstickHid FindBySerial(String serial)
+        public static BlinkStick FindBySerial(String serial)
         {
-            foreach (BlinkstickHid device in AllDevices())
+            foreach (BlinkStick device in AllDevices())
             {
                 if (device.Serial == serial)
                     return device;

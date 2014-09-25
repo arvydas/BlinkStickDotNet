@@ -19,7 +19,7 @@
 using System;
 using LibUsbDotNet.DeviceNotify;
 
-namespace BlinkStick.Hid
+namespace BlinkStickDotNet
 {
 	public class UsbMonitor
 	{

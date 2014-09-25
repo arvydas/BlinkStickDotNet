@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibUsbDotNet", "Components\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HidSharp", "Components\HidSharp\HidSharp.csproj", "{0DB86674-2A7B-4BDC-93C1-3F7DC771426C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlinkStick.Hid", "BlinkStick.Hid\BlinkStick.Hid.csproj", "{7AAEBEBE-E38D-47B1-A04C-A055DCEB0757}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlinkStickDotNet", "BlinkStickDotNet\BlinkStickDotNet.csproj", "{7AAEBEBE-E38D-47B1-A04C-A055DCEB0757}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

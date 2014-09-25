@@ -5,8 +5,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{7AAEBEBE-E38D-47B1-A04C-A055DCEB0757}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>BlinkStick.Hid</RootNamespace>
-    <AssemblyName>BlinkStick.Hid</AssemblyName>
+    <RootNamespace>BlinkStickDotNet</RootNamespace>
+    <AssemblyName>BlinkStickDotNet</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,7 +38,7 @@
     <Compile Include="WinUsbDeviceMonitor.cs" />
     <Compile Include="RgbColor.cs" />
     <Compile Include="HSLColor.cs" />
-    <Compile Include="BlinkstickHid.cs" />
+    <Compile Include="BlinkStick.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
