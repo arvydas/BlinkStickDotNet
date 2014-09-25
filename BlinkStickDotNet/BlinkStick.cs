@@ -931,7 +931,7 @@ namespace BlinkStickDotNet
         /// Find all BlinkStick devices.
         /// </summary>
         /// <returns>The devices.</returns>
-        public static BlinkStick[] AllDevices ()
+        public static BlinkStick[] FindAll ()
 		{
             List<BlinkStick> result = new List<BlinkStick>();
 
@@ -950,9 +950,9 @@ namespace BlinkStickDotNet
         /// Find first BlinkStick.
         /// </summary>
         /// <returns>BlinkStickHid device if found, otherwise null if no devices found</returns>
-        public static BlinkStick FirstDevice()
+        public static BlinkStick FirstFirst()
         {
-            BlinkStick[] devices = AllDevices();
+            BlinkStick[] devices = FindAll();
 
             return devices.Length > 0 ? devices[0] : null;
         }
@@ -964,7 +964,7 @@ namespace BlinkStickDotNet
         /// <param name="serial">Serial number to search for</param>
         public static BlinkStick FindBySerial(String serial)
         {
-            foreach (BlinkStick device in AllDevices())
+            foreach (BlinkStick device in FindAll())
             {
                 if (device.Serial == serial)
                     return device;
