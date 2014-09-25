@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['serial',['Serial',['../class_blink_stick_1_1_hid_1_1_blinkstick_hid.html#a9b9830de8c16f85357fbef686e8dc537',1,'BlinkStick::Hid::BlinkstickHid']]]
+  ['serial',['Serial',['../class_blink_stick_dot_net_1_1_blink_stick.html#a52b924641d173fc209f0c17098a8d984',1,'BlinkStickDotNet::BlinkStick']]]
 ];

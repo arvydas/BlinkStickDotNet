@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['usbdeviceadded',['UsbDeviceAdded',['../class_blink_stick_1_1_hid_1_1_usb_monitor.html#a3781c887346aef45126ac14d4c775811',1,'BlinkStick::Hid::UsbMonitor']]]
+  ['usbdeviceadded',['UsbDeviceAdded',['../class_blink_stick_dot_net_1_1_usb_monitor.html#a9f87d84025d8bbcf6a3bb6d6ba8b0b20',1,'BlinkStickDotNet::UsbMonitor']]]
 ];

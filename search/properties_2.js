@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['manufacturername',['ManufacturerName',['../class_blink_stick_1_1_hid_1_1_blinkstick_hid.html#a84b3f48774e824e09852c844e53a3f46',1,'BlinkStick::Hid::BlinkstickHid']]]
+  ['manufacturername',['ManufacturerName',['../class_blink_stick_dot_net_1_1_blink_stick.html#a86abc18f12268b3bed136d59c416e355',1,'BlinkStickDotNet::BlinkStick']]]
 ];

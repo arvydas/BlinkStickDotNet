@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['torgb',['ToRGB',['../struct_blink_stick_1_1_hid_1_1_h_s_l_color.html#a1d322b2fb68520e30cd1680f2c72e5f6',1,'BlinkStick::Hid::HSLColor']]],
-  ['tostring',['ToString',['../struct_blink_stick_1_1_hid_1_1_h_s_l_color.html#a3142fc69b4156ec1a9a9e290f7c34430',1,'BlinkStick.Hid.HSLColor.ToString()'],['../class_blink_stick_1_1_hid_1_1_rgb_color.html#ad84c41bb6d293d4609d4f90d625a5701',1,'BlinkStick.Hid.RgbColor.ToString()']]],
-  ['turnoff',['TurnOff',['../class_blink_stick_1_1_hid_1_1_blinkstick_hid.html#a9f3af3b304708ae0419192a7d3f977f3',1,'BlinkStick::Hid::BlinkstickHid']]]
+  ['tostring',['ToString',['../class_blink_stick_dot_net_1_1_rgb_color.html#a1b9f7cdb8c77d0bb480c0eddefeaf104',1,'BlinkStickDotNet::RgbColor']]],
+  ['turnoff',['TurnOff',['../class_blink_stick_dot_net_1_1_blink_stick.html#aefc49e9899df8c4b2844d1bd73d12c35',1,'BlinkStickDotNet::BlinkStick']]]
 ];

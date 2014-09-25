@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['deviceattached',['DeviceAttached',['../class_blink_stick_1_1_hid_1_1_blinkstick_hid.html#a3c9fed774d5ebe5212a4a6df42a06f2b',1,'BlinkStick::Hid::BlinkstickHid']]],
-  ['devicelistchanged',['DeviceListChanged',['../class_blink_stick_1_1_hid_1_1_win_usb_device_monitor.html#a62ca4cff804edb9595a17cf0aeb9215f',1,'BlinkStick::Hid::WinUsbDeviceMonitor']]],
-  ['deviceremoved',['DeviceRemoved',['../class_blink_stick_1_1_hid_1_1_blinkstick_hid.html#a02469753b0e3dff38dd519b57991b85c',1,'BlinkStick::Hid::BlinkstickHid']]],
-  ['dispose',['Dispose',['../class_blink_stick_1_1_hid_1_1_blinkstick_hid.html#a0f2953fdc22bb70af9a37654ad79fe81',1,'BlinkStick::Hid::BlinkstickHid']]]
+  ['findall',['FindAll',['../class_blink_stick_dot_net_1_1_blink_stick.html#a2d3d9c423e22813854b606ac2a915582',1,'BlinkStickDotNet::BlinkStick']]],
+  ['findbyserial',['FindBySerial',['../class_blink_stick_dot_net_1_1_blink_stick.html#a7234ef16551a5f3716bc2cd7d8abf433',1,'BlinkStickDotNet::BlinkStick']]],
+  ['firstfirst',['FirstFirst',['../class_blink_stick_dot_net_1_1_blink_stick.html#a4979e97e9ab63b7f738ef9dd1077a2b4',1,'BlinkStickDotNet::BlinkStick']]],
+  ['fromgdkcolor',['FromGdkColor',['../class_blink_stick_dot_net_1_1_rgb_color.html#a6d41e95dd1d1ef27ae2f4305b7af1221',1,'BlinkStickDotNet::RgbColor']]],
+  ['fromrgb',['FromRgb',['../class_blink_stick_dot_net_1_1_rgb_color.html#a1449d59ce78840d44e0608cf81df2f90',1,'BlinkStickDotNet::RgbColor']]],
+  ['fromstring',['FromString',['../class_blink_stick_dot_net_1_1_rgb_color.html#a214970fe1e219b607606709039b777e3',1,'BlinkStickDotNet::RgbColor']]]
 ];

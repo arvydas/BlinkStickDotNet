@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['connected',['Connected',['../class_blink_stick_1_1_hid_1_1_blinkstick_hid.html#a59607058f7be89a4263939d0907cddf8',1,'BlinkStick::Hid::BlinkstickHid']]]
+  ['connected',['Connected',['../class_blink_stick_dot_net_1_1_blink_stick.html#a8181a590c78c7e501fb50cfd3f917a63',1,'BlinkStickDotNet::BlinkStick']]]
 ];

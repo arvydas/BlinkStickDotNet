@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['blinkstickhid',['BlinkstickHid',['../class_blink_stick_1_1_hid_1_1_blinkstick_hid.html',1,'BlinkStick::Hid']]]
+  ['blinkstick',['BlinkStick',['../class_blink_stick_dot_net_1_1_blink_stick.html',1,'BlinkStickDotNet']]]
 ];

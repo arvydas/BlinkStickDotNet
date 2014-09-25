@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['closedevice',['CloseDevice',['../class_blink_stick_1_1_hid_1_1_blinkstick_hid.html#a9420b4543e3f1f0d5c0803148cd61c6d',1,'BlinkStick::Hid::BlinkstickHid']]],
-  ['connected',['Connected',['../class_blink_stick_1_1_hid_1_1_blinkstick_hid.html#a59607058f7be89a4263939d0907cddf8',1,'BlinkStick::Hid::BlinkstickHid']]]
+  ['devicelistchanged',['DeviceListChanged',['../class_blink_stick_dot_net_1_1_win_usb_device_monitor.html#a19f0e71a0ee9919ea02088973716131a',1,'BlinkStickDotNet::WinUsbDeviceMonitor']]],
+  ['dispose',['Dispose',['../class_blink_stick_dot_net_1_1_blink_stick.html#ae3381ffb56462b47f677ba39172d36bb',1,'BlinkStickDotNet::BlinkStick']]]
 ];

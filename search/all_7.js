@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['infoblock1',['InfoBlock1',['../class_blink_stick_1_1_hid_1_1_blinkstick_hid.html#afffa5b695c2feb2c995446c62911d512',1,'BlinkStick::Hid::BlinkstickHid']]],
-  ['infoblock2',['InfoBlock2',['../class_blink_stick_1_1_hid_1_1_blinkstick_hid.html#a421fafe597abe3a3c087d8400e68ea5b',1,'BlinkStick::Hid::BlinkstickHid']]],
-  ['isvalidcolor',['IsValidColor',['../class_blink_stick_1_1_hid_1_1_blinkstick_hid.html#a7e3fab5cdf54428102eba9aa5a8980a3',1,'BlinkStick::Hid::BlinkstickHid']]]
+  ['manufacturername',['ManufacturerName',['../class_blink_stick_dot_net_1_1_blink_stick.html#a86abc18f12268b3bed136d59c416e355',1,'BlinkStickDotNet::BlinkStick']]],
+  ['morph',['Morph',['../class_blink_stick_dot_net_1_1_blink_stick.html#a4b04d54d0434053c7488607453c632a2',1,'BlinkStickDotNet.BlinkStick.Morph(byte channel, byte index, byte r, byte g, byte b, int duration=1000, int steps=50)'],['../class_blink_stick_dot_net_1_1_blink_stick.html#a0349062ad35543e9eed411ec69bd947d',1,'BlinkStickDotNet.BlinkStick.Morph(byte channel, byte index, RgbColor color, int duration=1000, int steps=50)'],['../class_blink_stick_dot_net_1_1_blink_stick.html#adf6dbd796cc0108490295ad1e49addb7',1,'BlinkStickDotNet.BlinkStick.Morph(byte channel, byte index, string color, int duration=1000, int steps=50)'],['../class_blink_stick_dot_net_1_1_blink_stick.html#a7cb7607d98abdb0fad5ada807d06d73b',1,'BlinkStickDotNet.BlinkStick.Morph(byte r, byte g, byte b, int duration=1000, int steps=50)'],['../class_blink_stick_dot_net_1_1_blink_stick.html#afa67e482652886817b9b390d11821f1f',1,'BlinkStickDotNet.BlinkStick.Morph(RgbColor color, int duration=1000, int steps=50)'],['../class_blink_stick_dot_net_1_1_blink_stick.html#a415c713b83397cf1e2bd633b55b0da6f',1,'BlinkStickDotNet.BlinkStick.Morph(string color, int duration=1000, int steps=50)']]],
+  ['myform',['MyForm',['../class_blink_stick_dot_net_1_1_win_usb_device_monitor_1_1_my_form.html',1,'BlinkStickDotNet::WinUsbDeviceMonitor']]]
 ];

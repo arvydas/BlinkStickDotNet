@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['infoblock1',['InfoBlock1',['../class_blink_stick_1_1_hid_1_1_blinkstick_hid.html#afffa5b695c2feb2c995446c62911d512',1,'BlinkStick::Hid::BlinkstickHid']]],
-  ['infoblock2',['InfoBlock2',['../class_blink_stick_1_1_hid_1_1_blinkstick_hid.html#a421fafe597abe3a3c087d8400e68ea5b',1,'BlinkStick::Hid::BlinkstickHid']]]
+  ['infoblock1',['InfoBlock1',['../class_blink_stick_dot_net_1_1_blink_stick.html#ab61dc7a4db3d8b5f8caa47fb64ea9144',1,'BlinkStickDotNet::BlinkStick']]],
+  ['infoblock2',['InfoBlock2',['../class_blink_stick_dot_net_1_1_blink_stick.html#a206c3bc1df6d142a34842dc2b460cda3',1,'BlinkStickDotNet::BlinkStick']]]
 ];
