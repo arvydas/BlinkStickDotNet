@@ -8,12 +8,12 @@
 var indexSectionsWithContent =
 {
   0: "bcdfghimoprstuvw",
-  1: "bhmruw",
+  1: "bdhmruw",
   2: "b",
   3: "bcdfgimopst",
-  4: "bgr",
+  4: "bdgru",
   5: "cimpsv",
-  6: "du"
+  6: "bdu"
 };
 
 var indexSectionNames =

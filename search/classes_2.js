@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['myform',['MyForm',['../class_blink_stick_dot_net_1_1_win_usb_device_monitor_1_1_my_form.html',1,'BlinkStickDotNet::WinUsbDeviceMonitor']]]
+  ['hslcolor',['HSLColor',['../struct_blink_stick_dot_net_1_1_h_s_l_color.html',1,'BlinkStickDotNet']]]
 ];

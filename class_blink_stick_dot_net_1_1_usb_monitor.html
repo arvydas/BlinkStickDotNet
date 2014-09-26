@@ -83,9 +83,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a2fefceb2917605109030a296a8287a8f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2fefceb2917605109030a296a8287a8f"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>UsbMonitor</b> (IntPtr mainWindowHandle)</td></tr>
-<tr class="separator:a2fefceb2917605109030a296a8287a8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5dd6259ce706c2b070e6a3cb9dc9fcea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_blink_stick_dot_net_1_1_usb_monitor.html#a5dd6259ce706c2b070e6a3cb9dc9fcea">Start</a> ()</td></tr>
 <tr class="memdesc:a5dd6259ce706c2b070e6a3cb9dc9fcea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start monitoring for added/removed <a class="el" href="class_blink_stick_dot_net_1_1_blink_stick.html" title="BlinkStick class is designed to control regular BlinkStick devices.Code examples on how you can use t...">BlinkStick</a> devices.  <a href="#a5dd6259ce706c2b070e6a3cb9dc9fcea">More...</a><br /></td></tr>
 <tr class="separator:a5dd6259ce706c2b070e6a3cb9dc9fcea"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -95,30 +92,42 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ab4d47cf1f350a74f41c7cbf1c5a49ed2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab4d47cf1f350a74f41c7cbf1c5a49ed2"></a>
-IDeviceNotifier&#160;</td><td class="memItemRight" valign="bottom"><b>UsbDeviceNotifier</b></td></tr>
+<tr class="memitem:ab4d47cf1f350a74f41c7cbf1c5a49ed2"><td class="memItemLeft" align="right" valign="top">IDeviceNotifier&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_blink_stick_dot_net_1_1_usb_monitor.html#ab4d47cf1f350a74f41c7cbf1c5a49ed2">UsbDeviceNotifier</a></td></tr>
+<tr class="memdesc:ab4d47cf1f350a74f41c7cbf1c5a49ed2"><td class="mdescLeft">&#160;</td><td class="mdescRight">USB device monitor for Linux/Mac.  <a href="#ab4d47cf1f350a74f41c7cbf1c5a49ed2">More...</a><br /></td></tr>
 <tr class="separator:ab4d47cf1f350a74f41c7cbf1c5a49ed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a596e38ac2b6d43a4747a33f692b9ccfd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_blink_stick_dot_net_1_1_usb_monitor.html#a596e38ac2b6d43a4747a33f692b9ccfd">OnUsbDeviceAdded</a> ()</td></tr>
-<tr class="memdesc:a596e38ac2b6d43a4747a33f692b9ccfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Raises the usb device added event.  <a href="#a596e38ac2b6d43a4747a33f692b9ccfd">More...</a><br /></td></tr>
-<tr class="separator:a596e38ac2b6d43a4747a33f692b9ccfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace6d012931aaccfd5d8b5c42d410dda3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_blink_stick_dot_net_1_1_usb_monitor.html#ace6d012931aaccfd5d8b5c42d410dda3">OnBlinkStickConnected</a> (<a class="el" href="class_blink_stick_dot_net_1_1_blink_stick.html">BlinkStick</a> device)</td></tr>
+<tr class="memdesc:ace6d012931aaccfd5d8b5c42d410dda3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Raises the <a class="el" href="class_blink_stick_dot_net_1_1_blink_stick.html" title="BlinkStick class is designed to control regular BlinkStick devices.Code examples on how you can use t...">BlinkStick</a> connected event.  <a href="#ace6d012931aaccfd5d8b5c42d410dda3">More...</a><br /></td></tr>
+<tr class="separator:ace6d012931aaccfd5d8b5c42d410dda3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11887b21a985bdd35f544eaf8c950da1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_blink_stick_dot_net_1_1_usb_monitor.html#a11887b21a985bdd35f544eaf8c950da1">OnBlinkStickDisconnected</a> (<a class="el" href="class_blink_stick_dot_net_1_1_blink_stick.html">BlinkStick</a> device)</td></tr>
+<tr class="memdesc:a11887b21a985bdd35f544eaf8c950da1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Raises the <a class="el" href="class_blink_stick_dot_net_1_1_blink_stick.html" title="BlinkStick class is designed to control regular BlinkStick devices.Code examples on how you can use t...">BlinkStick</a> disconnected event.  <a href="#a11887b21a985bdd35f544eaf8c950da1">More...</a><br /></td></tr>
+<tr class="separator:a11887b21a985bdd35f544eaf8c950da1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70176b965bc3114f3ac39c94c57719c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_blink_stick_dot_net_1_1_usb_monitor.html#a70176b965bc3114f3ac39c94c57719c0">OnUsbDevicesChanged</a> ()</td></tr>
+<tr class="memdesc:a70176b965bc3114f3ac39c94c57719c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Raises the usb device changed event.  <a href="#a70176b965bc3114f3ac39c94c57719c0">More...</a><br /></td></tr>
+<tr class="separator:a70176b965bc3114f3ac39c94c57719c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="properties"></a>
 Properties</h2></td></tr>
-<tr class="memitem:ae658abad4ca0d88198e676b38d721095"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae658abad4ca0d88198e676b38d721095"></a>
-Boolean&#160;</td><td class="memItemRight" valign="bottom"><b>Monitoring</b><code> [get]</code></td></tr>
+<tr class="memitem:ae658abad4ca0d88198e676b38d721095"><td class="memItemLeft" align="right" valign="top">Boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_blink_stick_dot_net_1_1_usb_monitor.html#ae658abad4ca0d88198e676b38d721095">Monitoring</a><code> [get]</code></td></tr>
+<tr class="memdesc:ae658abad4ca0d88198e676b38d721095"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a value indicating whether this <a class="el" href="class_blink_stick_dot_net_1_1_usb_monitor.html">BlinkStickDotNet.UsbMonitor</a> is monitoring.  <a href="#ae658abad4ca0d88198e676b38d721095">More...</a><br /></td></tr>
 <tr class="separator:ae658abad4ca0d88198e676b38d721095"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="events"></a>
 Events</h2></td></tr>
-<tr class="memitem:a9f87d84025d8bbcf6a3bb6d6ba8b0b20"><td class="memItemLeft" align="right" valign="top">EventHandler&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_blink_stick_dot_net_1_1_usb_monitor.html#a9f87d84025d8bbcf6a3bb6d6ba8b0b20">UsbDeviceAdded</a></td></tr>
-<tr class="memdesc:a9f87d84025d8bbcf6a3bb6d6ba8b0b20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Occurs when usb device added.  <a href="#a9f87d84025d8bbcf6a3bb6d6ba8b0b20">More...</a><br /></td></tr>
-<tr class="separator:a9f87d84025d8bbcf6a3bb6d6ba8b0b20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4774e6e76f30969769dd8165b51ef5b"><td class="memItemLeft" align="right" valign="top">EventHandler&lt; <a class="el" href="class_blink_stick_dot_net_1_1_device_modified_args.html">DeviceModifiedArgs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_blink_stick_dot_net_1_1_usb_monitor.html#af4774e6e76f30969769dd8165b51ef5b">BlinkStickConnected</a></td></tr>
+<tr class="memdesc:af4774e6e76f30969769dd8165b51ef5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Occurs when <a class="el" href="class_blink_stick_dot_net_1_1_blink_stick.html" title="BlinkStick class is designed to control regular BlinkStick devices.Code examples on how you can use t...">BlinkStick</a> is connected.  <a href="#af4774e6e76f30969769dd8165b51ef5b">More...</a><br /></td></tr>
+<tr class="separator:af4774e6e76f30969769dd8165b51ef5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa79965c3706a845f295513667316ad25"><td class="memItemLeft" align="right" valign="top">EventHandler&lt; <a class="el" href="class_blink_stick_dot_net_1_1_device_modified_args.html">DeviceModifiedArgs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_blink_stick_dot_net_1_1_usb_monitor.html#aa79965c3706a845f295513667316ad25">BlinkStickDisconnected</a></td></tr>
+<tr class="memdesc:aa79965c3706a845f295513667316ad25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Occurs when <a class="el" href="class_blink_stick_dot_net_1_1_blink_stick.html" title="BlinkStick class is designed to control regular BlinkStick devices.Code examples on how you can use t...">BlinkStick</a> disconnected.  <a href="#aa79965c3706a845f295513667316ad25">More...</a><br /></td></tr>
+<tr class="separator:aa79965c3706a845f295513667316ad25"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e64f2b1ffdf94935728d479848a835e"><td class="memItemLeft" align="right" valign="top">EventHandler&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_blink_stick_dot_net_1_1_usb_monitor.html#a6e64f2b1ffdf94935728d479848a835e">UsbDevicesChanged</a></td></tr>
+<tr class="memdesc:a6e64f2b1ffdf94935728d479848a835e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Occurs when usb devices change.  <a href="#a6e64f2b1ffdf94935728d479848a835e">More...</a><br /></td></tr>
+<tr class="separator:a6e64f2b1ffdf94935728d479848a835e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a596e38ac2b6d43a4747a33f692b9ccfd"></a>
+<a class="anchor" id="ace6d012931aaccfd5d8b5c42d410dda3"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -126,7 +135,71 @@ Events</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void BlinkStickDotNet.UsbMonitor.OnUsbDeviceAdded </td>
+          <td class="memname">void BlinkStickDotNet.UsbMonitor.OnBlinkStickConnected </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_blink_stick_dot_net_1_1_blink_stick.html">BlinkStick</a>&#160;</td>
+          <td class="paramname"><em>device</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Raises the <a class="el" href="class_blink_stick_dot_net_1_1_blink_stick.html" title="BlinkStick class is designed to control regular BlinkStick devices.Code examples on how you can use t...">BlinkStick</a> connected event. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">device</td><td>Device which has been connected.</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a11887b21a985bdd35f544eaf8c950da1"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void BlinkStickDotNet.UsbMonitor.OnBlinkStickDisconnected </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_blink_stick_dot_net_1_1_blink_stick.html">BlinkStick</a>&#160;</td>
+          <td class="paramname"><em>device</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Raises the <a class="el" href="class_blink_stick_dot_net_1_1_blink_stick.html" title="BlinkStick class is designed to control regular BlinkStick devices.Code examples on how you can use t...">BlinkStick</a> disconnected event. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">device</td><td>Device which has been disconnected.</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a70176b965bc3114f3ac39c94c57719c0"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void BlinkStickDotNet.UsbMonitor.OnUsbDevicesChanged </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -139,7 +212,7 @@ Events</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Raises the usb device added event. </p>
+<p>Raises the usb device changed event. </p>
 
 </div>
 </div>
@@ -177,18 +250,85 @@ Events</h2></td></tr>
 
 </div>
 </div>
-<h2 class="groupheader">Event Documentation</h2>
-<a class="anchor" id="a9f87d84025d8bbcf6a3bb6d6ba8b0b20"></a>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a class="anchor" id="ab4d47cf1f350a74f41c7cbf1c5a49ed2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">EventHandler BlinkStickDotNet.UsbMonitor.UsbDeviceAdded</td>
+          <td class="memname">IDeviceNotifier BlinkStickDotNet.UsbMonitor.UsbDeviceNotifier</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Occurs when usb device added. </p>
+<p>USB device monitor for Linux/Mac. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Property Documentation</h2>
+<a class="anchor" id="ae658abad4ca0d88198e676b38d721095"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Boolean BlinkStickDotNet.UsbMonitor.Monitoring</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">get</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a value indicating whether this <a class="el" href="class_blink_stick_dot_net_1_1_usb_monitor.html">BlinkStickDotNet.UsbMonitor</a> is monitoring. </p>
+<p><code>true</code> if monitoring; otherwise, <code>false</code>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Event Documentation</h2>
+<a class="anchor" id="af4774e6e76f30969769dd8165b51ef5b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">EventHandler&lt;<a class="el" href="class_blink_stick_dot_net_1_1_device_modified_args.html">DeviceModifiedArgs</a>&gt; BlinkStickDotNet.UsbMonitor.BlinkStickConnected</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Occurs when <a class="el" href="class_blink_stick_dot_net_1_1_blink_stick.html" title="BlinkStick class is designed to control regular BlinkStick devices.Code examples on how you can use t...">BlinkStick</a> is connected. </p>
+
+</div>
+</div>
+<a class="anchor" id="aa79965c3706a845f295513667316ad25"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">EventHandler&lt;<a class="el" href="class_blink_stick_dot_net_1_1_device_modified_args.html">DeviceModifiedArgs</a>&gt; BlinkStickDotNet.UsbMonitor.BlinkStickDisconnected</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Occurs when <a class="el" href="class_blink_stick_dot_net_1_1_blink_stick.html" title="BlinkStick class is designed to control regular BlinkStick devices.Code examples on how you can use t...">BlinkStick</a> disconnected. </p>
+
+</div>
+</div>
+<a class="anchor" id="a6e64f2b1ffdf94935728d479848a835e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">EventHandler BlinkStickDotNet.UsbMonitor.UsbDevicesChanged</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Occurs when usb devices change. </p>
 
 </div>
 </div>
@@ -198,7 +338,7 @@ Events</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Sep 25 2014 22:00:52 for BlinkStickDotNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Sep 26 2014 12:56:20 for BlinkStickDotNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.8
 </small></address>

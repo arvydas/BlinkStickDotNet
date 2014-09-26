@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['r',['R',['../class_blink_stick_dot_net_1_1_rgb_color.html#add2c2a0c26acc26937d39a962c538d66',1,'BlinkStickDotNet::RgbColor']]]
+  ['g',['G',['../class_blink_stick_dot_net_1_1_rgb_color.html#ade66132d923055a882d74a5fec071d86',1,'BlinkStickDotNet::RgbColor']]]
 ];
