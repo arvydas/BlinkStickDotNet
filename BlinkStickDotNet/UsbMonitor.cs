@@ -17,27 +17,81 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using LibUsbDotNet.DeviceNotify;
 
 namespace BlinkStickDotNet
 {
 	public class UsbMonitor
 	{
+        public event EventHandler<DeviceModifiedArgs> BlinkStickConnected;
+
+        protected void OnBlinkStickConnected(BlinkStick device)
+        {
+            if (BlinkStickConnected != null)
+            {
+                BlinkStickConnected(this, new DeviceModifiedArgs(device));
+            }
+        }
+
+        public event EventHandler<DeviceModifiedArgs> BlinkStickDisconnected;
+
+        protected void OnBlinkStickDisconnected(BlinkStick device)
+        {
+            if (BlinkStickDisconnected != null)
+            {
+                BlinkStickDisconnected(this, new DeviceModifiedArgs(device));
+            }
+        }
+
         /// <summary>
-        /// Occurs when usb device added.
+        /// Occurs when usb devices change.
         /// </summary>
-		public event EventHandler UsbDeviceAdded;
+		public event EventHandler UsbDevicesChanged;
 		
         /// <summary>
-        /// Raises the usb device added event.
+        /// Raises the usb device changed event.
         /// </summary>
-		protected void OnUsbDeviceAdded()
+		protected void OnUsbDevicesChanged()
 		{
-			if (UsbDeviceAdded != null)
+			if (UsbDevicesChanged != null)
 			{
-				UsbDeviceAdded(this, new EventArgs());
+				UsbDevicesChanged(this, new EventArgs());
 			}
+
+            List<BlinkStick> newDevices = new List<BlinkStick>();
+
+            List<BlinkStick> scannedDevices = new List<BlinkStick>(BlinkStick.FindAll());
+
+            foreach (BlinkStick newDevice in scannedDevices)
+            {
+                Boolean found = false;
+
+                for (int i = devices.Count - 1; i >= 0; i--)
+                {
+                    if (devices[i].Serial == newDevice.Serial)
+                    {
+                        devices.RemoveAt(i);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    OnBlinkStickConnected(newDevice);
+                }
+            }
+
+            foreach (BlinkStick device in devices)
+            {
+                OnBlinkStickDisconnected(device);
+            }
+
+            devices = scannedDevices;
 		}
+
+        List<BlinkStick> devices;
 
 		private WinUsbDeviceMonitor winUsbDeviceMonitor;
         public IDeviceNotifier UsbDeviceNotifier;
@@ -64,17 +118,30 @@ namespace BlinkStickDotNet
 
 		private void HandleDeviceListChanged (object sender, EventArgs e)
 		{
-			OnUsbDeviceAdded();
+			OnUsbDevicesChanged();
 		}
+
+        private void OnDeviceNotifyEvent(object sender, DeviceNotifyEventArgs e)
+        {
+            OnUsbDevicesChanged();
+        }
 
         /// <summary>
         /// Start monitoring for added/removed BlinkStick devices.
         /// </summary>
 		public void Start ()
 		{
-            if (UsbDeviceNotifier != null) {
-				UsbDeviceNotifier.Enabled = true;
-			}
+            //Get the list of already connected BlinkSticks
+            devices = new List<BlinkStick>(BlinkStick.FindAll());
+
+            if (UsbDeviceNotifier != null)
+            {
+                UsbDeviceNotifier.Enabled = true;
+            }
+            else if (winUsbDeviceMonitor != null)
+            {
+                winUsbDeviceMonitor.Enabled = true;
+            }
 
             Monitoring = true;
 		}
@@ -89,18 +156,27 @@ namespace BlinkStickDotNet
 
 				UsbDeviceNotifier.OnDeviceNotify -= OnDeviceNotifyEvent;
 			}
+            else if (winUsbDeviceMonitor != null)
+            {
+                winUsbDeviceMonitor.Enabled = false;
+            }
 
 			Monitoring = false;
 		}
-
-		private void OnDeviceNotifyEvent(object sender, DeviceNotifyEventArgs e)
-        {
-			OnUsbDeviceAdded();
-        }
 
 		~UsbMonitor ()
 		{
 		}
 	}
+
+    public class DeviceModifiedArgs : EventArgs
+    {
+        public BlinkStick Device;
+
+        public DeviceModifiedArgs(BlinkStick device)
+        {
+            this.Device = device;
+        }
+    }
 }
 
