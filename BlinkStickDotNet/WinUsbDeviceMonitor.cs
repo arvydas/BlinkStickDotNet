@@ -77,6 +77,13 @@ namespace BlinkStickDotNet
 		{
 			form = new MyForm();
 			form.Monitor = this;
+
+            //Move main form off the screen
+            form.StartPosition = FormStartPosition.Manual;
+            form.Width = 10;
+            form.Height = 10;
+            form.Left = -200;
+
 			form.Visible = true;
 			form.Visible = false;
 		}
