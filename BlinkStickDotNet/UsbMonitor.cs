@@ -47,7 +47,7 @@ namespace BlinkStickDotNet
 			private set;
 		}
 
-		public UsbMonitor (IntPtr mainWindowHandle)
+		public UsbMonitor ()
 		{
             switch (HidSharp.PlatformDetector.RunningPlatform())
             {
