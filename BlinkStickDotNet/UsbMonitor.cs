@@ -24,8 +24,15 @@ namespace BlinkStickDotNet
 {
 	public class UsbMonitor
 	{
+        /// <summary>
+        /// Occurs when BlinkStick is connected.
+        /// </summary>
         public event EventHandler<DeviceModifiedArgs> BlinkStickConnected;
 
+        /// <summary>
+        /// Raises the BlinkStick connected event.
+        /// </summary>
+        /// <param name="device">Device which has been connected.</param>
         protected void OnBlinkStickConnected(BlinkStick device)
         {
             if (BlinkStickConnected != null)
@@ -34,8 +41,15 @@ namespace BlinkStickDotNet
             }
         }
 
+        /// <summary>
+        /// Occurs when BlinkStick disconnected.
+        /// </summary>
         public event EventHandler<DeviceModifiedArgs> BlinkStickDisconnected;
 
+        /// <summary>
+        /// Raises the BlinkStick disconnected event.
+        /// </summary>
+        /// <param name="device">Device which has been disconnected.</param>
         protected void OnBlinkStickDisconnected(BlinkStick device)
         {
             if (BlinkStickDisconnected != null)
@@ -91,11 +105,25 @@ namespace BlinkStickDotNet
             devices = scannedDevices;
 		}
 
+        /// <summary>
+        /// Internal list of tracked devices.
+        /// </summary>
         List<BlinkStick> devices;
 
+        /// <summary>
+        /// USB device monitor for Windows.
+        /// </summary>
 		private WinUsbDeviceMonitor winUsbDeviceMonitor;
+
+        /// <summary>
+        /// USB device monitor for Linux/Mac.
+        /// </summary>
         public IDeviceNotifier UsbDeviceNotifier;
 
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="BlinkStickDotNet.UsbMonitor"/> is monitoring.
+        /// </summary>
+        /// <value><c>true</c> if monitoring; otherwise, <c>false</c>.</value>
 		public Boolean Monitoring {
 			get;
 			private set;
@@ -116,11 +144,21 @@ namespace BlinkStickDotNet
             }
 		}
 
+        /// <summary>
+        /// Handles the device list change on Windows.
+        /// </summary>
+        /// <param name="sender">Sender object</param>
+        /// <param name="e">Event args</param>
 		private void HandleDeviceListChanged (object sender, EventArgs e)
 		{
 			OnUsbDevicesChanged();
 		}
 
+        /// <summary>
+        /// Handles device list change on Linux/Mac.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
         private void OnDeviceNotifyEvent(object sender, DeviceNotifyEventArgs e)
         {
             OnUsbDevicesChanged();
@@ -164,15 +202,29 @@ namespace BlinkStickDotNet
 			Monitoring = false;
 		}
 
+        /// <summary>
+        /// Releases unmanaged resources and performs other cleanup operations before the
+        /// <see cref="BlinkStickDotNet.UsbMonitor"/> is reclaimed by garbage collection.
+        /// </summary>
 		~UsbMonitor ()
 		{
 		}
 	}
 
+    /// <summary>
+    /// Device modified arguments.
+    /// </summary>
     public class DeviceModifiedArgs : EventArgs
     {
+        /// <summary>
+        /// The device which has been modified.
+        /// </summary>
         public BlinkStick Device;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BlinkStickDotNet.DeviceModifiedArgs"/> class.
+        /// </summary>
+        /// <param name="device">Device passed as an argument</param>
         public DeviceModifiedArgs(BlinkStick device)
         {
             this.Device = device;
