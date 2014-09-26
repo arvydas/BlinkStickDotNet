@@ -83,6 +83,7 @@ namespace BlinkStickDotNet
             form.Width = 10;
             form.Height = 10;
             form.Left = -200;
+            form.ShowInTaskbar = false;
 
 			form.Visible = true;
 			form.Visible = false;
