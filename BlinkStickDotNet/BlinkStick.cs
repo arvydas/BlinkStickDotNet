@@ -89,7 +89,7 @@ namespace BlinkStickDotNet
                 {
                     try
                     {
-                        _VersionMajor = Convert.ToInt32(this.Serial.Substring(this.Serial.Length - 1, 1));
+                        _VersionMajor = Convert.ToInt32(this.Serial.Substring(this.Serial.Length - 3, 1));
                     }
                     catch
                     {
@@ -113,7 +113,7 @@ namespace BlinkStickDotNet
                 {
                     try
                     {
-                        _VersionMinor = Convert.ToInt32(this.Serial.Substring(this.Serial.Length - 3, 1));
+                        _VersionMinor = Convert.ToInt32(this.Serial.Substring(this.Serial.Length - 1, 1));
                     }
                     catch
                     {
