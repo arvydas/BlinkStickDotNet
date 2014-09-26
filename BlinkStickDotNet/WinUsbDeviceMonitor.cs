@@ -41,6 +41,8 @@ namespace BlinkStickDotNet
 			}
 		}
 
+        public Boolean Enabled { get; set; }
+
         /// <summary>
         /// Private property to keep reference to Windows form for getting
         /// notification from the OS about changes to USB devices
@@ -65,7 +67,8 @@ namespace BlinkStickDotNet
 				    || m.WParam.ToInt32() == DBT_DEVICEREMOVECOMPLETE
 				    || m.WParam.ToInt32() == DBT_DEVNODES_CHANGED))
 				{
-					Monitor.OnDeviceListChanged();
+                    if (this.Enabled)
+                        Monitor.OnDeviceListChanged();
 				}
 				
 				base.WndProc(ref m);
@@ -75,7 +78,9 @@ namespace BlinkStickDotNet
 
 		public WinUsbDeviceMonitor ()
 		{
-			form = new MyForm();
+            this.Enabled = false;
+
+            form = new MyForm();
 			form.Monitor = this;
 
             //Move main form off the screen
