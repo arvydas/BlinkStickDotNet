@@ -1,5 +1,5 @@
-BlinkStickDotNet
-=================
+.. image:: http://www.blinkstick.com/images/logos/blinkstick-dotnet.png
+   :alt: BlinkStickDotNet
 
 This is BlinkStick .NET interface to control devices connected to the
 computer. The library is written in Mono/.NET 4.0 C#.
