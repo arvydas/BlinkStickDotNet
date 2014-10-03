@@ -954,7 +954,7 @@ namespace BlinkStickDotNet
         /// Find first BlinkStick.
         /// </summary>
         /// <returns>BlinkStick device if found, otherwise null if no devices found</returns>
-        public static BlinkStick FirstFirst()
+        public static BlinkStick FindFirst()
         {
             BlinkStick[] devices = FindAll();
 

@@ -10,7 +10,7 @@ namespace BlinkTest
 		{
 			Console.WriteLine ("Blink test for BlinkStick.\r\n");
 
-			BlinkStick device = BlinkStick.FirstFirst ();
+			BlinkStick device = BlinkStick.FindFirst ();
 			if (device != null && device.OpenDevice ()) {
 				foreach (string color in new string[] {"red", "green", "blue"})
 				{

@@ -9,7 +9,7 @@ namespace MorphTest
 		{
 			Console.WriteLine ("Morph test for BlinkStick.\r\n");
 
-			BlinkStick device = BlinkStick.FirstFirst ();
+			BlinkStick device = BlinkStick.FindFirst ();
 			if (device != null && device.OpenDevice ()) {
 				device.Morph ("red");
 				device.Morph ("green");

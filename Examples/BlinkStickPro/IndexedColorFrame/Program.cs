@@ -9,7 +9,7 @@ namespace IndexedColorFrame
 		{
 			Console.WriteLine ("Set indexed color frame. \r\nThis example requires BlinkStick Pro with 8 smart pixels connected to R channel.\r\n");
 
-			BlinkStick device = BlinkStick.FirstFirst ();
+			BlinkStick device = BlinkStick.FindFirst ();
 
 			//Set mode to WS2812. Read more about modes here:
 			//http://www.blinkstick.com/help/tutorials/blinkstick-pro-modes

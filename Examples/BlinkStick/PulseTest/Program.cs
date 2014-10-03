@@ -9,7 +9,7 @@ namespace PulseTest
 		{
 			Console.WriteLine ("Pulse test for BlinkStick.\r\n");
 
-			BlinkStick device = BlinkStick.FirstFirst ();
+			BlinkStick device = BlinkStick.FindFirst ();
 			if (device != null && device.OpenDevice ()) {
 				device.Pulse ("red");
 				device.Pulse ("green");

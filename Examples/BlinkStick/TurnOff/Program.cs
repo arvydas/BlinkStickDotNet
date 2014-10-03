@@ -9,7 +9,7 @@ namespace TurnOff
 		{
 			Console.WriteLine ("Turn Off.\r\n");
 
-			BlinkStick device = BlinkStick.FirstFirst ();
+			BlinkStick device = BlinkStick.FindFirst ();
 
 			if (device != null) {
 				if (device.OpenDevice ()) {
