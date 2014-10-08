@@ -47,6 +47,41 @@ namespace BlinkStickDotNet
         private bool _RequiresSoftwareColorPatch = false;
         #endregion
 
+        #region Events
+        public event SendColorEventHandler SendColor;
+
+        public Boolean OnSendColor(byte channel, byte index, byte r, byte g, byte b)
+        {
+            if (SendColor != null)
+            {
+                SendColorEventArgs args = new SendColorEventArgs(channel, index, r, g, b);
+                SendColor(this, args);
+                return args.SendToDevice;
+            }
+
+            return true;
+        }
+
+        public event ReceiveColorEventHandler ReceiveColor;
+
+        public Boolean OnReceiveColor(byte index, out byte r, out byte g, out byte b)
+        {
+            if (ReceiveColor != null)
+            {
+                ReceiveColorEventArgs args = new ReceiveColorEventArgs(index);
+                ReceiveColor(this, args);
+                r = args.R;
+                g = args.G;
+                b = args.B;
+                return true;
+            }
+            r = 0;
+            g = 0;
+            b = 0;
+            return false;
+        }
+        #endregion
+
         #region Device Properties
         /// <summary>
         /// Gets a value indicating whether this <see cref="BlinkStickDotNet.BlinkStick"/> is connected.
@@ -423,6 +458,9 @@ namespace BlinkStickDotNet
         /// <param name="b">The blue component.</param>
         public void SetColor(byte r, byte g, byte b)
         {
+            if (!OnSendColor(0, 0, r, g, b))
+                return;
+
             if (connectedToDriver)
             {
                 if (_RequiresSoftwareColorPatch)
@@ -457,6 +495,9 @@ namespace BlinkStickDotNet
         /// <param name="b">The blue component.</param>
         public Boolean GetColor (out byte r, out byte g, out byte b)
         {
+            if (OnReceiveColor(0, out r, out g, out b))
+                return true;
+
             byte[] report = new byte[33]; 
             report[0] = 1;
 
@@ -497,6 +538,9 @@ namespace BlinkStickDotNet
         /// <param name="b">The blue component.</param>
         public void SetColor(byte channel, byte index, byte r, byte g, byte b)
         {
+            if (!OnSendColor(channel, index, r, g, b))
+                return;
+
             if (connectedToDriver)
             {
                 stream.SetFeature(new byte[6] { 5, channel, index, r, g, b });
@@ -632,6 +676,9 @@ namespace BlinkStickDotNet
         /// <param name="b">The blue component.</param>
         public Boolean GetColor (byte index, out byte r, out byte g, out byte b)
         {
+            if (OnReceiveColor(index, out r, out g, out b))
+                return true;
+
             if (index == 0)
             {
                 return this.GetColor(out r, out g, out b);
@@ -1009,5 +1056,40 @@ namespace BlinkStickDotNet
         }
         #endregion
 	}
+
+    public delegate void SendColorEventHandler(object sender, SendColorEventArgs e);
+
+    public delegate void ReceiveColorEventHandler(object sender, ReceiveColorEventArgs e);
+
+    public class SendColorEventArgs: EventArgs {
+        public byte Channel;
+        public byte Index;
+        public byte R;
+        public byte G;
+        public byte B;
+        public Boolean SendToDevice;
+
+        public SendColorEventArgs(byte channel, byte index, byte r, byte g, byte b)
+        {
+            this.Channel = channel;
+            this.Index = index;
+            this.R = r;
+            this.G = g;
+            this.B = b;
+            this.SendToDevice = true;
+        }
+    }
+
+    public class ReceiveColorEventArgs: EventArgs {
+        public byte Index;
+        public byte R;
+        public byte G;
+        public byte B;
+
+        public ReceiveColorEventArgs(byte index)
+        {
+            this.Index = index;
+        }
+    }
 }
 
