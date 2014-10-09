@@ -42,6 +42,8 @@ namespace BlinkStickDotNet
 
         private bool disposed = false;
 
+        private bool stopped = false;
+
         protected bool connectedToDriver = false;
 
         private bool _RequiresSoftwareColorPatch = false;
@@ -720,6 +722,13 @@ namespace BlinkStickDotNet
         }
         #endregion
 
+        #region Animation Control
+        public void Stop()
+        {
+            this.stopped = true;
+        }
+        #endregion
+
         #region Blink Animation
         /// <summary>
         /// Blink the LED on BlinkStick Pro.
@@ -736,9 +745,14 @@ namespace BlinkStickDotNet
             for (int i = 0; i < repeats; i++)
             {
                 this.InternalSetColor(channel, index, r, g, b);
-                Thread.Sleep(delay);
+
+                if (!WaitThread(delay))
+                    return;
+
                 this.InternalSetColor(channel, index, 0, 0, 0);
-                Thread.Sleep(delay);
+
+                if (!WaitThread(delay))
+                    return;
             }
         }
 
@@ -827,7 +841,8 @@ namespace BlinkStickDotNet
                     (byte)(1.0 * cg + (g - cg) / 1.0 / steps * i), 
                     (byte)(1.0 * cb + (b - cb) / 1.0 / steps * i));
 
-                Thread.Sleep(duration / steps);
+                if (!WaitThread(duration / steps))
+                    return;
             }
         }
 
@@ -1054,6 +1069,22 @@ namespace BlinkStickDotNet
                 this.SetColor(channel, index, r, g, b);
             }
         }
+
+        public Boolean WaitThread(long milliseconds)
+        {
+            DateTime nextRetry = DateTime.Now + new TimeSpan(TimeSpan.TicksPerMillisecond * milliseconds);
+
+            while (nextRetry > DateTime.Now)
+            {
+                if (this.stopped)
+                    return false;
+
+                Thread.Sleep(20);
+            }
+
+            return true;
+        } 
+
         #endregion
 	}
 
