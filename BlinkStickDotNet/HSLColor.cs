@@ -177,5 +177,15 @@ namespace BlinkStickDotNet
 			s += string.Format ("RGB({0:x2}{1:x2}{2:x2})", Color.R, Color.G, Color.B); 
 			return s;
 		}
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
 	}
 }
