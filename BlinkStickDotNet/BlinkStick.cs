@@ -568,7 +568,7 @@ namespace BlinkStickDotNet
         /// <param name="color">Color parameter as RgbColor class instance</param>
         public void SetColor(byte channel, byte index, RgbColor color)
         {
-            SetColor(channel, index, color.R, color.B, color.G);
+            SetColor(channel, index, color.R, color.G, color.B);
         }
 
         /// <summary>
