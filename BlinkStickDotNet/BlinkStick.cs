@@ -720,6 +720,23 @@ namespace BlinkStickDotNet
                 stream.SetFeature(new byte[2] {4, mode});
             }
         }
+
+        /// <summary>
+        /// Gets the mode on BlinkStick Pro.
+        /// </summary>
+        /// <param name="mode">0 - Normal, 1 - Inverse, 2 - WS2812, 3 - WS2812 mirror</param>
+        public int GetMode()
+        {
+            if (connectedToDriver)
+            {
+                byte[] data = new byte[2];
+                data[0] = 4;
+                stream.GetFeature(data, 0, data.Length);
+                return data[1];
+            }
+
+            return -1;
+        }
         #endregion
 
         #region Animation Control
