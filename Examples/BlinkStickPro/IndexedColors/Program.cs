@@ -15,10 +15,13 @@ namespace IndexedColors
 			//Set mode to WS2812. Read more about modes here:
 			//http://www.blinkstick.com/help/tutorials/blinkstick-pro-modes
 
-			device.SetMode (2);
-
 			if (device != null) {
 				if (device.OpenDevice ()) {
+					//Set mode to WS2812. Read more about modes here:
+					//http://www.blinkstick.com/help/tutorials/blinkstick-pro-modes
+
+					device.SetMode (2);
+					Thread.Sleep (100);
 
 					int numberOfLeds = 8;
 

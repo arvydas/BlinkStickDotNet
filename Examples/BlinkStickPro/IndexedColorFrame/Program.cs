@@ -1,5 +1,6 @@
 ﻿using System;
 using BlinkStickDotNet;
+using System.Threading;
 
 namespace IndexedColorFrame
 {
@@ -11,13 +12,13 @@ namespace IndexedColorFrame
 
 			BlinkStick device = BlinkStick.FindFirst ();
 
-			//Set mode to WS2812. Read more about modes here:
-			//http://www.blinkstick.com/help/tutorials/blinkstick-pro-modes
-
-			device.SetMode (2);
-
 			if (device != null) {
 				if (device.OpenDevice ()) {
+					//Set mode to WS2812. Read more about modes here:
+					//http://www.blinkstick.com/help/tutorials/blinkstick-pro-modes
+
+					device.SetMode (2);
+					Thread.Sleep (100);
 
 					byte[] data = new byte[3*8] 
 						{0, 0, 255,    //GRB for led0
