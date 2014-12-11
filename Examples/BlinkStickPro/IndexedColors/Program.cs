@@ -12,9 +12,6 @@ namespace IndexedColors
 
 			BlinkStick device = BlinkStick.FindFirst ();
 
-			//Set mode to WS2812. Read more about modes here:
-			//http://www.blinkstick.com/help/tutorials/blinkstick-pro-modes
-
 			if (device != null) {
 				if (device.OpenDevice ()) {
 					//Set mode to WS2812. Read more about modes here:
