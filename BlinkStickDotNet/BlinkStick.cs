@@ -851,7 +851,7 @@ namespace BlinkStickDotNet
             byte cr, cg, cb;
             GetColor(index, out cr, out cg, out cb);
 
-            for (int i = 0; i < steps; i++)
+            for (int i = 1; i <= steps; i++)
             {
                 this.InternalSetColor(channel, index, 
                     (byte)(1.0 * cr + (r - cr) / 1.0 / steps * i), 
