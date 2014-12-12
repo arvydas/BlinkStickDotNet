@@ -504,7 +504,24 @@ namespace BlinkStickDotNet
             report[0] = 1;
 
             if (connectedToDriver) {
-                stream.GetFeature(report, 0, 33);
+                int attempt = 0;
+                while (attempt < 5)
+                {
+                    attempt++;
+                    try
+                    {
+                        stream.GetFeature(report, 0, 33);
+                        break;
+                    }
+                    catch 
+                    {
+                        if (attempt == 5)
+                            throw;
+
+                        Thread.Sleep(1);
+                    }
+                }
+
 
                 r = report [1];
                 g = report [2];
