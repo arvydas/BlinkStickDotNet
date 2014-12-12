@@ -761,6 +761,11 @@ namespace BlinkStickDotNet
         {
             this.stopped = true;
         }
+
+        public void Enable()
+        {
+            this.stopped = false;
+        }
         #endregion
 
         #region Blink Animation
