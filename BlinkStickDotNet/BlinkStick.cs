@@ -865,6 +865,9 @@ namespace BlinkStickDotNet
         /// <param name="steps">How many steps for color changes</param>
         public void Morph(byte channel, byte index, byte r, byte g, byte b, int duration=1000, int steps=50)
         {
+            if (stopped)
+                return;
+
             byte cr, cg, cb;
             GetColor(index, out cr, out cg, out cb);
 
@@ -959,7 +962,14 @@ namespace BlinkStickDotNet
 
             for (int i = 0; i < repeats; i++)
             {
+                if (this.stopped)
+                    break;
+
                 this.Morph(channel, index, r, g, b, duration, steps);
+
+                if (this.stopped)
+                    break;
+
                 this.Morph(channel, index, 0, 0, 0, duration, steps);
             }
         }
