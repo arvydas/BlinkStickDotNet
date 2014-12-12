@@ -399,7 +399,7 @@ namespace BlinkStickDotNet
 
                 data[0] = id;
 
-                stream.SetFeature(data);
+                SetFeature(data);
             } else {
                 throw new Exception("Invalid info block id");
             }
@@ -474,17 +474,17 @@ namespace BlinkStickDotNet
                         {
                             if (cr > 0)
                             {
-                                stream.SetFeature(new byte[4] { 1, (byte)(cr - 1), cg, cb });
+                                SetFeature(new byte[4] { 1, (byte)(cr - 1), cg, cb });
                             }
                             else if (cg > 0)
                             {
-                                stream.SetFeature(new byte[4] { 1, cr, (byte)(cg - 1), cb });
+                                SetFeature(new byte[4] { 1, cr, (byte)(cg - 1), cb });
                             }
                         }
                     }
                 }
 
-                stream.SetFeature(new byte[4] {1, r, g, b});
+                SetFeature(new byte[4] {1, r, g, b});
             }
         }
 
@@ -562,7 +562,7 @@ namespace BlinkStickDotNet
 
             if (connectedToDriver)
             {
-                stream.SetFeature(new byte[6] { 5, channel, index, r, g, b });
+                SetFeature(new byte[6] { 5, channel, index, r, g, b });
             }
         }
 
@@ -639,7 +639,7 @@ namespace BlinkStickDotNet
                 data[i] = 0;
             }
 
-            stream.SetFeature(data);
+            SetFeature(data);
 
             if (reportId == 10)
             {
@@ -655,7 +655,7 @@ namespace BlinkStickDotNet
 
                 data[0] = (byte)(reportId + 1);
 
-                stream.SetFeature(data);
+                SetFeature(data);
             }
         } 
 
@@ -734,7 +734,7 @@ namespace BlinkStickDotNet
         {
             if (connectedToDriver)
             {
-                stream.SetFeature(new byte[2] {4, mode});
+                SetFeature(new byte[2] {4, mode});
             }
         }
 
@@ -1101,6 +1101,26 @@ namespace BlinkStickDotNet
             else
             {
                 this.SetColor(channel, index, r, g, b);
+            }
+        }
+
+        private void SetFeature(byte[] buffer)
+        {
+            try
+            {
+                stream.SetFeature(buffer);
+            }
+            catch (System.IO.IOException e)
+            {
+                if (e.InnerException is System.ComponentModel.Win32Exception)
+                {
+                    System.ComponentModel.Win32Exception win32Exception = e.InnerException as System.ComponentModel.Win32Exception;
+
+                    if (win32Exception != null && win32Exception.NativeErrorCode == 0) 
+                        return;
+                }
+
+                throw;
             }
         }
 
