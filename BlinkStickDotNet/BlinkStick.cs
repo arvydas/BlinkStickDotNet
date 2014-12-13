@@ -518,7 +518,8 @@ namespace BlinkStickDotNet
                         if (attempt == 5)
                             throw;
 
-                        Thread.Sleep(1);
+                        if (!WaitThread(20))
+                            return false;
                     }
                 }
 
