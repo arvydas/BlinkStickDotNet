@@ -225,6 +225,8 @@ namespace BlinkStickDotNet
                 }
             }
         }
+
+        public int SetColorDelay { get; set; }
         #endregion
 
         #region Constructor/Destructor
@@ -233,6 +235,7 @@ namespace BlinkStickDotNet
         /// </summary>
         public BlinkStick()
         {
+            SetColorDelay = 0;
         }
 
         /// <summary>
@@ -965,6 +968,12 @@ namespace BlinkStickDotNet
         public void Pulse(byte channel, byte index, byte r, byte g, byte b, int repeats=1, int duration=1000, int steps=50)
         {
             this.InternalSetColor(channel, index, 0, 0, 0);
+
+            if (this.SetColorDelay > 0)
+            {
+                if (!WaitThread(this.SetColorDelay))
+                    return;
+            }
 
             for (int i = 0; i < repeats; i++)
             {
