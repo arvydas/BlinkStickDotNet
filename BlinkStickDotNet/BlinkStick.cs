@@ -1122,21 +1122,31 @@ namespace BlinkStickDotNet
 
         private void SetFeature(byte[] buffer)
         {
-            try
+            int attempt = 0;
+            while (attempt < 5)
             {
-                stream.SetFeature(buffer);
-            }
-            catch (System.IO.IOException e)
-            {
-                if (e.InnerException is System.ComponentModel.Win32Exception)
+                attempt++;
+                try
                 {
-                    System.ComponentModel.Win32Exception win32Exception = e.InnerException as System.ComponentModel.Win32Exception;
+                    stream.SetFeature(buffer);
+                    break;
+                }
+                catch (System.IO.IOException e)
+                {
+                    if (e.InnerException is System.ComponentModel.Win32Exception)
+                    {
+                        System.ComponentModel.Win32Exception win32Exception = e.InnerException as System.ComponentModel.Win32Exception;
 
-                    if (win32Exception != null && win32Exception.NativeErrorCode == 0) 
+                        if (win32Exception != null && win32Exception.NativeErrorCode == 0)
+                            return;
+                    }
+
+                    if (attempt == 5)
+                        throw;
+
+                    if (!WaitThread(20))
                         return;
                 }
-
-                throw;
             }
         }
 
