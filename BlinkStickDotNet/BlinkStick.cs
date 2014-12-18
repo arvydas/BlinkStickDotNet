@@ -163,6 +163,38 @@ namespace BlinkStickDotNet
         }
 
         /// <summary>
+        /// Gets the device type
+        /// </summary>
+        /// <value>Returns the device type.</value>
+        public BlinkStickDeviceEnum BlinkStickDevice
+        {
+            get
+            {
+                if (VersionMajor == 1)
+                {
+                    return BlinkStickDeviceEnum.BlinkStick;
+                }
+                else if (VersionMajor == 2)
+                {
+                    return BlinkStickDeviceEnum.BlinkStickPro;
+                }
+                else if (VersionMajor == 3)
+                {
+                    if (device.ProductVersion == 0x0200)
+                    {
+                        return BlinkStickDeviceEnum.BlinkStickSquare;
+                    }
+                    else if (device.ProductVersion == 0x0201)
+                    {
+                        return BlinkStickDeviceEnum.BlinkStickStrip;
+                    }
+                }
+
+                return BlinkStickDeviceEnum.Unknown;
+            }
+        }
+
+        /// <summary>
         /// Gets the name of the manufacturer.
         /// </summary>
         /// <value>Returns the name of the manufacturer.</value>
@@ -1210,6 +1242,15 @@ namespace BlinkStickDotNet
         {
             this.Index = index;
         }
+    }
+
+    public enum BlinkStickDeviceEnum
+    {
+        Unknown,
+        BlinkStick,
+        BlinkStickPro,
+        BlinkStickStrip,
+        BlinkStickSquare
     }
 }
 
