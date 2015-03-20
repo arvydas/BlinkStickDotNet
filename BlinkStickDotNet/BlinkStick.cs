@@ -279,6 +279,33 @@ namespace BlinkStickDotNet
         }
 
         public int SetColorDelay { get; set; }
+
+        private int _Mode = -1;
+
+        /// <summary>
+        /// Gets or sets the mode of BlinkStick device.
+        /// </summary>
+        /// <value>The mode to set or get.</value>
+        public int Mode
+        {
+            get
+            {
+                if (_Mode == -1)
+                {
+                    _Mode = GetMode();
+                }
+
+                return _Mode;
+            }
+            set 
+            {
+                if (_Mode != value)
+                {
+                    _Mode = value;
+                    SetMode((byte)_Mode);
+                }
+            }
+        }
         #endregion
 
         #region Constructor/Destructor
