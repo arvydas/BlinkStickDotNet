@@ -194,6 +194,26 @@ namespace BlinkStickDotNet
             }
         }
 
+        public static BlinkStickDeviceEnum BlinkStickDeviceFromSerial(string serial)
+        {
+            int versionMajor = Convert.ToInt32(serial.Substring(serial.Length - 3, 1));
+
+            if (versionMajor == 1)
+            {
+                return BlinkStickDeviceEnum.BlinkStick;
+            }
+            else if (versionMajor == 2)
+            {
+                return BlinkStickDeviceEnum.BlinkStickPro;
+            }
+            else if (versionMajor == 3)
+            {
+                return BlinkStickDeviceEnum.BlinkStickSquare;
+            }
+
+            return BlinkStickDeviceEnum.Unknown;
+        }
+
         /// <summary>
         /// Gets the name of the manufacturer.
         /// </summary>
