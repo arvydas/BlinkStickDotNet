@@ -188,6 +188,14 @@ namespace BlinkStickDotNet
                     {
                         return BlinkStickDeviceEnum.BlinkStickStrip;
                     }
+                    else if (device.ProductVersion == 0x0202)
+                    {
+                        return BlinkStickDeviceEnum.BlinkStickNano;
+                    }
+                    else if (device.ProductVersion == 0x0203)
+                    {
+                        return BlinkStickDeviceEnum.BlinkStickFlex;
+                    }
                 }
 
                 return BlinkStickDeviceEnum.Unknown;
@@ -1327,7 +1335,9 @@ namespace BlinkStickDotNet
         BlinkStick,
         BlinkStickPro,
         BlinkStickStrip,
-        BlinkStickSquare
+        BlinkStickSquare,
+        BlinkStickNano,
+        BlinkStickFlex
     }
 }
 
