@@ -509,7 +509,33 @@ namespace BlinkStickDotNet
 
                 if (connectedToDriver)
                 {
-                    stream.GetFeature(data, 0, data.Length);
+                    int attempt = 0;
+                    while (attempt < 5)
+                    {
+                        attempt++;
+                        try
+                        {
+                            stream.GetFeature(data, 0, data.Length);
+                            break;
+                        }
+                        catch (System.IO.IOException e)
+                        {
+                            if (e.InnerException is System.ComponentModel.Win32Exception)
+                            {
+                                System.ComponentModel.Win32Exception win32Exception = e.InnerException as System.ComponentModel.Win32Exception;
+
+                                if (win32Exception != null && win32Exception.NativeErrorCode == 0)
+                                    return true;
+                            }
+
+                            if (attempt == 5)
+                                throw;
+
+                            if (!WaitThread(20))
+                                return false;
+                        }
+                    }
+
                     return true;
                 }
                 else
