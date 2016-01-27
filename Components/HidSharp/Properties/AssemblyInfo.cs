@@ -7,8 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("C# HID wrappers")]
 [assembly: AssemblyProduct("HidSharp")]
 [assembly: AssemblyTitle("HidSharp")]
-[assembly: AssemblyFileVersion("1.5.1.0")]
-[assembly: AssemblyVersion("1.5.1.0")]
+[assembly: AssemblyVersion("1.5.*")]
 
 [assembly: ComVisible(false)]
 [assembly: Guid("1b874372-4c6c-4acb-9f4a-906f6738cff9")]
