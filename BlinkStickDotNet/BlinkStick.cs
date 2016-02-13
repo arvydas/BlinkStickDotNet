@@ -873,6 +873,28 @@ namespace BlinkStickDotNet
         }
         #endregion
 
+        #region BlinkStick Flex features
+        public void SetLedCount(byte count)
+        {
+            if (connectedToDriver)
+            {
+                SetFeature(new byte[2] {0x81, count});
+            }
+        }
+
+        public int GetLedCount()
+        {
+            if (connectedToDriver)
+            {
+                byte[] data = new byte[2];
+                data[0] = 0x81;
+                stream.GetFeature(data, 0, data.Length);
+                return data[1];
+            }
+            return -1;
+        }
+        #endregion
+
         #region Animation Control
         public void Stop()
         {
