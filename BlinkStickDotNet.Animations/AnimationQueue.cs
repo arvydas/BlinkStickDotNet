@@ -12,6 +12,7 @@ namespace BlinkStickDotNet.Animations
     /// <seealso cref="System.IDisposable" />
     public class AnimationQueue : IDisposable, IAnimationQueue
     {
+        private IBlinkStickColorProcessor _processor;
         private Thread _thread;
         public List<IAnimation> _animations = new List<IAnimation>();
 
@@ -19,9 +20,11 @@ namespace BlinkStickDotNet.Animations
         /// Initializes a new instance of the <see cref="AnimationQueue"/> class.
         /// </summary>
         /// <param name="loop">if set to <c>true</c> the queue will loop the animation at the end.</param>
-        public AnimationQueue(bool loop = false)
+        public AnimationQueue(IBlinkStickColorProcessor processor, bool loop = false)
         {
             IsLooping = loop;
+
+            _processor = processor;
         }
 
         /// <summary>
@@ -68,7 +71,7 @@ namespace BlinkStickDotNet.Animations
         /// Queues a repeat of the last animation.
         /// </summary>
         /// <param name="nrOfTimes">The nr of times.</param>
-        public void QueueRepeat(int nrOfTimes = 1)
+        public void Repeat(int nrOfTimes = 1)
         {
             if (nrOfTimes > 0 && _animations.Count > 0)
             {
@@ -84,7 +87,7 @@ namespace BlinkStickDotNet.Animations
         /// Queues a repeat of the current queue.
         /// </summary>
         /// <param name="nrOfTimes">The nr of times.</param>
-        public void QueueRepeatQueue(int nrOfTimes = 1)
+        public void RepeatQueue(int nrOfTimes = 1)
         {
             if (nrOfTimes > 0 && _animations.Count > 0)
             {
@@ -102,7 +105,7 @@ namespace BlinkStickDotNet.Animations
         /// </summary>
         /// <param name="processor">The processor.</param>
         /// <exception cref="System.Exception">No animations.</exception>
-        public void Start(IBlinkStickColorProcessor processor)
+        public void Start()
         {
             if (_animations.Count == 0)
             {
@@ -113,7 +116,7 @@ namespace BlinkStickDotNet.Animations
             {
                 for (int i = 0; i < _animations.Count; i++)
                 {
-                    _animations[i].Start(processor);
+                    _animations[i].Start(_processor);
 
                     if (i + 1 == _animations.Count && IsLooping)
                     {

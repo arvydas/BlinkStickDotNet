@@ -9,20 +9,17 @@ namespace BlinkStickDotNet.Animations
     /// <seealso cref="BlinkStickDotNet.Animations.AnimationBase" />
     internal class DimAnimation : AnimationBase
     {
-        private int _interval;
-        private double _amount;
+        private int _duration;
         private Color[] _colors;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DimAnimation"/> class.
         /// </summary>
-        /// <param name="interval">The interval.</param>
-        /// <param name="amount">The amount.</param>
+        /// <param name="duration">The interval.</param>
         /// <param name="colors">The colors.</param>
-        public DimAnimation(int interval, double amount, params Color[] colors)
+        public DimAnimation(int duration, params Color[] colors)
         {
-            _interval = interval;
-            _amount = amount;
+            _duration = duration;
             _colors = colors;
         }
 
@@ -32,26 +29,25 @@ namespace BlinkStickDotNet.Animations
         /// <param name="processor">The processor.</param>
         public override void Start(IBlinkStickColorProcessor processor)
         {
-            var interation = 1;
+            var hz = 50;
+            var steps = ((double)_duration / 1000) * hz;
+            var wait = _duration / steps;
+            var amount = 1 / steps;
             var localAmount = 0d;
 
             while (true)
             {
-                if (localAmount <= 1)
-                {
-                    var c = _colors.Darken(localAmount);
-                    processor.ProcessColors(c);
-                }
+                var c = _colors.Darken(localAmount);
+                processor.ProcessColors(c);
 
-                interation++;
-                localAmount = interation * (_amount / 4);
-
-                if (localAmount > 1)
+                if (localAmount >= 1)
                 {
                     break;
                 }
 
-                Thread.Sleep(_interval / 4);
+                localAmount += amount;
+
+                Thread.Sleep((int)wait);
             }
         }
 
@@ -63,7 +59,7 @@ namespace BlinkStickDotNet.Animations
         /// </returns>
         public override IAnimation Clone()
         {
-            return new DimAnimation(_interval, _amount, _colors);
+            return new DimAnimation(_duration, _colors);
         }
     }
 }

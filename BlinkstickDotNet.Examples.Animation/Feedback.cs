@@ -3,18 +3,18 @@ using BlinkStickDotNet.Animations;
 
 namespace BlinkstickDotNet.Examples.Animation
 {
-    public class ConsoleAnimation : IAnimation
+    public class Feedback : IAnimation
     {
         private string _message;
 
-        public ConsoleAnimation(string message)
+        public Feedback(string message)
         {
             _message = message;
         }
 
         public IAnimation Clone()
         {
-            return new ConsoleAnimation(_message);
+            return new Feedback(_message);
         }
 
         public void Start(IBlinkStickColorProcessor processor)

@@ -23,12 +23,23 @@
         /// </summary>
         /// <param name="animation">The animation.</param>
         void Queue(IAnimation animation);
+        
+        /// <summary>
+        /// Queues a repeat of the last animation.
+        /// </summary>
+        /// <param name="nrOfTimes">The nr of times.</param>
+        void Repeat(int nrOfTimes = 1);
+
+        /// <summary>
+        /// Queues a repeat of the current queue.
+        /// </summary>
+        /// <param name="nrOfTimes">The nr of times.</param>
+        void RepeatQueue(int nrOfTimes = 1);
 
         /// <summary>
         /// Starts the animation.
         /// </summary>
-        /// <param name="processor">The processor.</param>
-        void Start(IBlinkStickColorProcessor processor);
+        void Start();
 
         /// <summary>
         /// Stops this instance.
