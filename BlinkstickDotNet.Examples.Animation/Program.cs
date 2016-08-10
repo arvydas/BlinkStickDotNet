@@ -64,8 +64,7 @@ namespace BlinkstickDotNet.Examples.Animation
                 }
                 finally
                 {
-                    queue.Stop();
-                    device.TurnOff();
+                    queue.Stop(true);
                 }
             }
         }

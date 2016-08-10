@@ -44,6 +44,7 @@
         /// <summary>
         /// Stops this instance.
         /// </summary>
-        void Stop();
+        /// <param name="turnOff">if set to <c>true</c> if the stick should be turned off.</param>
+        void Stop(bool turnOff = false);
     }
 }

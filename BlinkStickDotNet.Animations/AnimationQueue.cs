@@ -10,7 +10,7 @@ namespace BlinkStickDotNet.Animations
     /// Queueu that store the animation. When the queue is started a thread will perform the animation.
     /// </summary>
     /// <seealso cref="System.IDisposable" />
-    public class AnimationQueue : IDisposable, IAnimationQueue
+    public class AnimationQueue : IAnimationQueue, IDisposable
     {
         private IBlinkStickColorProcessor _processor;
         private Thread _thread;
@@ -148,6 +148,20 @@ namespace BlinkStickDotNet.Animations
             }
 
             _thread = null;
+        }
+
+        /// <summary>
+        /// Stops this instance.
+        /// </summary>
+        /// <param name="turnOff">if set to <c>true</c> if the stick should be turned off.</param>
+        public void Stop(bool turnOff = false)
+        {
+            Stop();
+
+            if (turnOff)
+            {
+                this._processor.ProcessColors(Color.Black);
+            }
         }
 
         public void Dispose()
