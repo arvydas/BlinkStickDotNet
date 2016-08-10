@@ -10,13 +10,13 @@ namespace BlinkStickDotNet.Usb
         /// <summary>
         /// The device which has been modified.
         /// </summary>
-        public BlinkStick Device { get; set; }
+        public IUsbDevice Device { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BlinkStickDotNet.DeviceModifiedArgs"/> class.
         /// </summary>
         /// <param name="device">Device passed as an argument</param>
-        public DeviceModifiedArgs(BlinkStick device)
+        public DeviceModifiedArgs(IUsbDevice device)
         {
             this.Device = device;
         }
