@@ -7,7 +7,7 @@ namespace BlinkStickDotNet.Usb
     /// Adapter for the HID device.
     /// </summary>
     /// <seealso cref="BlinkStickDotNet.Usb.IUsbDevice" />
-    internal class HidDeviceAdapter : IUsbDevice
+    public class HidDeviceAdapter : IUsbDevice
     {
         private HidDevice device;
 
