@@ -20,8 +20,8 @@ namespace BlinkstickDotNet.Examples.Animation
 
                 queue.Queue(new ConsoleAnimation("Dim from red: 200, 0.1"));
                 queue.QueueDim(200, 0.1, Color.Red);
-                queue.Queue(new ConsoleAnimation("Wait 5000"));
-                queue.QueueWait(5000);
+                queue.Queue(new ConsoleAnimation("Wait 2000"));
+                queue.QueueWait(2000);
                 queue.QueueRepeatQueue();
 
                 queue.Queue(new ConsoleAnimation("Chase 1 orange led for 1000 for 8 times"));
