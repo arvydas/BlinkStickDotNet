@@ -1,4 +1,6 @@
-﻿namespace BlinkStickDotNet.Animations
+﻿using BlinkStickDotNet.Meta;
+
+namespace BlinkStickDotNet.Animations
 {
     public static class BlinkStickExtensions
     {

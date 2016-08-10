@@ -1,4 +1,4 @@
-﻿namespace BlinkStickDotNet
+﻿namespace BlinkStickDotNet.Meta
 {
     public enum BlinkStickDeviceEnum
     {

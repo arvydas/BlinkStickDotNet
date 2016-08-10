@@ -1,3 +1,4 @@
+using BlinkStickDotNet.Meta;
 using BlinkStickDotNet.Usb;
 using System;
 using System.Linq;
@@ -13,17 +14,14 @@ namespace BlinkStickDotNet
     /// </summary>
 	public class BlinkStick : IDisposable
     {
-        private bool disposed = false;
-        private bool stopped = false;
-        private int? _mode;
-        private int? _versionMajor;
-        private int? _versionMinor;
+        private bool _disposed = false;
+        private bool _stopped = false;
+
         private IUsbDevice _device;
+        private BlinkStickMetaData _meta;
+
         private IUsbStream _stream;
-        private bool _connectedToDriver = false;
-        private bool _requiresSoftwareColorPatch = false;
-        private string _infoBlock1;
-        private string _infoBlock2;
+        private int? _mode;
 
         public const int VendorId = 0x20A0;
         public const int ProductId = 0x41E5;
@@ -31,7 +29,7 @@ namespace BlinkStickDotNet
         #region Events
         public event SendColorEventHandler SendColor;
 
-        public bool OnSendColor(byte channel, byte index, byte r, byte g, byte b)
+        private bool OnSendColor(byte channel, byte index, byte r, byte g, byte b)
         {
             if (SendColor != null)
             {
@@ -45,7 +43,7 @@ namespace BlinkStickDotNet
 
         public event ReceiveColorEventHandler ReceiveColor;
 
-        public bool OnReceiveColor(byte index, out byte r, out byte g, out byte b)
+        private bool OnReceiveColor(byte index, out byte r, out byte g, out byte b)
         {
             if (ReceiveColor != null)
             {
@@ -66,12 +64,31 @@ namespace BlinkStickDotNet
         #region Device Properties
 
         /// <summary>
+        /// Gets the meta.
+        /// </summary>
+        /// <value>
+        /// The meta.
+        /// </value>
+        public BlinkStickMetaData Meta
+        {
+            get
+            {
+                if (_device != null)
+                {
+                    _meta = new BlinkStickMetaData(_device, this);
+                }
+
+                return _meta;
+            }
+        }
+
+        /// <summary>
         /// Gets a value indicating whether this <see cref="BlinkStickDotNet.BlinkStick"/> is connected.
         /// </summary>
         /// <value><c>true</c> if connected; otherwise, <c>false</c>.</value>
         public bool Connected
         {
-            get { return _connectedToDriver; }
+            get { return _stream != null; }
         }
 
         /// <summary>
@@ -83,162 +100,77 @@ namespace BlinkStickDotNet
         /// ||  |-------- Denotes sequential number
         /// ||----------- Denotes BlinkStick device
         /// </pre>
-        /// 
         /// Software version defines the capabilities of the device
         /// </summary>
-        /// <value>Returns the serial.</value>
+        /// <value>The serial.</value>
+        [Obsolete("Please use Meta.Serial.")]
         public string Serial
         {
-            get { return _device?.SerialNumber; }
+            get { return Meta?.Serial; }
         }
 
         /// <summary>
         /// Gets the major version number from serial number.
         /// </summary>
         /// <value>Returns the major version number.</value>
+        [Obsolete("Please use Meta.VersionMajor.")]
         public int VersionMajor
         {
-            get
-            {
-                if (_versionMajor == null)
-                {
-                    try
-                    {
-                        _versionMajor = Convert.ToInt32(this.Serial.Substring(this.Serial.Length - 3, 1));
-                    }
-                    catch
-                    {
-                        _versionMajor = 0;
-                    }
-                }
-
-                return _versionMajor.GetValueOrDefault();
-            }
+            get { return (Meta?.VersionMajor).GetValueOrDefault(); }
         }
 
         /// <summary>
         /// Gets the minor version number from serial number.
         /// </summary>
         /// <value>Returns the version minor.</value>
+        [Obsolete("Please use Meta.VersionMinor.")]
         public int VersionMinor
         {
-            get
-            {
-                if (_versionMinor == null)
-                {
-                    try
-                    {
-                        _versionMinor = Convert.ToInt32(this.Serial.Substring(this.Serial.Length - 1, 1));
-                    }
-                    catch
-                    {
-                        _versionMinor = 0;
-                    }
-                }
-
-                return _versionMinor.GetValueOrDefault();
-            }
+            get { return (Meta?.VersionMinor).GetValueOrDefault(); }
         }
 
         /// <summary>
         /// Gets the device type
         /// </summary>
         /// <value>Returns the device type.</value>
+        [Obsolete("Please use Meta.BlinkStickDevice.")]
         public BlinkStickDeviceEnum BlinkStickDevice
         {
-            get
-            {
-                if (VersionMajor == 1)
-                {
-                    return BlinkStickDeviceEnum.BlinkStick;
-                }
-                else if (VersionMajor == 2)
-                {
-                    return BlinkStickDeviceEnum.BlinkStickPro;
-                }
-                else if (VersionMajor == 3)
-                {
-                    if (_device?.ProductVersion == 0x0200)
-                    {
-                        return BlinkStickDeviceEnum.BlinkStickSquare;
-                    }
-                    else if (_device?.ProductVersion == 0x0201)
-                    {
-                        return BlinkStickDeviceEnum.BlinkStickStrip;
-                    }
-                    else if (_device?.ProductVersion == 0x0202)
-                    {
-                        return BlinkStickDeviceEnum.BlinkStickNano;
-                    }
-                    else if (_device?.ProductVersion == 0x0203)
-                    {
-                        return BlinkStickDeviceEnum.BlinkStickFlex;
-                    }
-                }
-
-                return BlinkStickDeviceEnum.Unknown;
-            }
-        }
-
-        public static BlinkStickDeviceEnum BlinkStickDeviceFromSerial(string serial)
-        {
-            int versionMajor = Convert.ToInt32(serial.Substring(serial.Length - 3, 1));
-
-            if (versionMajor == 1)
-            {
-                return BlinkStickDeviceEnum.BlinkStick;
-            }
-            else if (versionMajor == 2)
-            {
-                return BlinkStickDeviceEnum.BlinkStickPro;
-            }
-            else if (versionMajor == 3)
-            {
-                return BlinkStickDeviceEnum.BlinkStickSquare;
-            }
-
-            return BlinkStickDeviceEnum.Unknown;
+            get { return (Meta?.BlinkStickDevice).GetValueOrDefault(); }
         }
 
         /// <summary>
         /// Gets the name of the manufacturer.
         /// </summary>
         /// <value>Returns the name of the manufacturer.</value>
+        [Obsolete("Please use Meta.ManufacturerName.")]
         public string ManufacturerName
         {
-            get { return _device?.Manufacturer; }
+            get { return Meta?.Manufacturer; }
         }
 
         /// <summary>
         /// Gets the product name of the device.
         /// </summary>
         /// <value>Returns the name of the product.</value>
-        public String ProductName
+        [Obsolete("Please use Meta.ProductName.")]
+        public string ProductName
         {
-            get { return _device?.ProductName; }
+            get { return Meta?.ProductName; }
         }
 
         /// <summary>
-        /// Gets or sets the name of the device (InfoBlock1).
+        /// Gets or sets the data of the device (InfoBlock1).
         /// </summary>
-        /// <value>String value of InfoBlock1</value>
+        /// <value>String value of InfoBlock1.</value>
         public string InfoBlock1
         {
-            get
-            {
-                if (_infoBlock1 == null)
-                {
-                    GetInfoBlock(2, out _infoBlock1);
-                }
-
-                return _infoBlock1;
-            }
+            get { return Meta?.InfoBlock1; }
             set
             {
-                if (_infoBlock1 != value)
+                if (Meta != null)
                 {
-                    _infoBlock1 = value;
-                    SetInfoBlock(2, _infoBlock1);
+                    Meta.InfoBlock1 = value;
                 }
             }
         }
@@ -246,24 +178,15 @@ namespace BlinkStickDotNet
         /// <summary>
         /// Gets or sets the data of the device (InfoBlock2).
         /// </summary>
-        /// <value>String value of InfoBlock2</value>
+        /// <value>String value of InfoBlock2.</value>
         public string InfoBlock2
         {
-            get
-            {
-                if (_infoBlock2 == null)
-                {
-                    GetInfoBlock(3, out _infoBlock2);
-                }
-
-                return _infoBlock2;
-            }
+            get { return Meta?.InfoBlock2; }
             set
             {
-                if (_infoBlock2 != value)
+                if (Meta != null)
                 {
-                    _infoBlock2 = value;
-                    SetInfoBlock(3, _infoBlock2);
+                    Meta.InfoBlock2 = value;
                 }
             }
         }
@@ -326,14 +249,14 @@ namespace BlinkStickDotNet
         /// <param name="disposing"></param>
         private void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!this._disposed)
             {
                 if (disposing)
                 {
                     CloseDevice();
                 }
 
-                disposed = true;
+                _disposed = true;
             }
         }
 
@@ -347,6 +270,7 @@ namespace BlinkStickDotNet
         #endregion
 
         #region Device Open/Close functions
+
         /// <summary>
         /// Attempts to connect to a BlinkStick device.
         /// 
@@ -375,9 +299,7 @@ namespace BlinkStickDotNet
                 return false;
             }
 
-            bool result = OpenCurrentDevice();
-            CheckRequiresSoftwareColorPatch();
-            return result;
+            return OpenCurrentDevice();
         }
 
         /// <summary>
@@ -390,9 +312,7 @@ namespace BlinkStickDotNet
         {
             //Todo: looks like the device always opens.
 
-            _versionMajor = -1;
-            _versionMinor = -1;
-            _connectedToDriver = true;
+            _meta = null;
             _device.TryOpen(out _stream);
 
             return true;
@@ -406,24 +326,23 @@ namespace BlinkStickDotNet
             _stream.Close();
             _stream = null;
             _device = null;
-            _connectedToDriver = false;
-            _versionMinor = -1;
-            _versionMajor = -1;
+            _meta = null;
         }
         #endregion
 
         #region Helper functions for InfoBlocks
+
         /// <summary>
         /// Sets the info block.
         /// </summary>
         /// <param name="id">2 - InfoBlock1, 3 - InfoBlock2</param>
         /// <param name="data">Maximum 32 bytes of data</param>
-        private void SetInfoBlock(byte id, string data)
+        internal void SetInfoBlock(byte id, string data)
         {
             SetInfoBlock(id, Encoding.ASCII.GetBytes(data));
         }
 
-        private bool GetInfoBlock(byte id, out string data)
+        internal bool GetInfoBlock(byte id, out string data)
         {
             byte[] dataBytes;
             bool result = GetInfoBlock(id, out dataBytes);
@@ -449,7 +368,7 @@ namespace BlinkStickDotNet
             return result;
         }
 
-        protected void SetInfoBlock(byte id, byte[] data)
+        internal void SetInfoBlock(byte id, byte[] data)
         {
             if (id == 2 || id == 3)
             {
@@ -501,7 +420,7 @@ namespace BlinkStickDotNet
                 data = new byte[33];
                 data[0] = id;
 
-                if (_connectedToDriver)
+                if (Connected)
                 {
                     int attempt = 0;
                     while (attempt < 5)
@@ -558,9 +477,9 @@ namespace BlinkStickDotNet
             if (!OnSendColor(0, 0, r, g, b))
                 return;
 
-            if (_connectedToDriver)
+            if (Connected)
             {
-                if (_requiresSoftwareColorPatch)
+                if (Meta.RequiresSoftwareColorPatch)
                 {
                     byte cr, cg, cb;
                     if (GetColor(out cr, out cg, out cb))
@@ -598,7 +517,7 @@ namespace BlinkStickDotNet
             byte[] report = new byte[33];
             report[0] = 1;
 
-            if (_connectedToDriver)
+            if (Connected)
             {
                 int attempt = 0;
                 while (attempt < 5)
@@ -660,7 +579,7 @@ namespace BlinkStickDotNet
             if (!OnSendColor(channel, index, r, g, b))
                 return;
 
-            if (_connectedToDriver)
+            if (Connected)
             {
                 SetFeature(new byte[6] { 5, channel, index, r, g, b });
             }
@@ -744,7 +663,7 @@ namespace BlinkStickDotNet
         /// <param name="data">LED data as an array of colors [g0, r0, b0, g1, r1, b1 ...]</param>
         public bool GetColors(out byte[] colorData)
         {
-            if (_connectedToDriver)
+            if (Connected)
             {
                 byte[] data = new byte[3 * 8 * 8 + 2];
                 data[0] = 9;
@@ -760,9 +679,7 @@ namespace BlinkStickDotNet
                 colorData = new byte[0];
                 return false;
             }
-
         }
-
 
         /// <summary>
         /// Gets the color of the led.
@@ -810,7 +727,7 @@ namespace BlinkStickDotNet
         /// <param name="mode">0 - Normal, 1 - Inverse, 2 - WS2812</param>
         public void SetMode(byte mode)
         {
-            if (_connectedToDriver)
+            if (Connected)
             {
                 SetFeature(new byte[2] { 4, mode });
             }
@@ -822,7 +739,7 @@ namespace BlinkStickDotNet
         /// <param name="mode">0 - Normal, 1 - Inverse, 2 - WS2812, 3 - WS2812 mirror</param>
         public int GetMode()
         {
-            if (_connectedToDriver)
+            if (Connected)
             {
                 byte[] data = new byte[2];
                 data[0] = 4;
@@ -835,17 +752,22 @@ namespace BlinkStickDotNet
         #endregion
 
         #region BlinkStick Flex features
+
         public void SetLedCount(byte count)
         {
-            if (_connectedToDriver)
+            if (Connected)
             {
                 SetFeature(new byte[2] { 0x81, count });
             }
         }
 
+        /// <summary>
+        /// Gets the led count.
+        /// </summary>
+        /// <returns>The number of leds. <c>-1</c> when no device is connected.</returns>
         public int GetLedCount()
         {
-            if (_connectedToDriver)
+            if (Connected)
             {
                 byte[] data = new byte[2];
                 data[0] = 0x81;
@@ -854,21 +776,25 @@ namespace BlinkStickDotNet
             }
             return -1;
         }
+
         #endregion
 
         #region Animation Control
+
         public void Stop()
         {
-            this.stopped = true;
+            this._stopped = true;
         }
 
         public void Enable()
         {
-            this.stopped = false;
+            this._stopped = false;
         }
+
         #endregion
 
         #region Blink Animation
+
         /// <summary>
         /// Blink the LED on BlinkStick Pro.
         /// </summary>
@@ -955,9 +881,11 @@ namespace BlinkStickDotNet
         {
             this.Blink(0, 0, color, repeats, delay);
         }
+
         #endregion
 
         #region Morph Animation
+
         /// <summary>
         /// Morph from current color to new color on BlinkStick Pro.
         /// </summary>
@@ -970,7 +898,7 @@ namespace BlinkStickDotNet
         /// <param name="steps">How many steps for color changes</param>
         public void Morph(byte channel, byte index, byte r, byte g, byte b, int duration = 1000, int steps = 50)
         {
-            if (stopped)
+            if (_stopped)
                 return;
 
             byte cr, cg, cb;
@@ -1073,12 +1001,12 @@ namespace BlinkStickDotNet
 
             for (int i = 0; i < repeats; i++)
             {
-                if (this.stopped)
+                if (this._stopped)
                     break;
 
                 this.Morph(channel, index, r, g, b, duration, steps);
 
-                if (this.stopped)
+                if (this._stopped)
                     break;
 
                 this.Morph(channel, index, 0, 0, 0, duration, steps);
@@ -1188,14 +1116,6 @@ namespace BlinkStickDotNet
         #endregion
 
         #region Misc helper functions
-        /// <summary>
-        /// Checks if BlinkStick requires software color patch due to hardware bug.
-        /// </summary>
-        /// <returns><c>true</c>, if requires software color patch, <c>false</c> otherwise.</returns>
-        private void CheckRequiresSoftwareColorPatch()
-        {
-            _requiresSoftwareColorPatch = VersionMajor == 1 && VersionMinor >= 1 && VersionMinor <= 3;
-        }
 
         /// <summary>
         /// Automatically sets the color of the device using either BlinkStick or BlinkStick Pro API
@@ -1283,7 +1203,7 @@ namespace BlinkStickDotNet
 
             while (nextRetry > DateTime.Now)
             {
-                if (this.stopped)
+                if (this._stopped)
                     return false;
 
                 Thread.Sleep(20);
