@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibUsbDotNet", "Components\LibWinUsb\LibUsbDotNet.csproj", "{0A78F6FF-5586-4052-8104-E23FF83A7CE1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HidSharp", "Components\HidSharp\HidSharp.csproj", "{0DB86674-2A7B-4BDC-93C1-3F7DC771426C}"
-EndProject
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlinkStickDotNet", "BlinkStickDotNet\BlinkStickDotNet.csproj", "{7AAEBEBE-E38D-47B1-A04C-A055DCEB0757}"
 EndProject
 Global
@@ -13,18 +11,13 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0A78F6FF-5586-4052-8104-E23FF83A7CE1}.Debug|x86.ActiveCfg = Debug|x86
-		{0A78F6FF-5586-4052-8104-E23FF83A7CE1}.Debug|x86.Build.0 = Debug|x86
-		{0A78F6FF-5586-4052-8104-E23FF83A7CE1}.Release|x86.ActiveCfg = Release|x86
-		{0A78F6FF-5586-4052-8104-E23FF83A7CE1}.Release|x86.Build.0 = Release|x86
-		{0DB86674-2A7B-4BDC-93C1-3F7DC771426C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0DB86674-2A7B-4BDC-93C1-3F7DC771426C}.Debug|x86.Build.0 = Debug|Any CPU
-		{0DB86674-2A7B-4BDC-93C1-3F7DC771426C}.Release|x86.ActiveCfg = Release|Any CPU
-		{0DB86674-2A7B-4BDC-93C1-3F7DC771426C}.Release|x86.Build.0 = Release|Any CPU
 		{7AAEBEBE-E38D-47B1-A04C-A055DCEB0757}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{7AAEBEBE-E38D-47B1-A04C-A055DCEB0757}.Debug|x86.Build.0 = Debug|Any CPU
 		{7AAEBEBE-E38D-47B1-A04C-A055DCEB0757}.Release|x86.ActiveCfg = Release|Any CPU
 		{7AAEBEBE-E38D-47B1-A04C-A055DCEB0757}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Components\LibWinUsb\LibUsbDotNet.csproj
