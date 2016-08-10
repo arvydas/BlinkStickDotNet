@@ -64,16 +64,14 @@ namespace BlinkStickDotNet
         #endregion
 
         #region Device Properties
+
         /// <summary>
         /// Gets a value indicating whether this <see cref="BlinkStickDotNet.BlinkStick"/> is connected.
         /// </summary>
         /// <value><c>true</c> if connected; otherwise, <c>false</c>.</value>
         public bool Connected
         {
-            get
-            {
-                return _connectedToDriver;
-            }
+            get { return _connectedToDriver; }
         }
 
         /// <summary>
@@ -91,7 +89,7 @@ namespace BlinkStickDotNet
         /// <value>Returns the serial.</value>
         public string Serial
         {
-            get { return _device.SerialNumber; }
+            get { return _device?.SerialNumber; }
         }
 
         /// <summary>
@@ -160,19 +158,19 @@ namespace BlinkStickDotNet
                 }
                 else if (VersionMajor == 3)
                 {
-                    if (_device.ProductVersion == 0x0200)
+                    if (_device?.ProductVersion == 0x0200)
                     {
                         return BlinkStickDeviceEnum.BlinkStickSquare;
                     }
-                    else if (_device.ProductVersion == 0x0201)
+                    else if (_device?.ProductVersion == 0x0201)
                     {
                         return BlinkStickDeviceEnum.BlinkStickStrip;
                     }
-                    else if (_device.ProductVersion == 0x0202)
+                    else if (_device?.ProductVersion == 0x0202)
                     {
                         return BlinkStickDeviceEnum.BlinkStickNano;
                     }
-                    else if (_device.ProductVersion == 0x0203)
+                    else if (_device?.ProductVersion == 0x0203)
                     {
                         return BlinkStickDeviceEnum.BlinkStickFlex;
                     }
@@ -208,10 +206,7 @@ namespace BlinkStickDotNet
         /// <value>Returns the name of the manufacturer.</value>
         public string ManufacturerName
         {
-            get
-            {
-                return _device.Manufacturer;
-            }
+            get { return _device?.Manufacturer; }
         }
 
         /// <summary>
@@ -220,10 +215,7 @@ namespace BlinkStickDotNet
         /// <value>Returns the name of the product.</value>
         public String ProductName
         {
-            get
-            {
-                return _device.ProductName;
-            }
+            get { return _device?.ProductName; }
         }
 
         /// <summary>
@@ -378,7 +370,7 @@ namespace BlinkStickDotNet
                 _device = UsbMonitor.GetFirstDevice(VendorId, ProductId);
             }
 
-            if(_device == null)
+            if (_device == null)
             {
                 return false;
             }
@@ -1230,7 +1222,7 @@ namespace BlinkStickDotNet
             var device = UsbMonitor.GetFirstDevice(VendorId, ProductId, serial);
             return device == null ? null : new BlinkStick(device);
         }
-        
+
         #endregion
 
         #region Misc helper functions
