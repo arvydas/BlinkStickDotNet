@@ -17,7 +17,7 @@ namespace BlinkStickDotNet.Usb
         /// <param name="hid">The hid.</param>
         public HidStreamAdapter(HidStream hid)
         {
-           if(hid == null)
+            if (hid == null)
             {
                 throw new ArgumentNullException(nameof(hid));
             }

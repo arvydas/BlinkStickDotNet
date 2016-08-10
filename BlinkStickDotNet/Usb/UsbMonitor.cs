@@ -155,17 +155,31 @@ namespace BlinkStickDotNet.Usb
             return trackedDevices.ToList();
         }
 
+        /// <summary>
+        /// Gets the devices that match the specified options.
+        /// </summary>
+        /// <param name="vendorId">The vendor identifier.</param>
+        /// <param name="productId">The product identifier.</param>
+        /// <param name="serial">The serial (optional).</param>
+        /// <returns>The devices.</returns>
         public static IEnumerable<IUsbDevice> GetDevices(int vendorId, int productId, string serial = null)
         {
             var loader = new HidDeviceLoader();
             var devices = loader
                 .GetDevices(vendorId, productId)
-                .Where(d => serial == null || d.SerialNumber == serial)
+                .Where(d => serial == null || serial == "" || d.SerialNumber == serial)
                 .Select(d => new HidDeviceAdapter(d));
 
             return devices;
         }
 
+        /// <summary>
+        /// Gets the first device that matches the specified options.
+        /// </summary>
+        /// <param name="vendorId">The vendor identifier.</param>
+        /// <param name="productId">The product identifier.</param>
+        /// <param name="serial">The serial (optional).</param>
+        /// <returns>A device or <c>null</c>.</returns>
         public static IUsbDevice GetFirstDevice(int vendorId, int productId, string serial = null)
         {
             return GetDevices(vendorId, productId, serial).FirstOrDefault();
