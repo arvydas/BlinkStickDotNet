@@ -7,7 +7,7 @@ using HidSharp;
 namespace BlinkStickDotNet.Usb
 {
     /// <summary>
-    /// Monitors changes on the USB ports regarding connected BlinkSticks. Hides implementation details.
+    /// Monitors changes on the USB ports regarding connected devices. Hides implementation details.
     /// </summary>
     public class UsbMonitor
     {
@@ -33,12 +33,12 @@ namespace BlinkStickDotNet.Usb
         }
 
         /// <summary>
-        /// Occurs when BlinkStick is connected.
+        /// Occurs when a usb device is connected.
         /// </summary>
         public event EventHandler<DeviceModifiedArgs> Connected;
 
         /// <summary>
-        /// Occurs when BlinkStick disconnected.
+        /// Occurs when a usb device is  disconnected.
         /// </summary>
         public event EventHandler<DeviceModifiedArgs> Disconnected;
 
@@ -58,19 +58,19 @@ namespace BlinkStickDotNet.Usb
         }
 
         /// <summary>
-        /// Raises the BlinkStick connected event.
+        /// Raises the connected event.
         /// </summary>
         /// <param name="device">Device which has been connected.</param>
-        protected void OnBlinkStickConnected(IUsbDevice device)
+        protected void OnConnected(IUsbDevice device)
         {
             Connected?.Invoke(this, new DeviceModifiedArgs(device));
         }
 
         /// <summary>
-        /// Raises the BlinkStick disconnected event.
+        /// Raises the disconnected event.
         /// </summary>
         /// <param name="device">Device which has been disconnected.</param>
-        protected void OnBlinkStickDisconnected(IUsbDevice device)
+        protected void OnDisconnected(IUsbDevice device)
         {
             Disconnected?.Invoke(this, new DeviceModifiedArgs(device));
         }
@@ -88,13 +88,13 @@ namespace BlinkStickDotNet.Usb
             _trackedDevices
                 .Where(d => scannedDevices.FirstOrDefault(d2 => d2.SerialNumber == d.SerialNumber) == null)
                 .ToList()
-                .ForEach(d => OnBlinkStickDisconnected(d));
+                .ForEach(d => OnDisconnected(d));
 
             //signal newly connected devices
             scannedDevices
                 .Where(d => this._trackedDevices.FirstOrDefault(d2 => d2.SerialNumber == d.SerialNumber) == null)
                 .ToList()
-                .ForEach(d => OnBlinkStickConnected(d));
+                .ForEach(d => OnConnected(d));
 
             //register devices to class
             _trackedDevices = scannedDevices;
@@ -138,7 +138,7 @@ namespace BlinkStickDotNet.Usb
         }
 
         /// <summary>
-        /// Stop monitoring for added/removed BlinkStick devices.
+        /// Stop monitoring for added/removed devices.
         /// </summary>
 		public void Stop()
         {
