@@ -1,10 +1,8 @@
+using BlinkStickDotNet.Usb;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Runtime.InteropServices;
 using System.Threading;
-using HidSharp;
 
 namespace BlinkStickDotNet
 {
@@ -15,21 +13,16 @@ namespace BlinkStickDotNet
     /// </summary>
 	public class BlinkStick : IDisposable
     {
-        #region Private Properties
-        protected const int VendorId = 0x20A0;
-        protected const int ProductId = 0x41E5;
-
-        private HidDevice device;
-        private HidStream stream;
-
         private bool disposed = false;
-
         private bool stopped = false;
 
-        protected bool connectedToDriver = false;
+        public const int VendorId = 0x20A0;
+        public const int ProductId = 0x41E5;
 
+        private IUsbStream stream;
+
+        protected bool connectedToDriver = false;
         private bool _RequiresSoftwareColorPatch = false;
-        #endregion
 
         #region Events
         public event SendColorEventHandler SendColor;
@@ -216,7 +209,7 @@ namespace BlinkStickDotNet
         /// Gets the name of the manufacturer.
         /// </summary>
         /// <value>Returns the name of the manufacturer.</value>
-        public String ManufacturerName
+        public string ManufacturerName
         {
             get
             {
@@ -291,6 +284,7 @@ namespace BlinkStickDotNet
         public int SetColorDelay { get; set; }
 
         private int _Mode = -1;
+        private IUsbDevice device;
 
         /// <summary>
         /// Gets or sets the mode of BlinkStick device.
@@ -325,6 +319,11 @@ namespace BlinkStickDotNet
         public BlinkStick()
         {
             SetColorDelay = 0;
+        }
+
+        public BlinkStick(IUsbDevice d)
+        {
+            this.device = d;
         }
 
         /// <summary>
@@ -378,8 +377,7 @@ namespace BlinkStickDotNet
 
             if (this.device == null)
             {
-                HidDeviceLoader loader = new HidDeviceLoader();
-                HidDevice adevice = loader.GetDevices(VendorId, ProductId).FirstOrDefault();
+                var adevice = UsbMonitor.GetFirstDevice(VendorId, ProductId);
                 result = OpenDevice(adevice);
             }
             else
@@ -397,11 +395,11 @@ namespace BlinkStickDotNet
         /// </summary>
         /// <returns><c>true</c>, if device was opened, <c>false</c> otherwise.</returns>
         /// <param name="adevice">Pass the parameter of HidDevice to open it directly</param>
-        public bool OpenDevice(HidDevice adevice)
+        public bool OpenDevice(IUsbDevice adevice)
         {
             if (adevice != null)
             {
-                this.device = adevice;
+                this.device = this.device;
 
                 return OpenCurrentDevice();
             }
@@ -1206,51 +1204,43 @@ namespace BlinkStickDotNet
         #endregion
 
         #region Static Functions to initialize BlinkSticks
+
         /// <summary>
         /// Find all BlinkStick devices.
         /// </summary>
         /// <returns>An array of BlinkStick devices</returns>
         public static BlinkStick[] FindAll()
         {
-            List<BlinkStick> result = new List<BlinkStick>();
-
-            HidDeviceLoader loader = new HidDeviceLoader();
-            foreach (HidDevice adevice in loader.GetDevices(VendorId, ProductId).ToArray())
-            {
-                BlinkStick hid = new BlinkStick();
-                hid.device = adevice;
-                result.Add(hid);
-            }
-
-            return result.ToArray();
+            var devices = UsbMonitor.GetDevices(VendorId, ProductId);
+            return devices.Select(d => new BlinkStick(d)).ToArray();
         }
 
         /// <summary>
         /// Find first BlinkStick.
         /// </summary>
-        /// <returns>BlinkStick device if found, otherwise null if no devices found</returns>
+        /// <returns>The BlinkStick device if found, otherwise <c>null</c>.</returns>
         public static BlinkStick FindFirst()
         {
-            BlinkStick[] devices = FindAll();
-
-            return devices.Length > 0 ? devices[0] : null;
+            var device = UsbMonitor.GetFirstDevice(VendorId, ProductId);
+            return device == null ? null : new BlinkStick(device);
         }
 
         /// <summary>
         /// Finds BlinkStick by serial number.
         /// </summary>
-        /// <returns>BlinkStick device if found, otherwise null if no devices found</returns>
-        /// <param name="serial">Serial number to search for</param>
-        public static BlinkStick FindBySerial(String serial)
+        /// <param name="serial">The serial.</param>
+        /// <returns>The BlinkStick device if found, otherwise <c>null</c>.</returns>
+        public static BlinkStick FindBySerial(string serial)
         {
-            foreach (BlinkStick device in FindAll())
+            if (String.IsNullOrEmpty(serial))
             {
-                if (device.Serial == serial)
-                    return device;
+                throw new ArgumentNullException(nameof(serial));
             }
 
-            return null;
+            var device = UsbMonitor.GetFirstDevice(VendorId, ProductId, serial);
+            return device == null ? null : new BlinkStick(device);
         }
+        
         #endregion
 
         #region Misc helper functions

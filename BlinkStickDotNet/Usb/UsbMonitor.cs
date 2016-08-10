@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LibUsbDotNet.DeviceNotify;
+using HidSharp;
 
 namespace BlinkStickDotNet.Usb
 {
@@ -9,7 +10,7 @@ namespace BlinkStickDotNet.Usb
     /// Monitors changes on the USB ports regarding connected BlinkSticks. Hides implementation details.
     /// </summary>
     public class UsbMonitor
-	{
+    {
         /// <summary>
         /// Internal list of tracked devices.
         /// </summary>
@@ -99,10 +100,10 @@ namespace BlinkStickDotNet.Usb
         /// </summary>
         /// <param name="sender">Sender object</param>
         /// <param name="e">Event args</param>
-		private void HandleDeviceListChanged (object sender, EventArgs e)
-		{
-			OnUsbDevicesChanged();
-		}
+		private void HandleDeviceListChanged(object sender, EventArgs e)
+        {
+            OnUsbDevicesChanged();
+        }
 
         /// <summary>
         /// Handles device list change on Linux/Mac.
@@ -117,8 +118,8 @@ namespace BlinkStickDotNet.Usb
         /// <summary>
         /// Start monitoring for added/removed BlinkStick devices.
         /// </summary>
-		public void Start ()
-		{
+		public void Start()
+        {
             //Get the list of already connected BlinkSticks
             trackedDevices = new List<BlinkStick>(BlinkStick.FindAll());
 
@@ -129,20 +130,21 @@ namespace BlinkStickDotNet.Usb
             }
 
             Monitoring = true;
-		}
+        }
 
         /// <summary>
         /// Stop monitoring for added/removed BlinkStick devices.
         /// </summary>
-		public void Stop ()
-		{
-            if (usbDeviceNotifier != null) {
-				usbDeviceNotifier.Enabled = false;  // Disable the device notifier
-				usbDeviceNotifier.OnDeviceNotify -= OnDeviceNotifyEvent;
-			}
+		public void Stop()
+        {
+            if (usbDeviceNotifier != null)
+            {
+                usbDeviceNotifier.Enabled = false;  // Disable the device notifier
+                usbDeviceNotifier.OnDeviceNotify -= OnDeviceNotifyEvent;
+            }
 
-			Monitoring = false;
-		}
+            Monitoring = false;
+        }
 
         /// <summary>
         /// Gets the devices.
@@ -152,6 +154,21 @@ namespace BlinkStickDotNet.Usb
         {
             return trackedDevices.ToList();
         }
-	}
-}
 
+        public static IEnumerable<IUsbDevice> GetDevices(int vendorId, int productId, string serial = null)
+        {
+            var loader = new HidDeviceLoader();
+            var devices = loader
+                .GetDevices(vendorId, productId)
+                .Where(d => serial == null || d.SerialNumber == serial)
+                .Select(d => new HidDeviceAdapter(d));
+
+            return devices;
+        }
+
+        public static IUsbDevice GetFirstDevice(int vendorId, int productId, string serial = null)
+        {
+            return GetDevices(vendorId, productId, serial).FirstOrDefault();
+        }
+    }
+}
