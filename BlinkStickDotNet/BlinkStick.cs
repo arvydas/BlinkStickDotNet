@@ -15,9 +15,9 @@ namespace BlinkStickDotNet
     {
         private bool disposed = false;
         private bool stopped = false;
-        private int _mode = -1;
-        private int _versionMajor = -1;
-        private int _versionMinor = -1;
+        private int? _mode;
+        private int? _versionMajor;
+        private int? _versionMinor;
         private IUsbDevice _device;
         private IUsbStream _stream;
         private bool _connectedToDriver = false;
@@ -102,7 +102,7 @@ namespace BlinkStickDotNet
         {
             get
             {
-                if (_versionMajor == -1)
+                if (_versionMajor == null)
                 {
                     try
                     {
@@ -114,7 +114,7 @@ namespace BlinkStickDotNet
                     }
                 }
 
-                return _versionMajor;
+                return _versionMajor.GetValueOrDefault();
             }
         }
 
@@ -126,7 +126,7 @@ namespace BlinkStickDotNet
         {
             get
             {
-                if (_versionMinor == -1)
+                if (_versionMinor == null)
                 {
                     try
                     {
@@ -138,7 +138,7 @@ namespace BlinkStickDotNet
                     }
                 }
 
-                return _versionMinor;
+                return _versionMinor.GetValueOrDefault();
             }
         }
 
@@ -286,12 +286,12 @@ namespace BlinkStickDotNet
         {
             get
             {
-                if (_mode == -1)
+                if (_mode == null)
                 {
                     _mode = GetMode();
                 }
 
-                return _mode;
+                return _mode.GetValueOrDefault();
             }
             set
             {
@@ -361,51 +361,45 @@ namespace BlinkStickDotNet
         /// After a successful connection, a DeviceAttached event will normally be sent.
         /// </summary>
         /// <returns>True if a Blinkstick device is connected, False otherwise.</returns>
-        public bool OpenDevice()
+        public bool OpenDevice(IUsbDevice aDevice = null)
         {
-            bool result;
-
-            this._versionMajor = -1;
-            this._versionMinor = -1;
-
-            if (this._device == null)
+            if (aDevice != null)
             {
-                var adevice = UsbMonitor.GetFirstDevice(VendorId, ProductId);
-                result = OpenDevice(adevice);
+                //Todo: what to do with the previously opened device?
+                if (_device != null)
+                {
+                    CloseDevice();
+                }
+
+                _device = aDevice;
             }
-            else
+            else if (_device == null)
             {
-                result = OpenCurrentDevice();
+                _device = UsbMonitor.GetFirstDevice(VendorId, ProductId);
             }
 
+            if(_device == null)
+            {
+                return false;
+            }
+
+            bool result = OpenCurrentDevice();
             CheckRequiresSoftwareColorPatch();
-
             return result;
-        }
-
-        /// <summary>
-        /// Opens the device.
-        /// </summary>
-        /// <returns><c>true</c>, if device was opened, <c>false</c> otherwise.</returns>
-        /// <param name="adevice">Pass the parameter of HidDevice to open it directly</param>
-        public bool OpenDevice(IUsbDevice adevice)
-        {
-            if (adevice != null)
-            {
-                this._device = adevice;
-
-                return OpenCurrentDevice();
-            }
-
-            return false;
         }
 
         /// <summary>
         /// Opens the current device.
         /// </summary>
-        /// <returns><c>true</c>, if current device was opened, <c>false</c> otherwise.</returns>
+        /// <returns>
+        ///   <c>true</c>, if current device was opened, <c>false</c> otherwise.
+        /// </returns>
         private bool OpenCurrentDevice()
         {
+            //Todo: looks like the device always opens.
+
+            _versionMajor = -1;
+            _versionMinor = -1;
             _connectedToDriver = true;
             _device.TryOpen(out _stream);
 
@@ -418,8 +412,11 @@ namespace BlinkStickDotNet
         public void CloseDevice()
         {
             _stream.Close();
+            _stream = null;
             _device = null;
             _connectedToDriver = false;
+            _versionMinor = -1;
+            _versionMajor = -1;
         }
         #endregion
 
