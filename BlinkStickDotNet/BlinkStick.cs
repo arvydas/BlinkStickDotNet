@@ -1,3 +1,4 @@
+using BlinkStickDotNet.Animations;
 using BlinkStickDotNet.Meta;
 using BlinkStickDotNet.Usb;
 using System;
@@ -25,6 +26,8 @@ namespace BlinkStickDotNet
         private IUsbStream _stream;
         private BlinkStickMetaData _meta;
 
+        private AnimationState animationState = new AnimationState();
+ 
         #region Events
 
         public event SendColorEventHandler SendColor;
@@ -65,6 +68,31 @@ namespace BlinkStickDotNet
             return false;
         }
 
+        /// <summary>
+        /// Waits the thread.
+        /// </summary>
+        /// <param name="milliseconds">The milliseconds.</param>
+        /// <returns>True if the state is not stopped.</returns>
+        internal bool WaitThread(long milliseconds)
+        {
+            //todo: why is a normal sleep not enough?
+            //could 2 things happen on the same thread? Stopped is inspected each 20ms
+
+            DateTime nextRetry = DateTime.Now + new TimeSpan(TimeSpan.TicksPerMillisecond * milliseconds);
+
+            while (nextRetry > DateTime.Now)
+            {
+                if (AnimationState.Stopped)
+                {
+                    return false;
+                }
+
+                Thread.Sleep(20);
+            }
+
+            return true;
+        }
+
         #endregion
 
         #region Device Properties
@@ -87,6 +115,14 @@ namespace BlinkStickDotNet
                 return _meta;
             }
         }
+
+        /// <summary>
+        /// Gets the state of the animation.
+        /// </summary>
+        /// <value>
+        /// The state of the animation.
+        /// </value>
+        internal AnimationState AnimationState { get { return animationState; } }
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="BlinkStickDotNet.BlinkStick"/> is connected.
@@ -452,7 +488,7 @@ namespace BlinkStickDotNet
                             if (attempt == 5)
                                 throw;
 
-                            if (!WaitThread(20))
+                            if (!this.WaitThread(20))
                                 return false;
                         }
                     }
@@ -543,7 +579,7 @@ namespace BlinkStickDotNet
                         if (attempt == 5)
                             throw;
 
-                        if (!WaitThread(20))
+                        if (!this.WaitThread(20))
                             return false;
                     }
                 }
@@ -785,302 +821,6 @@ namespace BlinkStickDotNet
 
         #endregion
 
-        #region Animation Control
-
-        public void Stop()
-        {
-            this._stopped = true;
-        }
-
-        public void Enable()
-        {
-            this._stopped = false;
-        }
-
-        #endregion
-
-        #region Blink Animation
-
-        /// <summary>
-        /// Blink the LED on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="r">The red component.</param>
-        /// <param name="g">The green component.</param>
-        /// <param name="b">The blue component.</param>
-        /// <param name="repeats">How many times to repeat (default 1)</param>
-        /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
-        public void Blink(byte channel, byte index, byte r, byte g, byte b, int repeats = 1, int delay = 500)
-        {
-            for (int i = 0; i < repeats; i++)
-            {
-                this.InternalSetColor(channel, index, r, g, b);
-
-                if (!WaitThread(delay))
-                    return;
-
-                this.InternalSetColor(channel, index, 0, 0, 0);
-
-                if (!WaitThread(delay))
-                    return;
-            }
-        }
-
-        /// <summary>
-        /// Blink the LED on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Color parameter as RgbColor class instance</param>
-        /// <param name="repeats">How many times to repeat (default 1)</param>
-        /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
-        public void Blink(byte channel, byte index, RgbColor color, int repeats = 1, int delay = 500)
-        {
-            this.Blink(channel, index, color.R, color.G, color.B, repeats, delay);
-        }
-
-        /// <summary>
-        /// Blink the LED on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="repeats">How many times to repeat (default 1)</param>
-        /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
-        public void Blink(byte channel, byte index, string color, int repeats = 1, int delay = 500)
-        {
-            this.Blink(channel, index, RgbColor.FromString(color), repeats, delay);
-        }
-
-        /// <summary>
-        /// Blink the LED.
-        /// </summary>
-        /// <param name="r">The red component.</param>
-        /// <param name="g">The green component.</param>
-        /// <param name="b">The blue component.</param>
-        /// <param name="repeats">How many times to repeat (default 1)</param>
-        /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
-        public void Blink(byte r, byte g, byte b, int repeats = 1, int delay = 500)
-        {
-            this.Blink(0, 0, r, g, b, repeats, delay);
-        }
-
-        /// <summary>
-        /// Blink the LED.
-        /// </summary>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="repeats">How many times to repeat (default 1)</param>
-        /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
-        public void Blink(RgbColor color, int repeats = 1, int delay = 500)
-        {
-            this.Blink(0, 0, color, repeats, delay);
-        }
-
-        /// <summary>
-        /// Blink the LED.
-        /// </summary>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="repeats">How many times to repeat (default 1)</param>
-        /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
-        public void Blink(string color, int repeats = 1, int delay = 500)
-        {
-            this.Blink(0, 0, color, repeats, delay);
-        }
-
-        #endregion
-
-        #region Morph Animation
-
-        /// <summary>
-        /// Morph from current color to new color on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="r">The red component.</param>
-        /// <param name="g">The green component.</param>
-        /// <param name="b">The blue component.</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Morph(byte channel, byte index, byte r, byte g, byte b, int duration = 1000, int steps = 50)
-        {
-            if (_stopped)
-                return;
-
-            byte cr, cg, cb;
-            GetColor(index, out cr, out cg, out cb);
-
-            for (int i = 1; i <= steps; i++)
-            {
-                this.InternalSetColor(channel, index,
-                    (byte)(1.0 * cr + (r - cr) / 1.0 / steps * i),
-                    (byte)(1.0 * cg + (g - cg) / 1.0 / steps * i),
-                    (byte)(1.0 * cb + (b - cb) / 1.0 / steps * i));
-
-                if (!WaitThread(duration / steps))
-                    return;
-            }
-        }
-
-        /// <summary>
-        /// Morph from current color to new color on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Color parameter as RgbColor class instance</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Morph(byte channel, byte index, RgbColor color, int duration = 1000, int steps = 50)
-        {
-            this.Morph(channel, index, color.R, color.G, color.B, duration, steps);
-        }
-
-        /// <summary>
-        /// Morph from current color to new color on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Morph(byte channel, byte index, string color, int duration = 1000, int steps = 50)
-        {
-            this.Morph(channel, index, RgbColor.FromString(color), duration, steps);
-        }
-
-        /// <summary>
-        /// Morph from current color to new color.
-        /// </summary>
-        /// <param name="r">The red component.</param>
-        /// <param name="g">The green component.</param>
-        /// <param name="b">The blue component.</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Morph(byte r, byte g, byte b, int duration = 1000, int steps = 50)
-        {
-            this.Morph(0, 0, r, g, b, duration, steps);
-        }
-
-        /// <summary>
-        /// Morph from current color to new color.
-        /// </summary>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Morph(RgbColor color, int duration = 1000, int steps = 50)
-        {
-            this.Morph(0, 0, color, duration, steps);
-        }
-
-        /// <summary>
-        /// Morph from current color to new color.
-        /// </summary>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Morph(string color, int duration = 1000, int steps = 50)
-        {
-            this.Morph(0, 0, color, duration, steps);
-        }
-        #endregion
-
-        #region Pulse Animation
-        /// <summary>
-        /// Pulse specified color on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="r">The red component.</param>
-        /// <param name="g">The green component.</param>
-        /// <param name="b">The blue component.</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Pulse(byte channel, byte index, byte r, byte g, byte b, int repeats = 1, int duration = 1000, int steps = 50)
-        {
-            this.InternalSetColor(channel, index, 0, 0, 0);
-
-            if (this.SetColorDelay > 0)
-            {
-                if (!WaitThread(this.SetColorDelay))
-                    return;
-            }
-
-            for (int i = 0; i < repeats; i++)
-            {
-                if (this._stopped)
-                    break;
-
-                this.Morph(channel, index, r, g, b, duration, steps);
-
-                if (this._stopped)
-                    break;
-
-                this.Morph(channel, index, 0, 0, 0, duration, steps);
-            }
-        }
-
-        /// <summary>
-        /// Pulse specified color on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Color parameter as RgbColor class instance</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Pulse(byte channel, byte index, RgbColor color, int repeats = 1, int duration = 1000, int steps = 50)
-        {
-            this.Pulse(channel, index, color.R, color.G, color.B, repeats, duration, steps);
-        }
-
-        /// <summary>
-        /// Pulse specified color on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Pulse(byte channel, byte index, string color, int repeats = 1, int duration = 1000, int steps = 50)
-        {
-            this.Pulse(channel, index, RgbColor.FromString(color), repeats, duration, steps);
-        }
-
-        /// <summary>
-        /// Pulse specified color.
-        /// </summary>
-        /// <param name="r">The red component.</param>
-        /// <param name="g">The green component.</param>
-        /// <param name="b">The blue component.</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Pulse(byte r, byte g, byte b, int repeats = 1, int duration = 1000, int steps = 50)
-        {
-            this.Pulse(0, 0, r, g, b, repeats, duration, steps);
-        }
-
-        /// <summary>
-        /// Pulse specified color.
-        /// </summary>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Pulse(RgbColor color, int repeats = 1, int duration = 1000, int steps = 50)
-        {
-            this.Pulse(0, 0, color, repeats, duration, steps);
-        }
-
-        /// <summary>
-        /// Pulse specified color.
-        /// </summary>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Pulse(string color, int repeats = 1, int duration = 1000, int steps = 50)
-        {
-            this.Pulse(0, 0, color, repeats, duration, steps);
-        }
-        #endregion
-
         #region Static Functions to initialize BlinkSticks
 
         /// <summary>
@@ -1131,7 +871,7 @@ namespace BlinkStickDotNet
         /// <param name="r">The red component.</param>
         /// <param name="g">The green component.</param>
         /// <param name="b">The blue component.</param>
-        private void InternalSetColor(byte channel, byte index, byte r, byte g, byte b)
+        internal void InternalSetColor(byte channel, byte index, byte r, byte g, byte b)
         {
             if (channel == 0 && index == 0)
             {
@@ -1167,7 +907,7 @@ namespace BlinkStickDotNet
                     if (attempt == 5)
                         throw;
 
-                    if (!WaitThread(20))
+                    if (!this.WaitThread(20))
                         return;
                 }
             }
@@ -1197,25 +937,10 @@ namespace BlinkStickDotNet
                     if (attempt == 5)
                         throw;
 
-                    if (!WaitThread(20))
+                    if (!this.WaitThread(20))
                         return;
                 }
             }
-        }
-
-        public bool WaitThread(long milliseconds)
-        {
-            DateTime nextRetry = DateTime.Now + new TimeSpan(TimeSpan.TicksPerMillisecond * milliseconds);
-
-            while (nextRetry > DateTime.Now)
-            {
-                if (this._stopped)
-                    return false;
-
-                Thread.Sleep(20);
-            }
-
-            return true;
         }
 
         #endregion

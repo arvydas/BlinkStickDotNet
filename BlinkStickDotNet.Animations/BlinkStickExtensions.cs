@@ -14,7 +14,7 @@ namespace BlinkStickDotNet.Animations
             }
             catch
             {
-                switch (device.BlinkStickDevice)
+                switch (device.Meta.BlinkStickDevice)
                 {
                     case BlinkStickDeviceEnum.BlinkStickSquare:
                         ledCount = 8;
