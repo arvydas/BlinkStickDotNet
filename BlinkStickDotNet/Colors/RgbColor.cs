@@ -1,21 +1,3 @@
-#region License
-// Copyright 2013 by Agile Innovative Ltd
-//
-// This file is part of BlinkStick application.
-//
-// BlinkStick application is free software: you can redistribute 
-// it and/or modify it under the terms of the GNU General Public License as published 
-// by the Free Software Foundation, either version 3 of the License, or (at your option) 
-// any later version.
-//      
-// BlinkStick application is distributed in the hope that it will be useful, but 
-// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-// FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License along with 
-// BlinkStick application. If not, see http://www.gnu.org/licenses/.
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -192,7 +174,7 @@ namespace BlinkStickDotNet
         /// </summary>
         public Byte B;
 
-        public RgbColor ()
+        public RgbColor()
         {
         }
 
@@ -212,7 +194,7 @@ namespace BlinkStickDotNet
 
             return color;
         }
-        
+
         /// <summary>
         /// Froms the color of the GDK color.
         /// </summary>
@@ -223,11 +205,11 @@ namespace BlinkStickDotNet
         public static RgbColor FromGdkColor(ushort r, ushort g, ushort b)
         {
             RgbColor color = new RgbColor();
-            
+
             color.R = (byte)(r / 0x100);
             color.G = (byte)(g / 0x100);
             color.B = (byte)(b / 0x100);
-            
+
             return color;
         }
 
@@ -236,7 +218,7 @@ namespace BlinkStickDotNet
         /// </summary>
         /// <returns>The string.</returns>
         /// <param name="color">Color string.</param>
-        public static RgbColor FromString (String color)
+        public static RgbColor FromString(String color)
         {
             RgbColor result = new RgbColor();
 
@@ -260,7 +242,7 @@ namespace BlinkStickDotNet
         /// <summary>
         /// Get black color.
         /// </summary>
-        public static RgbColor Black ()
+        public static RgbColor Black()
         {
             return RgbColor.FromRgb(0, 0, 0);
         }
@@ -270,7 +252,7 @@ namespace BlinkStickDotNet
         /// </summary>
         /// <returns><c>true</c> if is valid color the specified color; otherwise, <c>false</c>.</returns>
         /// <param name="color">Color.</param>
-        public static Boolean IsValidColor (String color)
+        public static Boolean IsValidColor(String color)
         {
             return Regex.IsMatch(color, "^#[A-Fa-f0-9]{6}$");
         }
@@ -286,4 +268,3 @@ namespace BlinkStickDotNet
         }
     }
 }
-

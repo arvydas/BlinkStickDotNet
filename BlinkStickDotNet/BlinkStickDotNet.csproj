@@ -45,15 +45,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="HSLColor.cs" />
-    <Compile Include="RgbColor.cs" />
+    <Compile Include="Colors\HSLColor.cs" />
+    <Compile Include="Colors\RgbColor.cs" />
     <Compile Include="BlinkStick.cs" />
-    <Compile Include="UsbMonitor.cs" />
+    <Compile Include="Usb\DeviceModifiedArgs.cs" />
+    <Compile Include="Usb\UsbMonitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="BlinkStickDotNet.snk" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <MonoDevelop>

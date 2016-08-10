@@ -2,6 +2,7 @@
 using BlinkStickDotNet;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using BlinkStickDotNet.Usb;
 
 namespace MonitorTest
 {
