@@ -82,7 +82,7 @@ namespace BlinkStickDotNet.Usb
         {
             UsbDevicesChanged?.Invoke(this, new EventArgs());
 
-            var scannedDevices = GetDevices(_vendorId, _productId).ToList();
+            var scannedDevices = GetDevices().ToList();
 
             //signal disconnected devices
             _trackedDevices
@@ -126,7 +126,7 @@ namespace BlinkStickDotNet.Usb
 		public void Start()
         {
             //Get the list of already connected devices
-            _trackedDevices = GetDevices().ToList();
+            _trackedDevices = this.GetDevices().ToList();
 
             if (_usbDeviceNotifier != null)
             {
@@ -154,20 +154,28 @@ namespace BlinkStickDotNet.Usb
         /// <summary>
         /// Gets the devices that match the specified options.
         /// </summary>
-        /// <param name="vendorId">The vendor identifier.</param>
-        /// <param name="productId">The product identifier.</param>
         /// <param name="serial">The serial (optional).</param>
         /// <returns>The devices.</returns>
-        public static IEnumerable<IUsbDevice> GetDevices(int? vendorId = null, int? productId = null, string serial = null)
+        public IEnumerable<IUsbDevice> GetDevices(string serial = null)
         {
-            var monitor = new UsbMonitor(vendorId, productId);
-
             var loader = new HidDeviceLoader();
             var devices = loader
-                .GetDevices(vendorId, productId, serialNumber: serial)
-                .Select(d => new HidDeviceAdapter(d, monitor));
+                .GetDevices(_vendorId, _productId, serialNumber: serial)
+                .Select(d => new HidDeviceAdapter(d, this));
 
             return devices;
+        }
+
+        /// <summary>
+        /// Gets the devices.
+        /// </summary>
+        /// <param name="vendorId">The vendor identifier.</param>
+        /// <param name="productId">The product identifier.</param>
+        /// <param name="serial">The serial.</param>
+        /// <returns>The devices.</returns>
+        public static IEnumerable<IUsbDevice> GetAllDevices(int? vendorId = null, int? productId = null, string serial = null)
+        {
+            return new UsbMonitor(vendorId, productId).GetDevices(serial);
         }
 
         /// <summary>
@@ -179,7 +187,7 @@ namespace BlinkStickDotNet.Usb
         /// <returns>A device or <c>null</c>.</returns>
         public static IUsbDevice GetFirstDevice(int vendorId, int productId, string serial = null)
         {
-            return GetDevices(vendorId, productId, serial).FirstOrDefault();
+            return GetAllDevices(vendorId, productId, serial).FirstOrDefault();
         }
     }
 }

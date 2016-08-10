@@ -829,7 +829,7 @@ namespace BlinkStickDotNet
         /// <returns>An array of BlinkStick devices</returns>
         public static BlinkStick[] FindAll()
         {
-            var devices = UsbMonitor.GetDevices(VendorId, ProductId);
+            var devices = UsbMonitor.GetAllDevices(VendorId, ProductId);
             return devices.Select(d => new BlinkStick(d)).ToArray();
         }
 
