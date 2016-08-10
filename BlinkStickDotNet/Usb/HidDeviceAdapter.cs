@@ -9,21 +9,45 @@ namespace BlinkStickDotNet.Usb
     /// <seealso cref="BlinkStickDotNet.Usb.IUsbDevice" />
     public class HidDeviceAdapter : IUsbDevice
     {
-        private HidDevice device;
+        private HidDevice _device;
+        private UsbMonitor _monitor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HidDeviceAdapter"/> class.
         /// </summary>
         /// <param name="device">The device.</param>
-        /// <exception cref="System.ArgumentNullException"></exception>
-        public HidDeviceAdapter(HidDevice device)
+        public HidDeviceAdapter(HidDevice device, UsbMonitor monitor)
         {
             if (device == null)
             {
                 throw new ArgumentNullException(nameof(device));
             }
 
-            this.device = device;
+            if(monitor == null)
+            {
+                throw new ArgumentNullException(nameof(monitor));
+            }
+
+            _device = device;
+            _monitor = monitor;
+            _monitor.Disconnected += OnSomeDeviceDisconnected;
+        }
+
+        /// <summary>
+        /// Called when some USB device is disconnected.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="eventArgs">The event arguments.</param>
+        private void OnSomeDeviceDisconnected(object sender, DeviceModifiedArgs eventArgs)
+        {
+            if (eventArgs != null &&
+                eventArgs.Device.Manufacturer == Manufacturer &&
+                eventArgs.Device.ProductName == ProductName &&
+                eventArgs.Device.ProductVersion == ProductVersion &&
+                eventArgs.Device.SerialNumber == SerialNumber)
+            {
+                this.Disconnect?.Invoke(sender, new DeviceModifiedArgs(this));
+            }
         }
 
         /// <summary>
@@ -34,7 +58,7 @@ namespace BlinkStickDotNet.Usb
         /// </value>
         public string Manufacturer
         {
-            get { return this.device.Manufacturer; }
+            get { return this._device.Manufacturer; }
         }
 
         /// <summary>
@@ -45,7 +69,7 @@ namespace BlinkStickDotNet.Usb
         /// </value>
         public string ProductName
         {
-            get { return this.device.ProductName; }
+            get { return this._device.ProductName; }
         }
 
         /// <summary>
@@ -56,7 +80,7 @@ namespace BlinkStickDotNet.Usb
         /// </value>
         public int ProductVersion
         {
-            get { return this.device.ProductVersion; }
+            get { return this._device.ProductVersion; }
         }
 
         /// <summary>
@@ -67,8 +91,13 @@ namespace BlinkStickDotNet.Usb
         /// </value>
         public string SerialNumber
         {
-            get { return this.device.SerialNumber; }
+            get { return this._device.SerialNumber; }
         }
+
+        /// <summary>
+        /// Occurs when the device disconnects.
+        /// </summary>
+        public event EventHandler<DeviceModifiedArgs> Disconnect;
 
         /// <summary>
         /// Tries to make a connection to the HID device.
@@ -78,7 +107,7 @@ namespace BlinkStickDotNet.Usb
         {
             HidStream hid = null;
 
-            this.device.TryOpen(out hid);
+            this._device.TryOpen(out hid);
 
             if (hid == null)
             {

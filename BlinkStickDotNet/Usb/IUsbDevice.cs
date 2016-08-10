@@ -1,4 +1,4 @@
-﻿using HidSharp;
+﻿using System;
 
 namespace BlinkStickDotNet.Usb
 {
@@ -44,5 +44,10 @@ namespace BlinkStickDotNet.Usb
         /// </summary>
         /// <param name="stream">The stream.</param>
         void TryOpen(out IUsbStream stream);
+
+        /// <summary>
+        /// Occurs when the device disconnects.
+        /// </summary>
+        event EventHandler<DeviceModifiedArgs> Disconnect;
     }
 }

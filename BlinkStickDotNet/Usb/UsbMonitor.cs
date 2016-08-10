@@ -38,7 +38,7 @@ namespace BlinkStickDotNet.Usb
         public event EventHandler<DeviceModifiedArgs> Connected;
 
         /// <summary>
-        /// Occurs when a usb device is  disconnected.
+        /// Occurs when a usb device is disconnected.
         /// </summary>
         public event EventHandler<DeviceModifiedArgs> Disconnected;
 
@@ -160,10 +160,12 @@ namespace BlinkStickDotNet.Usb
         /// <returns>The devices.</returns>
         public static IEnumerable<IUsbDevice> GetDevices(int? vendorId = null, int? productId = null, string serial = null)
         {
+            var monitor = new UsbMonitor(vendorId, productId);
+
             var loader = new HidDeviceLoader();
             var devices = loader
                 .GetDevices(vendorId, productId, serialNumber: serial)
-                .Select(d => new HidDeviceAdapter(d));
+                .Select(d => new HidDeviceAdapter(d, monitor));
 
             return devices;
         }
