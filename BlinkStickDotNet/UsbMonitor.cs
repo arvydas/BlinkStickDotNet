@@ -111,11 +111,6 @@ namespace BlinkStickDotNet
         List<BlinkStick> devices;
 
         /// <summary>
-        /// USB device monitor for Windows.
-        /// </summary>
-		private WinUsbDeviceMonitor winUsbDeviceMonitor;
-
-        /// <summary>
         /// USB device monitor for Linux/Mac.
         /// </summary>
         public IDeviceNotifier UsbDeviceNotifier;
@@ -129,20 +124,11 @@ namespace BlinkStickDotNet
 			private set;
 		}
 
-		public UsbMonitor ()
-		{
-            switch (HidSharp.PlatformDetector.RunningPlatform())
-            {
-                case HidSharp.PlatformDetector.Platform.Windows:
-                    winUsbDeviceMonitor = new WinUsbDeviceMonitor();
-                    winUsbDeviceMonitor.DeviceListChanged += HandleDeviceListChanged;
-                    break;
-                case HidSharp.PlatformDetector.Platform.Linux:
-                    UsbDeviceNotifier = DeviceNotifier.OpenDeviceNotifier();
-                    UsbDeviceNotifier.OnDeviceNotify += OnDeviceNotifyEvent;
-                    break;
-            }
-		}
+        public UsbMonitor()
+        {
+            UsbDeviceNotifier = DeviceNotifier.OpenDeviceNotifier();
+            UsbDeviceNotifier.OnDeviceNotify += OnDeviceNotifyEvent;
+        }
 
         /// <summary>
         /// Handles the device list change on Windows.
@@ -176,10 +162,6 @@ namespace BlinkStickDotNet
             {
                 UsbDeviceNotifier.Enabled = true;
             }
-            else if (winUsbDeviceMonitor != null)
-            {
-                winUsbDeviceMonitor.Enabled = true;
-            }
 
             Monitoring = true;
 		}
@@ -194,10 +176,6 @@ namespace BlinkStickDotNet
 
 				UsbDeviceNotifier.OnDeviceNotify -= OnDeviceNotifyEvent;
 			}
-            else if (winUsbDeviceMonitor != null)
-            {
-                winUsbDeviceMonitor.Enabled = false;
-            }
 
 			Monitoring = false;
 		}

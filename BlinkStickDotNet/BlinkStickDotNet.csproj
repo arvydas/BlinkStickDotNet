@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>BlinkStickDotNet</RootNamespace>
     <AssemblyName>BlinkStickDotNet</AssemblyName>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>BlinkStickDotNet.snk</AssemblyOriginatorKeyFile>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
@@ -31,17 +31,28 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HidSharp, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HidSharp.1.5\lib\net35\HidSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="LibUsbDotNet, Version=2.2.8.104, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LibUsbDotNet.2.2.8\lib\LibUsbDotNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="UsbMonitor.cs" />
-    <Compile Include="WinUsbDeviceMonitor.cs" />
-    <Compile Include="RgbColor.cs" />
     <Compile Include="HSLColor.cs" />
+    <Compile Include="RgbColor.cs" />
     <Compile Include="BlinkStick.cs" />
+    <Compile Include="UsbMonitor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BlinkStickDotNet.snk" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -54,14 +65,4 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup>
-    <ProjectReference Include="..\Components\HidSharp\HidSharp.csproj">
-      <Project>{0DB86674-2A7B-4BDC-93C1-3F7DC771426C}</Project>
-      <Name>HidSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Components\LibWinUsb\LibUsbDotNet.csproj">
-      <Project>{0A78F6FF-5586-4052-8104-E23FF83A7CE1}</Project>
-      <Name>LibUsbDotNet</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>
