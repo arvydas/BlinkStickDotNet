@@ -14,27 +14,29 @@ namespace BlinkStickDotNet
     /// </summary>
 	public class BlinkStick : IDisposable
     {
+        public const int VendorId = 0x20A0;
+        public const int ProductId = 0x41E5;
+
+        private int? _mode;
         private bool _disposed = false;
         private bool _stopped = false;
 
         private IUsbDevice _device;
+        private IUsbStream _stream;
         private BlinkStickMetaData _meta;
 
-        private IUsbStream _stream;
-        private int? _mode;
-
-        public const int VendorId = 0x20A0;
-        public const int ProductId = 0x41E5;
-
         #region Events
+
         public event SendColorEventHandler SendColor;
 
         private bool OnSendColor(byte channel, byte index, byte r, byte g, byte b)
         {
             if (SendColor != null)
             {
-                SendColorEventArgs args = new SendColorEventArgs(channel, index, r, g, b);
+                var args = new SendColorEventArgs(channel, index, r, g, b);
+
                 SendColor(this, args);
+
                 return args.SendToDevice;
             }
 
@@ -47,18 +49,22 @@ namespace BlinkStickDotNet
         {
             if (ReceiveColor != null)
             {
-                ReceiveColorEventArgs args = new ReceiveColorEventArgs(index);
+                var args = new ReceiveColorEventArgs(index);
+
                 ReceiveColor(this, args);
+
                 r = args.R;
                 g = args.G;
                 b = args.B;
+
                 return true;
             }
-            r = 0;
-            g = 0;
-            b = 0;
+
+            r = g = b = 0;
+
             return false;
         }
+
         #endregion
 
         #region Device Properties
@@ -73,7 +79,7 @@ namespace BlinkStickDotNet
         {
             get
             {
-                if (_device != null)
+                if (_device != null && _meta == null)
                 {
                     _meta = new BlinkStickMetaData(_device, this);
                 }
@@ -163,6 +169,7 @@ namespace BlinkStickDotNet
         /// Gets or sets the data of the device (InfoBlock1).
         /// </summary>
         /// <value>String value of InfoBlock1.</value>
+        [Obsolete("Please use Meta.InfoBlock1.")]
         public string InfoBlock1
         {
             get { return Meta?.InfoBlock1; }
@@ -179,6 +186,7 @@ namespace BlinkStickDotNet
         /// Gets or sets the data of the device (InfoBlock2).
         /// </summary>
         /// <value>String value of InfoBlock2.</value>
+        [Obsolete("Please use Meta.InfoBlock2.")]
         public string InfoBlock2
         {
             get { return Meta?.InfoBlock2; }
@@ -512,7 +520,9 @@ namespace BlinkStickDotNet
         public bool GetColor(out byte r, out byte g, out byte b)
         {
             if (OnReceiveColor(0, out r, out g, out b))
+            {
                 return true;
+            }
 
             byte[] report = new byte[33];
             report[0] = 1;
@@ -538,21 +548,16 @@ namespace BlinkStickDotNet
                     }
                 }
 
-
                 r = report[1];
                 g = report[2];
                 b = report[3];
 
                 return true;
             }
-            else
-            {
-                r = 0;
-                g = 0;
-                b = 0;
 
-                return false;
-            }
+            r = g = b = 0;
+
+            return false;
         }
 
         /// <summary>
@@ -566,6 +571,7 @@ namespace BlinkStickDotNet
         #endregion
 
         #region Color manipulation functions for BlinkStick Pro
+
         /// <summary>
         /// Sets the color of the led.
         /// </summary>
@@ -577,7 +583,9 @@ namespace BlinkStickDotNet
         public void SetColor(byte channel, byte index, byte r, byte g, byte b)
         {
             if (!OnSendColor(channel, index, r, g, b))
+            {
                 return;
+            }
 
             if (Connected)
             {
@@ -674,11 +682,9 @@ namespace BlinkStickDotNet
 
                 return true;
             }
-            else
-            {
-                colorData = new byte[0];
-                return false;
-            }
+
+            colorData = new byte[0];
+            return false;
         }
 
         /// <summary>
@@ -691,7 +697,9 @@ namespace BlinkStickDotNet
         public bool GetColor(byte index, out byte r, out byte g, out byte b)
         {
             if (OnReceiveColor(index, out r, out g, out b))
+            {
                 return true;
+            }
 
             if (index == 0)
             {
@@ -709,18 +717,15 @@ namespace BlinkStickDotNet
 
                 return true;
             }
-            else
-            {
-                r = 0;
-                g = 0;
-                b = 0;
 
-                return false;
-            }
+            r = g = b = 0;
+            return false;
         }
+
         #endregion
 
         #region BlinkStick Pro mode selection
+
         /// <summary>
         /// Sets the mode for BlinkStick Pro.
         /// </summary>
@@ -749,6 +754,7 @@ namespace BlinkStickDotNet
 
             return -1;
         }
+
         #endregion
 
         #region BlinkStick Flex features
