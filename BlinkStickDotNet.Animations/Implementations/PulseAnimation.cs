@@ -29,26 +29,11 @@ namespace BlinkStickDotNet.Animations
         /// <param name="processor">The processor.</param>
         public override void Start(IBlinkStickColorProcessor processor)
         {
-            var hz = 50;
-            var steps = ((double)_duration / 1000) * hz;
+            var hz = 100;
+            var steps = ((double)(_duration / 2) / 1000) * hz;
             var wait = _duration / steps;
             var amount = 1 / steps;
-            var localAmount = 0d;
-
-            while (true)
-            {
-                var c = _colors.Darken(localAmount);
-                processor.ProcessColors(c);
-
-                if (localAmount >= 1)
-                {
-                    break;
-                }
-
-                localAmount += amount;
-
-                Thread.Sleep((int)wait);
-            }
+            var localAmount = 1d;
 
             while (true)
             {
@@ -61,6 +46,21 @@ namespace BlinkStickDotNet.Animations
                 }
 
                 localAmount -= amount;
+
+                Thread.Sleep((int)wait);
+            }
+
+            while (true)
+            {
+                var c = _colors.Darken(localAmount);
+                processor.ProcessColors(c);
+
+                if (localAmount >= 1)
+                {
+                    break;
+                }
+
+                localAmount += amount;
 
                 Thread.Sleep((int)wait);
             }

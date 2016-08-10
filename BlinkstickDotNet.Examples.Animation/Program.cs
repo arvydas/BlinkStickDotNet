@@ -25,9 +25,14 @@ namespace BlinkstickDotNet.Examples.Animation
                 //queue.Queue(new Feedback("Wait 2000"));
                 //queue.QueueWait(2000);
 
+                queue.Queue(new Feedback("Pulse red 1s"));
+                queue.Pulse(1000, Color.Red);
+
                 queue.Queue(new Feedback("Pulse green 1s"));
-                queue.Pulse(2000, green);
-                queue.Repeat(5);
+                queue.Pulse(1000, green);
+
+                queue.Queue(new Feedback("Pulse blue 1s"));
+                queue.Pulse(1000, Color.Blue);
 
                 /*
                 queue.QueueRepeatQueue();
