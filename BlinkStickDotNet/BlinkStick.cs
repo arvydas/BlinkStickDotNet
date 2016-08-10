@@ -546,23 +546,6 @@ namespace BlinkStickDotNet
         #endregion
 
         #region Color manipulation functions
-        /// <summary>
-        /// Sets the color of the led.
-        /// </summary>
-        /// <param name="color">Must be in #rrggbb format</param>
-        public void SetColor(String color)
-        {
-            SetColor(RgbColor.FromString(color));
-        }
-
-        /// <summary>
-        /// Sets the color of the led.
-        /// </summary>
-        /// <param name="color">Color as RgbColor class.</param>
-        public void SetColor(RgbColor color)
-        {
-            SetColor(color.R, color.G, color.B);
-        }
 
         /// <summary>
         /// Sets the color of the led.
@@ -660,6 +643,7 @@ namespace BlinkStickDotNet
         {
             SetColor(0, 0, 0);
         }
+
         #endregion
 
         #region Color manipulation functions for BlinkStick Pro
@@ -680,28 +664,6 @@ namespace BlinkStickDotNet
             {
                 SetFeature(new byte[6] { 5, channel, index, r, g, b });
             }
-        }
-
-        /// <summary>
-        /// Sets the color of the led.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        public void SetColor(byte channel, byte index, string color)
-        {
-            SetColor(channel, index, RgbColor.FromString(color));
-        }
-
-        /// <summary>
-        /// Sets the color of the led.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Color parameter as RgbColor class instance</param>
-        public void SetColor(byte channel, byte index, RgbColor color)
-        {
-            SetColor(channel, index, color.R, color.G, color.B);
         }
 
         /// <summary>

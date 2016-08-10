@@ -7,7 +7,8 @@ namespace BlinkStickDotNet
     public class RgbColor
     {
         #region Colors
-        static Dictionary<string, string> _NamesToHex = new Dictionary<string, string>
+
+        private static Dictionary<string, string> _NamesToHex = new Dictionary<string, string>
         {
             {"aliceblue", "#f0f8ff"},
             {"antiquewhite", "#faebd7"},
@@ -157,6 +158,7 @@ namespace BlinkStickDotNet
             {"yellow", "#ffff00"},
             {"yellowgreen", "#9acd32"}
         };
+
         #endregion
 
         /// <summary>
