@@ -1,5 +1,5 @@
-﻿using System;
-using HidSharp;
+﻿using HidSharp;
+using System;
 
 namespace BlinkStickDotNet.Usb
 {

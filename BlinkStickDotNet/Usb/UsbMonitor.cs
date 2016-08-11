@@ -1,8 +1,8 @@
+using HidSharp;
+using LibUsbDotNet.DeviceNotify;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using LibUsbDotNet.DeviceNotify;
-using HidSharp;
 
 namespace BlinkStickDotNet.Usb
 {

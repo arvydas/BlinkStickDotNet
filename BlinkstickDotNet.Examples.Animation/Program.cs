@@ -16,10 +16,13 @@ namespace BlinkstickDotNet.Examples.Animation
             {
                 var queue = device.CreateAnimationQueue(true);
 
-                queue.Color(2000, Color.Blue);
-                queue.Queue(new PulseInvertedAnimation(2000));
+                var blue = Color.Blue.Darken(0.6);
 
-                /*
+                queue.Color(2000, blue);
+                queue.Morph(2000, Color.Black);
+                queue.Wait(1000);
+                queue.Morph(2000, blue);
+
                 queue.Queue(new Feedback("Morph to red 5s"));
                 queue.Morph(5000, Color.Red);
 
