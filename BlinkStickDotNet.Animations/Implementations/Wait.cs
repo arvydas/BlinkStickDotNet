@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace BlinkStickDotNet.Animations
+namespace BlinkStickDotNet.Animations.Implementations
 {
     /// <summary>
     /// Waits for the specified amount of time and continues.

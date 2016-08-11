@@ -15,6 +15,18 @@ namespace BlinkstickDotNet.Examples.Animation
             {
                 var queue = device.CreateAnimationQueue(true);
 
+                queue.Queue(new Feedback("1s purple"));
+                queue.Morph(1000, Color.Purple);
+
+                queue.Queue(new Feedback("Morph to red 2s"));
+                queue.Morph(2000, Color.Red);
+
+                queue.Queue(new Feedback("Morph to green 2s"));
+                queue.Morph(2000, Color.Green);
+
+                queue.Queue(new Feedback("Morph to blue 2s"));
+                queue.Morph(2000, Color.Blue);
+
                 var orange = Color.FromArgb(255, 75, 0);
                 var green = Color.FromArgb(0, 70, 0);
                 

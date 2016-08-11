@@ -1,13 +1,13 @@
 ﻿using System.Drawing;
 using System.Threading;
 
-namespace BlinkStickDotNet.Animations
+namespace BlinkStickDotNet.Animations.Implementations
 {
     /// <summary>
     /// Pulse animation.
     /// </summary>
     /// <seealso cref="BlinkStickDotNet.Animations.AnimationBase" />
-    internal class PulseAnimation : AnimationBase
+    public class PulseAnimation : AnimationBase
     {
         private int _duration;
         private Color[] _colors;
