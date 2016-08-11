@@ -64,7 +64,7 @@ namespace BlinkStickDotNet.Animations
             queue.
                 _animations.
                 ToList().
-                ForEach(a => _animations.Add(a.Clone()));
+                ForEach(a => Queue(a.Clone()));
         }
 
         /// <summary>
@@ -107,27 +107,30 @@ namespace BlinkStickDotNet.Animations
         /// <exception cref="System.Exception">No animations.</exception>
         public void Start()
         {
-            if (_animations.Count == 0)
+            if (_thread == null)
             {
-                throw new Exception("No animations.");
-            }
-
-            _thread = new Thread(() =>
-            {
-                for (int i = 0; i < _animations.Count; i++)
+                if (_animations.Count == 0)
                 {
-                    _animations[i].Start(_processor);
-
-                    if (i + 1 == _animations.Count && IsLooping)
-                    {
-                        i = -1;
-                    }
+                    throw new Exception("No animations.");
                 }
 
-                _thread = null;
-            });
+                _thread = new Thread(() =>
+                {
+                    for (int i = 0; i < _animations.Count && IsRunning; i++)
+                    {
+                        _animations[i].Start(_processor);
 
-            _thread.Start();
+                        if (i + 1 == _animations.Count && IsLooping)
+                        {
+                            i = -1;
+                        }
+                    }
+
+                    _thread = null;
+                });
+
+                _thread.Start();
+            }
         }
 
         /// <summary>
