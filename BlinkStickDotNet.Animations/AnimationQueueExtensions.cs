@@ -21,15 +21,21 @@ namespace BlinkStickDotNet.Animations
             queue.Queue(animation);
         }
 
+        public static void PulseInverted(this IAnimationQueue queue, int duration, params Color[] colors)
+        {
+            var animation = new PulseInvertedAnimation(duration, colors);
+            queue.Queue(animation);
+        }
+
         /// <summary>
         /// Queues a dim.
         /// </summary>
         /// <param name="queue">The queue.</param>
         /// <param name="duration">The duration in ms.</param>
-        /// <param name="colors">The colors.</param>
-        public static void Dim(this IAnimationQueue queue, int duration, params Color[] colors)
+        /// <param name="fractionPercentage">The fraction percentage.</param>
+        public static void Dim(this IAnimationQueue queue, int duration, double fractionPercentage = 1)
         {
-            var animation = new DimAnimation(duration, colors);
+            var animation = new DimAnimation(duration, fractionPercentage);
             queue.Queue(animation);
         }
 

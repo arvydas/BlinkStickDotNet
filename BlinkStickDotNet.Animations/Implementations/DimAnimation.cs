@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Threading;
 
 namespace BlinkStickDotNet.Animations.Implementations
@@ -10,17 +11,22 @@ namespace BlinkStickDotNet.Animations.Implementations
     public class DimAnimation : AnimationBase
     {
         private int _duration;
-        private Color[] _colors;
+        private double _percentageFraction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DimAnimation"/> class.
         /// </summary>
         /// <param name="duration">The interval.</param>
         /// <param name="colors">The colors.</param>
-        public DimAnimation(int duration, params Color[] colors)
+        public DimAnimation(int duration, double percentageFraction = 1)
         {
             _duration = duration;
-            _colors = colors;
+            _percentageFraction = percentageFraction;
+        }
+
+        public static double Fract(double percentageFraction)
+        {
+            return Math.Max(1, Math.Min(0, percentageFraction));
         }
 
         /// <summary>
@@ -29,26 +35,8 @@ namespace BlinkStickDotNet.Animations.Implementations
         /// <param name="processor">The processor.</param>
         public override void Start(IBlinkStickColorProcessor processor)
         {
-            var hz = 50;
-            var steps = ((double)_duration / 1000) * hz;
-            var wait = _duration / steps;
-            var amount = 1 / steps;
-            var localAmount = 0d;
-
-            while (true)
-            {
-                var c = _colors.Darken(localAmount);
-                processor.ProcessColors(c);
-
-                if (localAmount >= 1)
-                {
-                    break;
-                }
-
-                localAmount += amount;
-
-                Thread.Sleep((int)wait);
-            }
+            var colors = processor.GetCurrentColors().Darken(_percentageFraction);
+            MorphAnimation.Morph(processor, _duration, colors);
         }
 
         /// <summary>
@@ -59,7 +47,7 @@ namespace BlinkStickDotNet.Animations.Implementations
         /// </returns>
         public override IAnimation Clone()
         {
-            return new DimAnimation(_duration, _colors);
+            return new DimAnimation(_duration, _percentageFraction);
         }
     }
 }
