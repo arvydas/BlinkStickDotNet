@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("BlinkStickDotNet Animation Library")]
 [assembly: AssemblyDescription("Provides animation for the BlinkStick project")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("KeesTalksTech, Kees C. Bakker")]
+[assembly: AssemblyCompany("KeesTalksTech")]
 [assembly: AssemblyProduct("BlinkStickDotNet")]
 [assembly: AssemblyCopyright("Copyright © 2016 / MIT License")]
 [assembly: AssemblyTrademark("")]

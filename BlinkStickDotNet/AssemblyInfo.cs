@@ -4,10 +4,10 @@ using System.Runtime.CompilerServices;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle("BlinkStick.Hid")]
-[assembly: AssemblyDescription("BlinkStick Generic Hid Library / KeesTalksTech modifications")]
+[assembly: AssemblyTitle("BlinkStick HID")]
+[assembly: AssemblyDescription("BlinkStick Generic Hid Library with KeesTalksTech modifications")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Agile Innovative Ltd")]
+[assembly: AssemblyCompany("KeesTalksTech")]
 [assembly: AssemblyProduct("BlinkStick")]
 [assembly: AssemblyCopyright("Arvydas Juskevicius")]
 [assembly: AssemblyTrademark("")]
