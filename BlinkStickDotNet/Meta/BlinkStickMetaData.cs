@@ -1,5 +1,6 @@
 ﻿using BlinkStickDotNet.Usb;
 using System;
+using System.Text;
 
 namespace BlinkStickDotNet.Meta
 {
@@ -191,7 +192,7 @@ namespace BlinkStickDotNet.Meta
             {
                 if (_infoBlock1 == null)
                 {
-                    _stick.GetInfoBlock(2, out _infoBlock1);
+                    GetInfoBlock(2, out _infoBlock1);
                 }
 
                 return _infoBlock1;
@@ -201,7 +202,7 @@ namespace BlinkStickDotNet.Meta
                 if (_infoBlock1 != value)
                 {
                     _infoBlock1 = value;
-                    _stick.SetInfoBlock(2, _infoBlock1);
+                    SetInfoBlock(2, _infoBlock1);
                 }
             }
         }
@@ -216,7 +217,7 @@ namespace BlinkStickDotNet.Meta
             {
                 if (_infoBlock2 == null)
                 {
-                    _stick.GetInfoBlock(3, out _infoBlock2);
+                    GetInfoBlock(3, out _infoBlock2);
                 }
 
                 return _infoBlock2;
@@ -226,7 +227,7 @@ namespace BlinkStickDotNet.Meta
                 if (_infoBlock2 != value)
                 {
                     _infoBlock2 = value;
-                    _stick.SetInfoBlock(3, _infoBlock2);
+                    SetInfoBlock(3, _infoBlock2);
                 }
             }
         }
@@ -254,6 +255,49 @@ namespace BlinkStickDotNet.Meta
             }
 
             return BlinkStickDeviceEnum.Unknown;
+        }
+
+
+        /// <summary>
+        /// Sets the info block.
+        /// </summary>
+        /// <param name="id">2 - InfoBlock1, 3 - InfoBlock2</param>
+        /// <param name="data">Maximum 32 bytes of data</param>
+        private void SetInfoBlock(byte id, string data)
+        {
+            _stick.SetInfoBlock(id, Encoding.ASCII.GetBytes(data));
+        }
+
+        /// <summary>
+        /// Gets the information block.
+        /// </summary>
+        /// <param name="id">2 - InfoBlock1, 3 - InfoBlock2</param>
+        /// <param name="data">The data.</param>
+        /// <returns>True if successful.</returns>
+        private bool GetInfoBlock(byte id, out string data)
+        {
+            byte[] dataBytes;
+            bool result = _stick.GetInfoBlock(id, out dataBytes);
+
+            if (result)
+            {
+                for (int i = 1; i < dataBytes.Length; i++)
+                {
+                    if (dataBytes[i] == 0)
+                    {
+                        Array.Resize(ref dataBytes, i);
+                        break;
+                    }
+                }
+
+                data = Encoding.ASCII.GetString(dataBytes, 1, dataBytes.Length - 1);
+            }
+            else
+            {
+                data = "";
+            }
+
+            return result;
         }
     }
 }
