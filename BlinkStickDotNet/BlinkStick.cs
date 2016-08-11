@@ -20,7 +20,6 @@ namespace BlinkStickDotNet
 
         private int? _mode;
         private bool _disposed = false;
-        private bool _stopped = false;
 
         private IUsbDevice _device;
         private IUsbStream _stream;
@@ -375,42 +374,6 @@ namespace BlinkStickDotNet
         #endregion
 
         #region Helper functions for InfoBlocks
-
-        /// <summary>
-        /// Sets the info block.
-        /// </summary>
-        /// <param name="id">2 - InfoBlock1, 3 - InfoBlock2</param>
-        /// <param name="data">Maximum 32 bytes of data</param>
-        internal void SetInfoBlock(byte id, string data)
-        {
-            SetInfoBlock(id, Encoding.ASCII.GetBytes(data));
-        }
-
-        internal bool GetInfoBlock(byte id, out string data)
-        {
-            byte[] dataBytes;
-            bool result = GetInfoBlock(id, out dataBytes);
-
-            if (result)
-            {
-                for (int i = 1; i < dataBytes.Length; i++)
-                {
-                    if (dataBytes[i] == 0)
-                    {
-                        Array.Resize(ref dataBytes, i);
-                        break;
-                    }
-                }
-
-                data = Encoding.ASCII.GetString(dataBytes, 1, dataBytes.Length - 1);
-            }
-            else
-            {
-                data = "";
-            }
-
-            return result;
-        }
 
         internal void SetInfoBlock(byte id, byte[] data)
         {
