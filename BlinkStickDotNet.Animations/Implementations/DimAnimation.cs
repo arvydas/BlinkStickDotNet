@@ -1,13 +1,13 @@
 ﻿using System.Drawing;
 using System.Threading;
 
-namespace BlinkStickDotNet.Animations
+namespace BlinkStickDotNet.Animations.Implementations
 {
     /// <summary>
     /// Dims from the specified color to off.
     /// </summary>
     /// <seealso cref="BlinkStickDotNet.Animations.AnimationBase" />
-    internal class DimAnimation : AnimationBase
+    public class DimAnimation : AnimationBase
     {
         private int _duration;
         private Color[] _colors;

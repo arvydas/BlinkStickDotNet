@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using BlinkStickDotNet.Animations.Implementations;
+using System.Drawing;
 
 namespace BlinkStickDotNet.Animations
 {
@@ -75,6 +76,18 @@ namespace BlinkStickDotNet.Animations
         public static void Wait(this IAnimationQueue queue, int duration)
         {
             var animation = new Wait(duration);
+            queue.Queue(animation);
+        }
+
+        /// <summary>
+        /// Queues a morph from the current color(s) to the specified color(s).
+        /// </summary>
+        /// <param name="queue">The queue.</param>
+        /// <param name="duration">The duration.</param>
+        /// <param name="colors">The colors.</param>
+        public static void Morph(this IAnimationQueue queue, int duration, params Color[] colors)
+        {
+            var animation = new MorphAnimation(duration, colors);
             queue.Queue(animation);
         }
     }

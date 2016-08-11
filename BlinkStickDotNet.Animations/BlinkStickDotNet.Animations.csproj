@@ -51,11 +51,12 @@
     <Compile Include="Implementations\ChaseAnimation.cs" />
     <Compile Include="Implementations\DimAnimation.cs" />
     <Compile Include="IAnimation.cs" />
+    <Compile Include="Implementations\MorphAnimation.cs" />
     <Compile Include="Implementations\PulseAnimation.cs" />
     <Compile Include="Implementations\ColorPattern.cs" />
     <Compile Include="Implementations\Wait.cs" />
     <Compile Include="BlinkStickColorProcessor.cs" />
-    <Compile Include="ColorExtensions.cs" />
+    <Compile Include="Colors\ColorExtensions.cs" />
     <Compile Include="IBlinkStickColorProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

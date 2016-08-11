@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace BlinkStickDotNet.Animations
+namespace BlinkStickDotNet.Animations.Implementations
 {
     /// <summary>
     /// Shows the given color pattern for the specified amount of time.

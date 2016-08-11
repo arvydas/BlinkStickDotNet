@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Threading;
 
-namespace BlinkStickDotNet.Animations
+namespace BlinkStickDotNet.Animations.Implementations
 {
     /// <summary>
     /// A chase animation is created by offsetting the color for each led. 
