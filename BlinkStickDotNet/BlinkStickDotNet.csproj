@@ -63,6 +63,7 @@
     <Compile Include="Usb\UsbMonitor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="BlinkStickDotNet.nuspec" />
     <None Include="BlinkStickDotNet.snk" />
     <None Include="packages.config" />
   </ItemGroup>
