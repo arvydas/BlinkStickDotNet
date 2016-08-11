@@ -25,7 +25,10 @@ namespace BlinkStickDotNet.Animations.Implementations
         /// <param name="processor">The processor.</param>
         public override void Start(IBlinkStickColorProcessor processor)
         {
-            Thread.Sleep(_duration);
+            if (_duration > 0)
+            {
+                Thread.Sleep(_duration);
+            }
         }
 
         /// <summary>

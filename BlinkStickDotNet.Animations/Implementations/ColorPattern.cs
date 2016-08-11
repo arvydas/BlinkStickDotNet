@@ -19,6 +19,11 @@ namespace BlinkStickDotNet.Animations.Implementations
         /// <param name="colors">The colors.</param>
         public ColorPattern(int duration, params Color[] colors) : base(duration)
         {
+            if (colors.Length < 0)
+            {
+                throw new ArgumentNullException(nameof(colors));
+            }
+
             this._duration = duration;
             this._colors = colors;
         }

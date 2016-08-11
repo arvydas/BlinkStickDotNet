@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Threading;
 
 namespace BlinkStickDotNet.Animations.Implementations
@@ -19,6 +20,11 @@ namespace BlinkStickDotNet.Animations.Implementations
         /// <param name="colors">The colors.</param>
         public ChaseAnimation(int duration, params Color[] colors)
         {
+            if (colors.Length < 0)
+            {
+                throw new ArgumentNullException(nameof(colors));
+            }
+
             _duration = duration;
             _colors = colors;
         }

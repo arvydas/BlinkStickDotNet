@@ -1,5 +1,5 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
+using System.Threading;
 
 namespace BlinkStickDotNet.Animations.Implementations
 {
@@ -7,7 +7,7 @@ namespace BlinkStickDotNet.Animations.Implementations
     /// Pulse animation.
     /// </summary>
     /// <seealso cref="BlinkStickDotNet.Animations.AnimationBase" />
-    public class PulseAnimation : AnimationBase
+    public class PulseInvertedAnimation : AnimationBase
     {
         private int _duration;
         private Color[] _colors;
@@ -17,13 +17,8 @@ namespace BlinkStickDotNet.Animations.Implementations
         /// </summary>
         /// <param name="duration">The duration.</param>
         /// <param name="colors">The colors.</param>
-        public PulseAnimation(int duration, params Color[] colors)
+        public PulseInvertedAnimation(int duration, params Color[] colors)
         {
-            if (colors.Length < 0)
-            {
-                throw new ArgumentNullException(nameof(colors));
-            }
-
             _duration = duration;
             _colors = colors;
         }
@@ -36,14 +31,20 @@ namespace BlinkStickDotNet.Animations.Implementations
         {
             var duration = _duration / 2;
 
-            //set to black
-            processor.ProcessColors(Color.Black);
+            var colors = _colors;
+            if (_colors.Length == 0)
+            {
+                colors = processor.GetCurrentColors();
+            }
 
-            //morph to color
-            MorphAnimation.Morph(processor, duration, _colors);
+            //set to color
+            processor.ProcessColors(colors);
 
             //morph to black
             MorphAnimation.Morph(processor, duration, Color.Black);
+
+            //morph to color
+            MorphAnimation.Morph(processor, duration, colors);
         }
 
         /// <summary>

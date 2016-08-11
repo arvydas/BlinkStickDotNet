@@ -68,6 +68,18 @@ namespace BlinkStickDotNet.Animations
         }
 
         /// <summary>
+        /// Pops the specified nr of items.
+        /// </summary>
+        /// <param name="nrOfItems">The nr of items.</param>
+        public void Pop(int nrOfItems = 1)
+        {
+            for (int i = 0; i < nrOfItems && _animations.Count > 0; i++)
+            {
+                _animations.RemoveAt(_animations.Count - 1);
+            }
+        }
+
+        /// <summary>
         /// Queues a repeat of the last animation.
         /// </summary>
         /// <param name="nrOfTimes">The nr of times.</param>
@@ -167,6 +179,9 @@ namespace BlinkStickDotNet.Animations
             }
         }
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             Stop();
