@@ -49,6 +49,7 @@
     <Compile Include="IAnimationQueue.cs" />
     <Compile Include="Implementations\BrightenAnimation.cs" />
     <Compile Include="Implementations\ChaseAnimation.cs" />
+    <Compile Include="Implementations\ChaseDimmerAnimation.cs" />
     <Compile Include="Implementations\DimAnimation.cs" />
     <Compile Include="IAnimation.cs" />
     <Compile Include="Implementations\LoopAnimation.cs" />

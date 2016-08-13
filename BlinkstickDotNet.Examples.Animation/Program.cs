@@ -1,5 +1,6 @@
 ﻿using BlinkStickDotNet;
 using BlinkStickDotNet.Animations;
+using BlinkStickDotNet.Animations.Implementations;
 using System;
 using System.Drawing;
 
@@ -19,12 +20,17 @@ namespace BlinkstickDotNet.Examples.Animation
             {
                 var queue = new AnimationQueue();
 
+                queue.Chase(1000, Color.Purple.PadBlack(8));
+                queue.Repeat(3);
+                queue.ChaseDimmer(2000, 2, Color.Purple.PadBlack(8));
+                queue.Morph(1000, Color.Black);
+
                 queue.Morph(1, Color.Black);
                 queue.Morph(1500, darkgreen);
                 queue.Wait(2500);
                 queue.Morph(1500, Color.Black);
                 queue.Wait(2500);
-                queue.RepeatQueue(7);
+                queue.RepeatQueue();
 
                 queue.Queue(new Feedback("Morph to red 5s"));
                 queue.Morph(5000, Color.Red);

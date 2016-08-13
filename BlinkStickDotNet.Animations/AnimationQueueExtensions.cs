@@ -209,5 +209,35 @@ namespace BlinkStickDotNet.Animations
 
             queue.Queue(new LoopAnimation());
         }
+
+        /// <summary>
+        /// Chases the dimmer animation.
+        /// </summary>
+        /// <param name="queue">The queue.</param>
+        /// <param name="duration">The duration.</param>
+        /// <param name="spins">The spins.</param>
+        /// <param name="colors">The colors.</param>
+        public static void ChaseDimmer(this IAnimationQueue queue, int duration, int spins, params Color[] colors) 
+        {
+            if (queue == null)
+                throw new ArgumentNullException(nameof(queue));
+
+            var animation = new ChaseDimmerAnimation(duration, spins, colors);
+            queue.Queue(animation);
+        }
+
+        /// <summary>
+        /// Chases the dimmer animation.
+        /// </summary>
+        /// <param name="queue">The queue.</param>
+        /// <param name="duration">The duration.</param>
+        /// <param name="colors">The colors.</param>
+        public static void ChaseDimmer(this IAnimationQueue queue, int duration, params Color[] colors)
+        {
+            if (queue == null)
+                throw new ArgumentNullException(nameof(queue));
+
+            queue.ChaseDimmer(duration, 1, colors);
+        }
     }
 }
