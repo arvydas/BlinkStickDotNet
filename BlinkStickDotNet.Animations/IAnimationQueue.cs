@@ -1,6 +1,8 @@
-﻿namespace BlinkStickDotNet.Animations
+﻿using System.Collections.Generic;
+
+namespace BlinkStickDotNet.Animations
 {
-    public interface IAnimationQueue
+    public interface IAnimationQueue : IEnumerable<IAnimation>
     {
         /// <summary>
         /// Gets a value indicating whether this instance is looping.
@@ -35,6 +37,18 @@
         /// </summary>
         /// <param name="nrOfTimes">The nr of times.</param>
         void RepeatQueue(int nrOfTimes = 1);
+
+        /// <summary>
+        /// Connects the specified stick.
+        /// </summary>
+        /// <param name="stick">The stick.</param>
+        /// <param name="nrOfLeds">The nr of leds.</param>
+        void Connect(BlinkStick stick, uint nrOfLeds);
+
+        /// <summary>
+        /// Clears this instance.
+        /// </summary>
+        void Clear();
 
         /// <summary>
         /// Starts the animation.

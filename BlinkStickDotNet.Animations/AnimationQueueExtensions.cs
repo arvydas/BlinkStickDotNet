@@ -1,5 +1,7 @@
 ﻿using BlinkStickDotNet.Animations.Implementations;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace BlinkStickDotNet.Animations
 {
@@ -95,6 +97,19 @@ namespace BlinkStickDotNet.Animations
         {
             var animation = new MorphAnimation(duration, colors);
             queue.Queue(animation);
+        }
+
+        /// <summary>
+        /// Queues the specified animations.
+        /// </summary>
+        /// <param name="queue">The queue.</param>
+        /// <param name="animations">The animations.</param>
+        public static void Queue(this IAnimationQueue queue, IEnumerable<IAnimation> animations)
+        {
+            foreach (var animation in animations.ToList())
+            {
+                queue.Queue(animations);
+            }
         }
     }
 }

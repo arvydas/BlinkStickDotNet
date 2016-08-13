@@ -14,7 +14,7 @@ namespace BlinkStickDotNet.Animations
         /// <value>
         /// The nr of leds.
         /// </value>
-        int NrOfLeds { get; }
+        uint NrOfLeds { get; }
 
         /// <summary>
         /// Processes the colors. Uses round robin to set the led colors.

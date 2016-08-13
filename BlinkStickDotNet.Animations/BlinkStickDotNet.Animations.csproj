@@ -46,7 +46,6 @@
     <Compile Include="AnimationBase.cs" />
     <Compile Include="AnimationQueue.cs" />
     <Compile Include="AnimationQueueExtensions.cs" />
-    <Compile Include="BlinkStickExtensions.cs" />
     <Compile Include="IAnimationQueue.cs" />
     <Compile Include="Implementations\BrightenAnimation.cs" />
     <Compile Include="Implementations\ChaseAnimation.cs" />

@@ -50,7 +50,7 @@ namespace BlinkStickDotNet.Animations.Implementations
                 offset = (offset + 1) % _colors.Length;
                 nr++;
 
-                Thread.Sleep(_duration / processor.NrOfLeds);
+                Thread.Sleep(_duration / (int)processor.NrOfLeds);
             }
         }
 
