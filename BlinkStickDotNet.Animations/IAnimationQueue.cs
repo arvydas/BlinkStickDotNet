@@ -5,14 +5,6 @@ namespace BlinkStickDotNet.Animations
     public interface IAnimationQueue : IEnumerable<IAnimation>
     {
         /// <summary>
-        /// Gets a value indicating whether this instance is looping.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is looping; otherwise, <c>false</c>.
-        /// </value>
-        bool IsLooping { get; }
-
-        /// <summary>
         /// Gets a value indicating whether this instance is running.
         /// </summary>
         /// <value>
@@ -26,18 +18,6 @@ namespace BlinkStickDotNet.Animations
         /// <param name="animation">The animation.</param>
         void Queue(IAnimation animation);
         
-        /// <summary>
-        /// Queues a repeat of the last animation.
-        /// </summary>
-        /// <param name="nrOfTimes">The nr of times.</param>
-        void Repeat(int nrOfTimes = 1);
-
-        /// <summary>
-        /// Queues a repeat of the current queue.
-        /// </summary>
-        /// <param name="nrOfTimes">The nr of times.</param>
-        void RepeatQueue(int nrOfTimes = 1);
-
         /// <summary>
         /// Connects the specified stick.
         /// </summary>

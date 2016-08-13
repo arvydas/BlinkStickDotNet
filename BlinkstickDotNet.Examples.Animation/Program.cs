@@ -1,6 +1,5 @@
 ﻿using BlinkStickDotNet;
 using BlinkStickDotNet.Animations;
-using BlinkStickDotNet.Animations.Implementations;
 using System;
 using System.Drawing;
 
@@ -13,11 +12,19 @@ namespace BlinkstickDotNet.Examples.Animation
             var blue = Color.Blue.Darken(0.6);
             var orange = Color.FromArgb(255, 75, 0);
             var green = Color.FromArgb(0, 70, 0);
+            var darkgreen = Color.Green.Darken(0.5);
 
             var stick = BlinkStick.FindFirst();
             if (stick.OpenDevice())
             {
-                var queue = new AnimationQueue(true);
+                var queue = new AnimationQueue();
+
+                queue.Morph(1, Color.Black);
+                queue.Morph(1500, darkgreen);
+                queue.Wait(2500);
+                queue.Morph(1500, Color.Black);
+                queue.Wait(2500);
+                queue.RepeatQueue(7);
 
                 queue.Queue(new Feedback("Morph to red 5s"));
                 queue.Morph(5000, Color.Red);
@@ -54,6 +61,7 @@ namespace BlinkstickDotNet.Examples.Animation
                 queue.Color(2000, green);
 
                 queue.Queue(new Feedback("Ready!"));
+                queue.Loop();
 
                 queue.Connect(stick, 8);
                 queue.Start();

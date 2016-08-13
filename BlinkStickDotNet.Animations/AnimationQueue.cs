@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlinkStickDotNet.Animations.Implementations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -20,26 +21,15 @@ namespace BlinkStickDotNet.Animations
         /// <summary>
         /// Initializes a new instance of the <see cref="AnimationQueue" /> class.
         /// </summary>
-        /// <param name="loop">if set to <c>true</c> the queue will loop the animation at the end.</param>
         /// <param name="stick">The stick.</param>
         /// <param name="nrOfLeds">The nr of leds.</param>
-        public AnimationQueue(bool loop = false, BlinkStick stick = null, uint nrOfLeds = 1)
+        public AnimationQueue(BlinkStick stick = null, uint nrOfLeds = 1)
         {
-            IsLooping = loop;
-
             if (stick != null)
             {
                 Connect(stick, nrOfLeds);
             }
         }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is looping.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is looping; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsLooping { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is running.
@@ -74,40 +64,6 @@ namespace BlinkStickDotNet.Animations
         }
 
         /// <summary>
-        /// Queues a repeat of the last animation.
-        /// </summary>
-        /// <param name="nrOfTimes">The nr of times.</param>
-        public void Repeat(int nrOfTimes = 1)
-        {
-            if (nrOfTimes > 0 && _animations.Count > 0)
-            {
-                for (int i = 0; i < nrOfTimes; i++)
-                {
-                    var animation = _animations[_animations.Count - 1];
-                    Queue(animation.Clone());
-                }
-            }
-        }
-
-        /// <summary>
-        /// Queues a repeat of the current queue.
-        /// </summary>
-        /// <param name="nrOfTimes">The nr of times.</param>
-        public void RepeatQueue(int nrOfTimes = 1)
-        {
-            if (nrOfTimes > 0 && _animations.Count > 0)
-            {
-                var list = _animations.ToList();
-
-                for (int i = 0; i < nrOfTimes; i++)
-                {
-                    list.ForEach(a => Queue(a.Clone()));
-                }
-            }
-        }
-
-
-        /// <summary>
         /// Starts the animation.
         /// </summary>
         /// <param name="stick">The stick.</param>
@@ -132,12 +88,16 @@ namespace BlinkStickDotNet.Animations
                 {
                     for (int i = 0; i < _animations.Count && IsRunning; i++)
                     {
-                        _animations[i].Start(_processor);
+                        var animation = _animations[i];
 
-                        if (i + 1 == _animations.Count && IsLooping)
+                        //check loop
+                        if(animation is LoopAnimation)
                         {
                             i = -1;
+                            continue;
                         }
+
+                        animation.Start(_processor);
                     }
 
                     _thread = null;

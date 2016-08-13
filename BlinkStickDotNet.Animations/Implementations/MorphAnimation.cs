@@ -65,9 +65,9 @@ namespace BlinkStickDotNet.Animations.Implementations
                         var color = colors[c];
                         var destinationColor = destinationColors[c];
 
-                        var r = (byte)(color.R + (destinationColor.R - color.R) / steps * i);
-                        var g = (byte)(color.G + (destinationColor.G - color.G) / steps * i);
-                        var b = (byte)(color.B + (destinationColor.B - color.B) / steps * i);
+                        var r = (byte)Math.Round(color.R + (destinationColor.R - color.R) / steps * i, MidpointRounding.AwayFromZero);
+                        var g = (byte)Math.Round(color.G + (destinationColor.G - color.G) / steps * i, MidpointRounding.AwayFromZero);
+                        var b = (byte)Math.Round(color.B + (destinationColor.B - color.B) / steps * i, MidpointRounding.AwayFromZero);
 
                         newColors.Add(Color.FromArgb(r, g, b));
                     }
