@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlinkStickDotNet", "BlinkStickDotNet\BlinkStickDotNet.csproj", "{7AAEBEBE-E38D-47B1-A04C-A055DCEB0757}"
 EndProject
@@ -33,7 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndexedColors", "Examples\B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlinkStickDotNet.Animations", "BlinkStickDotNet.Animations\BlinkStickDotNet.Animations.csproj", "{8C08259B-8EA4-496B-9681-D095279A4248}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlinkstickDotNet.Examples.Animation", "BlinkstickDotNet.Examples.Animation\BlinkstickDotNet.Examples.Animation.csproj", "{17302773-68CB-4D88-8EB9-6889E7FDC5EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examples.Animation", "BlinkstickDotNet.Examples.Animation\Examples.Animation.csproj", "{17302773-68CB-4D88-8EB9-6889E7FDC5EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
