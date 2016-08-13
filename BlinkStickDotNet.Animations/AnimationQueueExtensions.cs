@@ -108,7 +108,7 @@ namespace BlinkStickDotNet.Animations
         {
             foreach (var animation in animations.ToList())
             {
-                queue.Queue(animations);
+                queue.Queue(animation);
             }
         }
     }

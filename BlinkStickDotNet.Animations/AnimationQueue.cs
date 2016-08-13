@@ -62,18 +62,6 @@ namespace BlinkStickDotNet.Animations
         }
 
         /// <summary>
-        /// Queues the specified queue.
-        /// </summary>
-        /// <param name="queue">The queue.</param>
-        public void Queue(AnimationQueue queue)
-        {
-            queue.
-                _animations.
-                ToList().
-                ForEach(a => Queue(a.Clone()));
-        }
-
-        /// <summary>
         /// Pops the specified nr of items.
         /// </summary>
         /// <param name="nrOfItems">The nr of items.</param>
