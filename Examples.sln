@@ -35,6 +35,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlinkStickDotNet.Animations
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examples.Animation", "BlinkstickDotNet.Examples.Animation\Examples.Animation.csproj", "{17302773-68CB-4D88-8EB9-6889E7FDC5EF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{03D7F2E1-CE7B-49AA-8640-BCEC6B371FF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntergrationTests", "IntergrationTests\IntergrationTests.csproj", "{AF1EC3AC-B7B0-43F3-86CD-102541EF206B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,6 +131,14 @@ Global
 		{17302773-68CB-4D88-8EB9-6889E7FDC5EF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{17302773-68CB-4D88-8EB9-6889E7FDC5EF}.Release|x86.ActiveCfg = Release|Any CPU
 		{17302773-68CB-4D88-8EB9-6889E7FDC5EF}.Release|x86.Build.0 = Release|Any CPU
+		{AF1EC3AC-B7B0-43F3-86CD-102541EF206B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF1EC3AC-B7B0-43F3-86CD-102541EF206B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF1EC3AC-B7B0-43F3-86CD-102541EF206B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AF1EC3AC-B7B0-43F3-86CD-102541EF206B}.Debug|x86.Build.0 = Debug|Any CPU
+		{AF1EC3AC-B7B0-43F3-86CD-102541EF206B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF1EC3AC-B7B0-43F3-86CD-102541EF206B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF1EC3AC-B7B0-43F3-86CD-102541EF206B}.Release|x86.ActiveCfg = Release|Any CPU
+		{AF1EC3AC-B7B0-43F3-86CD-102541EF206B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -145,6 +157,8 @@ Global
 		{61527D2E-C94F-4EA5-8725-02EA6247EB8B} = {1C9FD0B2-C8A2-4B6A-9288-5B6D2E00DED4}
 		{725BBC2C-A4D3-4F67-ACC8-C65D92A3ECFE} = {1C9FD0B2-C8A2-4B6A-9288-5B6D2E00DED4}
 		{17302773-68CB-4D88-8EB9-6889E7FDC5EF} = {1C9FD0B2-C8A2-4B6A-9288-5B6D2E00DED4}
+		{03D7F2E1-CE7B-49AA-8640-BCEC6B371FF8} = {E9CD0471-DE68-4F37-91A5-9ECD760F01AE}
+		{AF1EC3AC-B7B0-43F3-86CD-102541EF206B} = {03D7F2E1-CE7B-49AA-8640-BCEC6B371FF8}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Examples\BlinkStick\MonitorTest\MonitorTest.csproj
