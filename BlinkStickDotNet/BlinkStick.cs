@@ -292,6 +292,7 @@ namespace BlinkStickDotNet
         {
             Dispose(false);
         }
+
         #endregion
 
         #region Device Open/Close functions
@@ -327,6 +328,10 @@ namespace BlinkStickDotNet
             //Todo: looks like the device always opens.
             _meta = null;
             _device.TryOpen(out _stream);
+
+            //Handle disconnects and reconnects
+            _device.Disconnect += (sender, e) => _stream = null;
+            _device.Reconnect += (sender, e) => _device.TryOpen(out _stream);
 
             return true;
         }
@@ -412,10 +417,11 @@ namespace BlinkStickDotNet
             {
                 _stream.GetFeature(data, 0, data.Length);
             }
-            catch (Win32Exception e)
+            catch (System.IO.IOException e)
             {
-                //todo: why?
-                if (e.NativeErrorCode == 0)
+                //why?
+                var inner = e.InnerException as Win32Exception;
+                if (inner?.NativeErrorCode == 0)
                 {
                     return true;
                 }
@@ -484,25 +490,8 @@ namespace BlinkStickDotNet
 
             if (Connected)
             {
-                int attempt = 0;
-                while (attempt < 5)
-                {
-                    attempt++;
-                    try
-                    {
-                        _stream.GetFeature(report, 0, 33);
-                        break;
-                    }
-                    catch
-                    {
-                        if (attempt == 5)
-                            throw;
-
-                        if (!this.WaitThread(20))
-                            return false;
-                    }
-                }
-
+                _stream.GetFeature(report, 0, 33);
+                 
                 r = report[1];
                 g = report[2];
                 b = report[3];
@@ -804,61 +793,39 @@ namespace BlinkStickDotNet
 
         private void SetFeature(byte[] buffer)
         {
-            int attempt = 0;
-            while (attempt < 5)
+            try
             {
-                attempt++;
-                try
+                _stream.SetFeature(buffer);
+            }
+            catch (System.IO.IOException e)
+            {
+                //why?
+                var inner = e.InnerException as Win32Exception;
+                if (inner?.NativeErrorCode == 0)
                 {
-                    _stream.SetFeature(buffer);
-                    break;
+                    return;
                 }
-                catch (System.IO.IOException e)
-                {
-                    if (e.InnerException is System.ComponentModel.Win32Exception)
-                    {
-                        System.ComponentModel.Win32Exception win32Exception = e.InnerException as System.ComponentModel.Win32Exception;
 
-                        if (win32Exception != null && win32Exception.NativeErrorCode == 0)
-                            return;
-                    }
-
-                    if (attempt == 5)
-                        throw;
-
-                    if (!this.WaitThread(20))
-                        return;
-                }
+                throw;
             }
         }
 
         private void GetFeature(byte[] buffer)
         {
-            int attempt = 0;
-            while (attempt < 5)
+            try
             {
-                attempt++;
-                try
+                _stream.GetFeature(buffer);
+            }
+            catch (System.IO.IOException e)
+            {
+                //why?
+                var inner = e.InnerException as Win32Exception;
+                if (inner?.NativeErrorCode == 0)
                 {
-                    _stream.GetFeature(buffer);
-                    break;
+                    return;
                 }
-                catch (System.IO.IOException e)
-                {
-                    if (e.InnerException is System.ComponentModel.Win32Exception)
-                    {
-                        System.ComponentModel.Win32Exception win32Exception = e.InnerException as System.ComponentModel.Win32Exception;
 
-                        if (win32Exception != null && win32Exception.NativeErrorCode == 0)
-                            return;
-                    }
-
-                    if (attempt == 5)
-                        throw;
-
-                    if (!this.WaitThread(20))
-                        return;
-                }
+                throw;
             }
         }
 
