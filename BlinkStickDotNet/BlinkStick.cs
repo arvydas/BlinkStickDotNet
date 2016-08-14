@@ -267,14 +267,11 @@ namespace BlinkStickDotNet
         /// <summary>
         /// Initializes a new instance of the BlinkStick class.
         /// </summary>
-        public BlinkStick()
+        public BlinkStick(IUsbDevice device = null)
         {
             SetColorDelay = 0;
-        }
 
-        public BlinkStick(IUsbDevice device)
-        {
-            this._device = device;
+            _device = device;
         }
 
         /// <summary>
@@ -341,7 +338,6 @@ namespace BlinkStickDotNet
             {
                 return false;
             }
-
 
             //Todo: looks like the device always opens.
             _meta = null;
