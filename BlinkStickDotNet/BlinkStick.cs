@@ -342,19 +342,8 @@ namespace BlinkStickDotNet
                 return false;
             }
 
-            return OpenCurrentDevice();
-        }
 
-        /// <summary>
-        /// Opens the current device.
-        /// </summary>
-        /// <returns>
-        ///   <c>true</c>, if current device was opened, <c>false</c> otherwise.
-        /// </returns>
-        private bool OpenCurrentDevice()
-        {
             //Todo: looks like the device always opens.
-
             _meta = null;
             _device.TryOpen(out _stream);
 
