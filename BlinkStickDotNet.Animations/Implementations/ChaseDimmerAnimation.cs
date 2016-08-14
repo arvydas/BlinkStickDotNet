@@ -50,23 +50,25 @@ namespace BlinkStickDotNet.Animations.Implementations
             int nr = 0;
 
             var rounds = (int)processor.NrOfLeds * _spins;
-            var darkenAmount = 1d / rounds;
+            var darkenAmount = 1d / (rounds - 1);
             var colours = _colors;
 
             while (true)
             {
-                //check if chase is completed
-                if (nr == rounds)
-                {
-                    break;
-                }
-
                 processor.ProcessColors(offset, _colors.Darken(darkenAmount * nr));
                 offset = (offset + 1) % _colors.Length;
                 nr++;
 
                 Thread.Sleep(_duration / rounds);
+
+                //check if chase is completed
+                if (nr == rounds)
+                {
+                    break;
+                }
             }
+
+            processor.ProcessColors(Color.Black);
         }
 
         /// <summary>

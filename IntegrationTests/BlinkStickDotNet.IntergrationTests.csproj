@@ -52,6 +52,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="BlinkStickAnimationQueueDisconnectIntegrationTests.cs" />
     <Compile Include="BlinkStickAnimationQueueIntegrationTests.cs" />
     <Compile Include="BlinkStickColorIntegrationTests.cs" />
     <Compile Include="BlinkStickIntegrationTests.cs" />
