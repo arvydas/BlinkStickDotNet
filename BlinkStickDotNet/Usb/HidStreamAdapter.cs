@@ -1,5 +1,6 @@
 ﻿using HidSharp;
 using System;
+using System.Threading;
 
 namespace BlinkStickDotNet.Usb
 {
@@ -9,7 +10,8 @@ namespace BlinkStickDotNet.Usb
     /// <seealso cref="BlinkStickDotNet.Usb.IUsbStream" />
     public class HidStreamAdapter : IUsbStream
     {
-        private HidStream hid;
+        private const uint RetriesOnFail = 5;
+        private HidStream _hid;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HidStreamAdapter"/> class.
@@ -22,7 +24,7 @@ namespace BlinkStickDotNet.Usb
                 throw new ArgumentNullException(nameof(hid));
             }
 
-            this.hid = hid;
+            this._hid = hid;
         }
 
         /// <summary>
@@ -30,7 +32,7 @@ namespace BlinkStickDotNet.Usb
         /// </summary>
         public void Close()
         {
-            hid.Close();
+            _hid.Close();
         }
 
         /// <summary>
@@ -39,7 +41,7 @@ namespace BlinkStickDotNet.Usb
         /// <param name="buffer">The buffer.</param>
         public void GetFeature(byte[] buffer)
         {
-            hid.GetFeature(buffer);
+            RetryActionOnFail(RetriesOnFail, () => _hid.GetFeature(buffer));
         }
 
         /// <summary>
@@ -50,7 +52,7 @@ namespace BlinkStickDotNet.Usb
         /// <param name="count">The count.</param>
         public void GetFeature(byte[] buffer, int offset, int count)
         {
-            hid.GetFeature(buffer, offset, count);
+            RetryActionOnFail(RetriesOnFail, () => _hid.GetFeature(buffer, offset, count));
         }
 
         /// <summary>
@@ -59,7 +61,37 @@ namespace BlinkStickDotNet.Usb
         /// <param name="buffer">The buffer.</param>
         public void SetFeature(byte[] buffer)
         {
-            hid.SetFeature(buffer);
+            RetryActionOnFail(RetriesOnFail, () => _hid.SetFeature(buffer));
+        }
+
+        /// <summary>
+        /// Retries the action on fail.
+        /// </summary>
+        /// <param name="times">The times.</param>
+        /// <param name="action">The action.</param>
+        private static void RetryActionOnFail(uint times, Action action)
+        {
+            int i = 0;
+
+            while (true)
+            {
+                try
+                {
+                    action();
+                    break;
+                }
+                catch (Exception)
+                {
+                    if (i == times)
+                    {
+                        throw;
+                    }
+
+                    i++;
+
+                    Thread.Sleep(2);
+                }
+            }
         }
     }
 }

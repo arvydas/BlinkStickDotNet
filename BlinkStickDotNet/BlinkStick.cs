@@ -2,8 +2,8 @@ using BlinkStickDotNet.Animations;
 using BlinkStickDotNet.Meta;
 using BlinkStickDotNet.Usb;
 using System;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace BlinkStickDotNet
@@ -26,7 +26,7 @@ namespace BlinkStickDotNet
         private BlinkStickMetaData _meta;
 
         private AnimationState animationState = new AnimationState();
- 
+
         #region Events
 
         public event SendColorEventHandler SendColor;
@@ -407,52 +407,36 @@ namespace BlinkStickDotNet
         /// <param name="data">Data.</param>
         public bool GetInfoBlock(byte id, out byte[] data)
         {
-            if (id == 2 || id == 3)
-            {
-                data = new byte[33];
-                data[0] = id;
-
-                if (Connected)
-                {
-                    int attempt = 0;
-                    while (attempt < 5)
-                    {
-                        attempt++;
-                        try
-                        {
-                            _stream.GetFeature(data, 0, data.Length);
-                            break;
-                        }
-                        catch (System.IO.IOException e)
-                        {
-                            if (e.InnerException is System.ComponentModel.Win32Exception)
-                            {
-                                System.ComponentModel.Win32Exception win32Exception = e.InnerException as System.ComponentModel.Win32Exception;
-
-                                if (win32Exception != null && win32Exception.NativeErrorCode == 0)
-                                    return true;
-                            }
-
-                            if (attempt == 5)
-                                throw;
-
-                            if (!this.WaitThread(20))
-                                return false;
-                        }
-                    }
-
-                    return true;
-                }
-                else
-                {
-                    data = new byte[0];
-                    return false;
-                }
-            }
-            else
+            if (id != 2 && id != 3)
             {
                 throw new Exception("Invalid info block id");
             }
+
+            if (!Connected)
+            {
+                data = new byte[0];
+                return false;
+            }
+
+            data = new byte[33];
+            data[0] = id;
+
+            try
+            {
+                _stream.GetFeature(data, 0, data.Length);
+            }
+            catch (Win32Exception e)
+            {
+                //todo: why?
+                if (e.NativeErrorCode == 0)
+                {
+                    return true;
+                }
+
+                throw;
+            }
+
+            return true;
         }
         #endregion
 
