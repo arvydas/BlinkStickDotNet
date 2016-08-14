@@ -31,7 +31,9 @@ namespace BlinkStickDotNet.Usb
             _device = device;
             _monitor = monitor;
             _monitor.Disconnected += OnSomeDeviceDisconnected;
+            _monitor.Connected += OnSomeDeviceConnected; 
         }
+
 
         /// <summary>
         /// Called when some USB device is disconnected.
@@ -47,6 +49,24 @@ namespace BlinkStickDotNet.Usb
                 eventArgs.Device.SerialNumber == SerialNumber)
             {
                 this.Disconnect?.Invoke(sender, new DeviceModifiedArgs(this));
+            }
+        }
+
+        /// <summary>
+        /// Called when some USB device is connected.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="eventArgs">The event arguments.</param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void OnSomeDeviceConnected(object sender, DeviceModifiedArgs eventArgs)
+        {
+            if (eventArgs != null &&
+                eventArgs.Device.Manufacturer == Manufacturer &&
+                eventArgs.Device.ProductName == ProductName &&
+                eventArgs.Device.ProductVersion == ProductVersion &&
+                eventArgs.Device.SerialNumber == SerialNumber)
+            {
+                this.Reconnect?.Invoke(sender, new DeviceModifiedArgs(this));
             }
         }
 
@@ -95,9 +115,14 @@ namespace BlinkStickDotNet.Usb
         }
 
         /// <summary>
-        /// Occurs when the device disconnects.
+        /// Occurs when the device is disconnected.
         /// </summary>
         public event EventHandler<DeviceModifiedArgs> Disconnect;
+
+        /// <summary>
+        /// Occurs when the device is reconnected.
+        /// </summary>
+        public event EventHandler<DeviceModifiedArgs> Reconnect;
 
         /// <summary>
         /// Tries to make a connection to the HID device.

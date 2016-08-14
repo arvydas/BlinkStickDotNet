@@ -49,5 +49,10 @@ namespace BlinkStickDotNet.Usb
         /// Occurs when the device disconnects.
         /// </summary>
         event EventHandler<DeviceModifiedArgs> Disconnect;
+
+        /// <summary>
+        /// Occurs when the device is reconnected.
+        /// </summary>
+        event EventHandler<DeviceModifiedArgs> Reconnect;
     }
 }
