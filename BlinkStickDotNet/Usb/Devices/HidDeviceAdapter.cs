@@ -7,68 +7,31 @@ namespace BlinkStickDotNet.Usb
     /// Adapter for the HID device.
     /// </summary>
     /// <seealso cref="BlinkStickDotNet.Usb.IUsbDevice" />
-    public class HidDeviceAdapter : IUsbDevice
+    public class HidDeviceAdapter : IInternalUsbDevice
     {
         private HidDevice _device;
-        private UsbMonitor _monitor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HidDeviceAdapter"/> class.
         /// </summary>
         /// <param name="device">The device.</param>
-        public HidDeviceAdapter(HidDevice device, UsbMonitor monitor)
+        public HidDeviceAdapter(HidDevice device)
         {
             if (device == null)
             {
                 throw new ArgumentNullException(nameof(device));
             }
 
-            if(monitor == null)
-            {
-                throw new ArgumentNullException(nameof(monitor));
-            }
-
             _device = device;
-            _monitor = monitor;
-            _monitor.Disconnected += OnSomeDeviceDisconnected;
-            _monitor.Connected += OnSomeDeviceConnected; 
-        }
-
-
-        /// <summary>
-        /// Called when some USB device is disconnected.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="eventArgs">The event arguments.</param>
-        private void OnSomeDeviceDisconnected(object sender, DeviceModifiedArgs eventArgs)
-        {
-            if (eventArgs != null &&
-                eventArgs.Device.Manufacturer == Manufacturer &&
-                eventArgs.Device.ProductName == ProductName &&
-                eventArgs.Device.ProductVersion == ProductVersion &&
-                eventArgs.Device.SerialNumber == SerialNumber)
-            {
-                this.Disconnect?.Invoke(sender, new DeviceModifiedArgs(this));
-            }
         }
 
         /// <summary>
-        /// Called when some USB device is connected.
+        /// Gets a value indicating whether this instance is connected.
         /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="eventArgs">The event arguments.</param>
-        /// <exception cref="NotImplementedException"></exception>
-        private void OnSomeDeviceConnected(object sender, DeviceModifiedArgs eventArgs)
-        {
-            if (eventArgs != null &&
-                eventArgs.Device.Manufacturer == Manufacturer &&
-                eventArgs.Device.ProductName == ProductName &&
-                eventArgs.Device.ProductVersion == ProductVersion &&
-                eventArgs.Device.SerialNumber == SerialNumber)
-            {
-                this.Reconnect?.Invoke(sender, new DeviceModifiedArgs(this));
-            }
-        }
+        /// <value>
+        /// <c>true</c> if this instance is connected; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsConnected { get; private set; }
 
         /// <summary>
         /// Gets the manufacturer.
@@ -115,14 +78,65 @@ namespace BlinkStickDotNet.Usb
         }
 
         /// <summary>
+        /// Gets the vendor identifier.
+        /// </summary>
+        /// <value>
+        /// The vendor identifier.
+        /// </value>
+        public int VendorId
+        {
+            get { return this._device.VendorID; }
+        }
+
+        /// <summary>
+        /// Gets the product identifier.
+        /// </summary>
+        /// <value>
+        /// The product identifier.
+        /// </value>
+        public int ProductId
+        {
+            get { return this._device.ProductID; }
+        }
+
+        /// <summary>
+        /// Gets the path.
+        /// </summary>
+        /// <value>
+        /// The path.
+        /// </value>
+        public string Path
+        {
+            get { return this._device.DevicePath; }
+        }
+
+        /// <summary>
         /// Occurs when the device is disconnected.
         /// </summary>
         public event EventHandler<DeviceModifiedArgs> Disconnect;
 
         /// <summary>
+        /// Called when the device disconnects.
+        /// </summary>
+        void IInternalUsbDevice.OnDisconnect()
+        {
+            this.IsConnected = false; 
+            this.Disconnect?.Invoke(null, new DeviceModifiedArgs(this));
+        }
+
+        /// <summary>
         /// Occurs when the device is reconnected.
         /// </summary>
         public event EventHandler<DeviceModifiedArgs> Reconnect;
+
+        /// <summary>
+        /// Called when the device connects.
+        /// </summary>
+        void IInternalUsbDevice.OnConnect()
+        {
+            this.IsConnected = true;
+            this.Reconnect?.Invoke(null, new DeviceModifiedArgs(this));
+        }
 
         /// <summary>
         /// Tries to make a connection to the HID device.

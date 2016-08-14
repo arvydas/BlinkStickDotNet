@@ -10,6 +10,14 @@ namespace BlinkstickDotNet.Examples.Animation
     {
         public static void Main(string[] args)
         {
+            var colors = new Color[] { Color.Red, Color.Black, Color.Green, Color.Black, Color.Blue, Color.Black, Color.White, Color.Black };
+            var processor = new BlinkStickColorProcessor(BlinkStick.FindFirst(), 8);
+            processor.ProcessColors(colors);
+
+            var processor2 = new BlinkStickColorProcessor(BlinkStick.FindFirst(), 8);
+            var colors2 = processor2.GetCurrentColors();
+
+
             var blue = Color.Blue.Darken(0.6);
             var orange = Color.FromArgb(255, 75, 0);
             var green = Color.FromArgb(0, 70, 0);

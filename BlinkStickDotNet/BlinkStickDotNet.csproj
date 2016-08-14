@@ -58,11 +58,14 @@
     <Compile Include="ReceiveColorEventHandler.cs" />
     <Compile Include="SendColorEventArgs.cs" />
     <Compile Include="SendColorEventHandler.cs" />
+    <Compile Include="Usb\CentralUsbMonitor.cs" />
     <Compile Include="Usb\DeviceModifiedArgs.cs" />
-    <Compile Include="Usb\HidDeviceAdapter.cs" />
-    <Compile Include="Usb\HidStreamAdapter.cs" />
+    <Compile Include="Usb\Devices\HidDeviceAdapter.cs" />
+    <Compile Include="Usb\Devices\HidStreamAdapter.cs" />
+    <Compile Include="Usb\Devices\IInternalUsbDevice.cs" />
     <Compile Include="Usb\IUsbDevice.cs" />
     <Compile Include="Usb\IUsbStream.cs" />
+    <Compile Include="Usb\Devices\UsbDeviceEqualityComparer.cs" />
     <Compile Include="Usb\UsbMonitor.cs" />
   </ItemGroup>
   <ItemGroup>

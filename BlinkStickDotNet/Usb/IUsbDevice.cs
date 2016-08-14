@@ -8,6 +8,22 @@ namespace BlinkStickDotNet.Usb
     public interface IUsbDevice
     {
         /// <summary>
+        /// Gets the path.
+        /// </summary>
+        /// <value>
+        /// The path.
+        /// </value>
+        string Path { get; }
+
+        /// <summary>
+        /// Gets the vendor identifier.
+        /// </summary>
+        /// <value>
+        /// The vendor identifier.
+        /// </value>
+        int VendorId { get; }
+
+        /// <summary>
         /// Gets the manufacturer.
         /// </summary>
         /// <value>
@@ -40,6 +56,14 @@ namespace BlinkStickDotNet.Usb
         string SerialNumber { get;}
 
         /// <summary>
+        /// Gets the product identifier.
+        /// </summary>
+        /// <value>
+        /// The product identifier.
+        /// </value>
+        int ProductId { get; }
+
+        /// <summary>
         /// Tries to open the stream.
         /// </summary>
         /// <param name="stream">The stream.</param>
@@ -54,5 +78,13 @@ namespace BlinkStickDotNet.Usb
         /// Occurs when the device is reconnected.
         /// </summary>
         event EventHandler<DeviceModifiedArgs> Reconnect;
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is connected.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is connected; otherwise, <c>false</c>.
+        /// </value>
+        bool IsConnected { get; }
     }
 }

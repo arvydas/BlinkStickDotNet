@@ -52,14 +52,20 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="BlinkStickAnimationQueueIntegrationTests.cs" />
     <Compile Include="BlinkStickColorIntegrationTests.cs" />
     <Compile Include="BlinkStickIntegrationTests.cs" />
     <Compile Include="BlinkStickAnimationIntegrationTests.cs" />
     <Compile Include="MessageBox.cs" />
-    <Compile Include="UsbMonitorIntergrationTest.cs" />
+    <Compile Include="UsbDeviceIntegrationTests.cs" />
+    <Compile Include="UsbMonitorIntegrationTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BlinkStickDotNet.Animations\BlinkStickDotNet.Animations.csproj">
+      <Project>{8C08259B-8EA4-496B-9681-D095279A4248}</Project>
+      <Name>BlinkStickDotNet.Animations</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BlinkStickDotNet\BlinkStickDotNet.csproj">
       <Project>{7AAEBEBE-E38D-47B1-A04C-A055DCEB0757}</Project>
       <Name>BlinkStickDotNet</Name>

@@ -245,6 +245,14 @@ namespace BlinkStickDotNet
             set { SetMode(value.GetValueOrDefault()); }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether to ignore disconnect errors.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if disconnect errors should be ignored; otherwise, <c>false</c>.
+        /// </value>
+        public bool IgnoreDisconnectErrors { get; set; }
+
         #endregion
 
         #region Constructor/Destructor
@@ -426,7 +434,12 @@ namespace BlinkStickDotNet
                     return true;
                 }
 
-                throw;
+                if (!IgnoreDisconnectErrors)
+                {
+                    throw;
+                }
+
+                return false;
             }
 
             return true;
@@ -793,39 +806,51 @@ namespace BlinkStickDotNet
 
         private void SetFeature(byte[] buffer)
         {
-            try
+            if (Connected)
             {
-                _stream.SetFeature(buffer);
-            }
-            catch (System.IO.IOException e)
-            {
-                //why?
-                var inner = e.InnerException as Win32Exception;
-                if (inner?.NativeErrorCode == 0)
+                try
                 {
-                    return;
+                    _stream.SetFeature(buffer);
                 }
+                catch (System.IO.IOException e)
+                {
+                    //why?
+                    var inner = e.InnerException as Win32Exception;
+                    if (inner?.NativeErrorCode == 0)
+                    {
+                        return;
+                    }
 
-                throw;
+                    if (!IgnoreDisconnectErrors)
+                    {
+                        throw;
+                    }
+                }
             }
         }
 
         private void GetFeature(byte[] buffer)
         {
-            try
+            if (Connected)
             {
-                _stream.GetFeature(buffer);
-            }
-            catch (System.IO.IOException e)
-            {
-                //why?
-                var inner = e.InnerException as Win32Exception;
-                if (inner?.NativeErrorCode == 0)
+                try
                 {
-                    return;
+                    _stream.GetFeature(buffer);
                 }
+                catch (System.IO.IOException e)
+                {
+                    //why?
+                    var inner = e.InnerException as Win32Exception;
+                    if (inner?.NativeErrorCode == 0)
+                    {
+                        return;
+                    }
 
-                throw;
+                    if (!IgnoreDisconnectErrors)
+                    {
+                        throw;
+                    }
+                }
             }
         }
 

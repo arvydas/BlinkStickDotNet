@@ -10,7 +10,7 @@ namespace BlinkStickDotNet.IntegrationTests
     /// They are created for debugging purposes and should not be run in production.
     /// </summary>
     [TestClass]
-    public class UsbMonitorIntergrationTest
+    public class UsbMonitorIntegrationTest
     {
         [TestMethod]
         public void UsbMonitor_ConnectDeviceEvent_ConnectDetected()
@@ -121,7 +121,7 @@ namespace BlinkStickDotNet.IntegrationTests
 
             monitor.Start();
 
-            msg.Show("Please connect a BlinkStick device. If one is connected it, please reconnect.");
+            msg.Show("Please connect a BlinkStick device. If one is connected, please reconnect it.");
             finished.WaitOne(5000);
 
             Assert.IsNotNull(device, "No device detected.");

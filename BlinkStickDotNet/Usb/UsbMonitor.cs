@@ -1,5 +1,3 @@
-using HidSharp;
-using LibUsbDotNet.DeviceNotify;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,24 +9,18 @@ namespace BlinkStickDotNet.Usb
     /// </summary>
     public class UsbMonitor
     {
-        private int? _vendorId;
-        private int? _productId;
-
-        private List<IUsbDevice> _trackedDevices;
-        private IDeviceNotifier _usbDeviceNotifier;
+        private List<IUsbDevice> _trackedDevices = new List<IUsbDevice>();
+        Func<IUsbDevice, bool> _predicate;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UsbMonitor"/> class.
+        /// Initializes a new instance of the <see cref="UsbMonitor" /> class.
         /// </summary>
         /// <param name="vendorId">The vendor identifier.</param>
         /// <param name="productId">The product identifier.</param>
-        public UsbMonitor(int? vendorId = null, int? productId = null)
+        /// <param name="serial">The serial.</param>
+        public UsbMonitor(int? vendorId = null, int? productId = null, string serial = null)
         {
-            _vendorId = vendorId;
-            _productId = productId;
-
-            _usbDeviceNotifier = DeviceNotifier.OpenDeviceNotifier();
-
+            _predicate = CreateUsbSearchPredicate(vendorId, productId, serial);
             Start();
         }
 
@@ -48,9 +40,11 @@ namespace BlinkStickDotNet.Usb
         public event EventHandler UsbDevicesChanged;
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="BlinkStickDotNet.UsbMonitor"/> is monitoring.
+        /// Gets a value indicating whether this <see cref="UsbMonitor"/> is monitoring.
         /// </summary>
-        /// <value><c>true</c> if monitoring; otherwise, <c>false</c>.</value>
+        /// <value>
+        ///   <c>true</c> if monitoring; otherwise, <c>false</c>.
+        /// </value>
         public bool Monitoring
         {
             get;
@@ -63,7 +57,10 @@ namespace BlinkStickDotNet.Usb
         /// <param name="device">Device which has been connected.</param>
         protected void OnConnected(IUsbDevice device)
         {
-            Connected?.Invoke(this, new DeviceModifiedArgs(device));
+            var args = new DeviceModifiedArgs(device);
+
+            UsbDevicesChanged?.Invoke(this, args);
+            Connected?.Invoke(this, args);
         }
 
         /// <summary>
@@ -72,52 +69,10 @@ namespace BlinkStickDotNet.Usb
         /// <param name="device">Device which has been disconnected.</param>
         protected void OnDisconnected(IUsbDevice device)
         {
-            Disconnected?.Invoke(this, new DeviceModifiedArgs(device));
-        }
+            var args = new DeviceModifiedArgs(device);
 
-        /// <summary>
-        /// Raises the usb device changed event.
-        /// </summary>
-        protected void OnUsbDevicesChanged()
-        {
-            UsbDevicesChanged?.Invoke(this, new EventArgs());
-
-            var scannedDevices = GetDevices().ToList();
-
-            //signal disconnected devices
-            _trackedDevices
-                .Where(d => scannedDevices.FirstOrDefault(d2 => d2.SerialNumber == d.SerialNumber) == null)
-                .ToList()
-                .ForEach(d => OnDisconnected(d));
-
-            //signal newly connected devices
-            scannedDevices
-                .Where(d => this._trackedDevices.FirstOrDefault(d2 => d2.SerialNumber == d.SerialNumber) == null)
-                .ToList()
-                .ForEach(d => OnConnected(d));
-
-            //register devices to class
-            _trackedDevices = scannedDevices;
-        }
-
-        /// <summary>
-        /// Handles the device list change on Windows.
-        /// </summary>
-        /// <param name="sender">Sender object</param>
-        /// <param name="e">Event args</param>
-		private void HandleDeviceListChanged(object sender, EventArgs e)
-        {
-            OnUsbDevicesChanged();
-        }
-
-        /// <summary>
-        /// Handles device list change on Linux/Mac.
-        /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">E.</param>
-        private void OnDeviceNotifyEvent(object sender, DeviceNotifyEventArgs e)
-        {
-            OnUsbDevicesChanged();
+            UsbDevicesChanged?.Invoke(this, args);
+            Disconnected?.Invoke(this, args);
         }
 
         /// <summary>
@@ -125,30 +80,71 @@ namespace BlinkStickDotNet.Usb
         /// </summary>
 		public void Start()
         {
-            //Get the list of already connected devices
-            _trackedDevices = this.GetDevices().ToList();
-
-            if (_usbDeviceNotifier != null)
-            {
-                _usbDeviceNotifier.Enabled = true;
-                _usbDeviceNotifier.OnDeviceNotify += OnDeviceNotifyEvent;
-            }
-
             Monitoring = true;
+
+            CentralUsbMonitor.Instance.Updated += OnDevicesUpdate;
+
+            OnDevicesUpdate();
+        }
+
+        /// <summary>
+        /// Called when the devices are update.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="eventArgs">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private void OnDevicesUpdate(object sender = null, EventArgs eventArgs = null)
+        {
+            if (Monitoring)
+            {
+                var newDevices = CentralUsbMonitor.Instance.GetDevices()
+                    .Where(_predicate)
+                    .Except(_trackedDevices, UsbDeviceEquality.Comparer)
+                    .ToList();
+
+                newDevices.ForEach(d =>
+                {
+                    d.Disconnect += (s, e) => OnDisconnected(e.Device);
+                    d.Reconnect += (s, e) => OnConnected(e.Device);
+
+                    if (d.IsConnected)
+                    {
+                        OnConnected(d);
+                    }
+                    else
+                    {
+                        OnDisconnected(d);
+                    }
+                });
+
+                lock (_trackedDevices)
+                {
+                    if (Monitoring)
+                    {
+                        _trackedDevices.AddRange(newDevices);
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// Stop monitoring for added/removed devices.
         /// </summary>
-		public void Stop()
+        public void Stop()
         {
-            if (_usbDeviceNotifier != null)
-            {
-                _usbDeviceNotifier.Enabled = false;  // Disable the device notifier
-                _usbDeviceNotifier.OnDeviceNotify -= OnDeviceNotifyEvent;
-            }
-
             Monitoring = false;
+
+            CentralUsbMonitor.Instance.Updated -= OnDevicesUpdate;
+
+            lock (_trackedDevices)
+            {
+                _trackedDevices.ForEach(d =>
+                {
+                    d.Disconnect -= (s, e) => OnDisconnected(e.Device);
+                    d.Reconnect -= (s, e) => OnConnected(e.Device);
+                });
+
+                _trackedDevices.Clear();
+            }
         }
 
         /// <summary>
@@ -158,12 +154,7 @@ namespace BlinkStickDotNet.Usb
         /// <returns>The devices.</returns>
         public IEnumerable<IUsbDevice> GetDevices(string serial = null)
         {
-            var loader = new HidDeviceLoader();
-            var devices = loader
-                .GetDevices(_vendorId, _productId, serialNumber: serial)
-                .Select(d => new HidDeviceAdapter(d, this));
-
-            return devices;
+            return this._trackedDevices.Where(d => serial == null || d.SerialNumber == serial).ToList();
         }
 
         /// <summary>
@@ -175,7 +166,27 @@ namespace BlinkStickDotNet.Usb
         /// <returns>The devices.</returns>
         public static IEnumerable<IUsbDevice> GetAllDevices(int? vendorId = null, int? productId = null, string serial = null)
         {
-            return new UsbMonitor(vendorId, productId).GetDevices(serial);
+            var predicate = CreateUsbSearchPredicate(vendorId, productId, serial);
+            return CentralUsbMonitor.Instance.GetDevices().Where(predicate);
+        }
+
+        /// <summary>
+        /// Creates the UB search predicate.
+        /// </summary>
+        /// <param name="vendorId">The vendor identifier.</param>
+        /// <param name="productId">The product identifier.</param>
+        /// <param name="serial">The serial.</param>
+        /// <returns>The predicate.</returns>
+        private static Func<IUsbDevice, bool> CreateUsbSearchPredicate(int? vendorId, int? productId, string serial)
+        {
+            return (d) =>
+            {
+                return
+                    d != null &&
+                    (vendorId == null || d.VendorId == vendorId.Value) &&
+                    (productId == null || d.ProductId == productId.Value) &&
+                    (serial == null || d.SerialNumber == serial);
+            };
         }
 
         /// <summary>
@@ -185,7 +196,7 @@ namespace BlinkStickDotNet.Usb
         /// <param name="productId">The product identifier.</param>
         /// <param name="serial">The serial (optional).</param>
         /// <returns>A device or <c>null</c>.</returns>
-        public static IUsbDevice GetFirstDevice(int vendorId, int productId, string serial = null)
+        public static IUsbDevice GetFirstDevice(int? vendorId = null, int? productId = null, string serial = null)
         {
             return GetAllDevices(vendorId, productId, serial).FirstOrDefault();
         }

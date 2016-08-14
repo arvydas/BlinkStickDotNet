@@ -11,6 +11,7 @@ namespace BlinkStickDotNet.Animations
     public class BlinkStickColorProcessor : IBlinkStickColorProcessor
     {
         private BlinkStick _stick;
+        private Color[] _backup;
 
         /// <summary>
         /// Gets the nr of leds.
@@ -92,6 +93,7 @@ namespace BlinkStickDotNet.Animations
             }
 
             _stick.SetColors(0, bytes.ToArray());
+            _backup = colors;
         }
 
         /// <summary>
@@ -126,11 +128,22 @@ namespace BlinkStickDotNet.Animations
                 _stick.OpenDevice();
             }
 
-            var colors = new List<Color>();
-            byte[] bytes = new byte[194];
-
+            //stick disconnected - return backup
+            if(!_stick.Connected)
+            {
+                return _backup;
+            }
+            
+            byte[] bytes;
             _stick.GetColors(out bytes);
 
+            //colors not available - return backup
+            if(bytes.Length == 0)
+            {
+                return _backup;
+            }
+
+            var colors = new List<Color>();
             for (var i = 0; i < NrOfLeds; i++)
             {
                 //format: GRB - don't ask ;-)
