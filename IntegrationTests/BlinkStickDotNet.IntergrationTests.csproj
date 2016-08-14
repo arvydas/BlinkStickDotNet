@@ -6,8 +6,8 @@
     <ProjectGuid>{AF1EC3AC-B7B0-43F3-86CD-102541EF206B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BlinkStickDotNet.IntergrationTests</RootNamespace>
-    <AssemblyName>BlinkStickDotNet.IntergrationTests</AssemblyName>
+    <RootNamespace>BlinkStickDotNet.IntegrationTests</RootNamespace>
+    <AssemblyName>BlinkStickDotNet.IntegrationTests</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="BlinkStickColorIntegrationTests.cs" />
     <Compile Include="BlinkStickIntegrationTests.cs" />
+    <Compile Include="BlinkStickAnimationIntegrationTests.cs" />
     <Compile Include="MessageBox.cs" />
     <Compile Include="UsbMonitorIntergrationTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
