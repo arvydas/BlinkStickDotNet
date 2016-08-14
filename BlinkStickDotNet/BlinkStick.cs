@@ -18,7 +18,6 @@ namespace BlinkStickDotNet
         public const int VendorId = 0x20A0;
         public const int ProductId = 0x41E5;
 
-        private int? _mode;
         private bool _disposed = false;
 
         private IUsbDevice _device;
@@ -237,29 +236,15 @@ namespace BlinkStickDotNet
         public int SetColorDelay { get; set; }
 
         /// <summary>
-        /// Gets or sets the mode of BlinkStick device.
+        /// Gets or sets the mode of BlinkStick device. 0 - Normal, 1 - Inverse, 2 - WS2812, 3 - WS2812 mirror.
         /// </summary>
-        /// <value>The mode to set or get.</value>
-        public int Mode
+        /// <value>The mode.</value>
+        public byte? Mode
         {
-            get
-            {
-                if (_mode == null)
-                {
-                    _mode = GetMode();
-                }
-
-                return _mode.GetValueOrDefault();
-            }
-            set
-            {
-                if (_mode != value)
-                {
-                    _mode = value;
-                    SetMode((byte)_mode);
-                }
-            }
+            get { return GetMode(); }
+            set { SetMode(value.GetValueOrDefault()); }
         }
+
         #endregion
 
         #region Constructor/Destructor
@@ -710,7 +695,7 @@ namespace BlinkStickDotNet
         /// Gets the mode on BlinkStick Pro.
         /// </summary>
         /// <param name="mode">0 - Normal, 1 - Inverse, 2 - WS2812, 3 - WS2812 mirror</param>
-        public int GetMode()
+        public byte? GetMode()
         {
             if (Connected)
             {
@@ -720,7 +705,7 @@ namespace BlinkStickDotNet
                 return data[1];
             }
 
-            return -1;
+            return null;
         }
 
         #endregion
