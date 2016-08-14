@@ -336,7 +336,7 @@ namespace BlinkStickDotNet
         /// </summary>
         public void CloseDevice()
         {
-            _stream.Close();
+            _stream?.Close();
             _stream = null;
             _device = null;
             _meta = null;
@@ -347,41 +347,43 @@ namespace BlinkStickDotNet
 
         internal void SetInfoBlock(byte id, byte[] data)
         {
-            if (id == 2 || id == 3)
-            {
-                if (data.Length > 32)
-                {
-                    Array.Resize(ref data, 32);
-                }
-                else if (data.Length < 32)
-                {
-                    int size = data.Length;
-
-                    Array.Resize(ref data, 32);
-
-                    //pad with zeros
-                    for (int i = size; i < 32; i++)
-                    {
-                        data[i] = 0;
-                    }
-                }
-
-                Array.Resize(ref data, 33);
-
-
-                for (int i = 32; i > 0; i--)
-                {
-                    data[i] = data[i - 1];
-                }
-
-                data[0] = id;
-
-                SetFeature(data);
-            }
-            else
+            if (id != 2 && id != 3)
             {
                 throw new Exception("Invalid info block id");
             }
+
+            if (!Connected)
+            {
+                return;
+            }
+
+            if (data.Length > 32)
+            {
+                Array.Resize(ref data, 32);
+            }
+            else if (data.Length < 32)
+            {
+                int size = data.Length;
+
+                Array.Resize(ref data, 32);
+
+                //pad with zeros
+                for (int i = size; i < 32; i++)
+                {
+                    data[i] = 0;
+                }
+            }
+
+            Array.Resize(ref data, 33);
+
+            for (int i = 32; i > 0; i--)
+            {
+                data[i] = data[i - 1];
+            }
+
+            data[0] = id;
+
+            SetFeature(data);
         }
 
         /// <summary>
