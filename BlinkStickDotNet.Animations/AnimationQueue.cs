@@ -3,13 +3,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Threading;
 
 namespace BlinkStickDotNet.Animations
 {
     /// <summary>
     /// Queueu that store the animation. When the queue is started a thread will perform the animation.
+    /// Your current thread will not be bothered.
     /// </summary>
     /// <seealso cref="System.IDisposable" />
     public class AnimationQueue : IAnimationQueue, IDisposable
