@@ -10,7 +10,6 @@ namespace BlinkStickDotNet.Animations
     /// <seealso cref="BlinkStickDotNet.Animations.IBlinkStickColorProcessor" />
     public class BlinkStickColorProcessor : IBlinkStickColorProcessor
     {
-        private Color[] _currentColors;
         private BlinkStick _stick;
 
         /// <summary>
@@ -28,6 +27,11 @@ namespace BlinkStickDotNet.Animations
         /// <param name="nrOfLeds">The nr of leds.</param>
         public BlinkStickColorProcessor(BlinkStick stick, uint nrOfLeds = 1)
         {
+            if (stick == null)
+            {
+                throw new ArgumentNullException(nameof(stick));
+            }
+
             _stick = stick;
 
             NrOfLeds = nrOfLeds;
@@ -44,6 +48,8 @@ namespace BlinkStickDotNet.Animations
         public void Off()
         {
             ProcessColors(Color.Black);
+
+            _stick.CloseDevice();
         }
 
         /// <summary>
@@ -64,6 +70,11 @@ namespace BlinkStickDotNet.Animations
         /// </example>
         public void ProcessColors(int offset, Color[] colors)
         {
+            if (!_stick.Connected)
+            {
+                _stick.OpenDevice();
+            }
+
             var currentColors = new List<Color>();
             var bytes = new List<byte>();
 
@@ -81,7 +92,6 @@ namespace BlinkStickDotNet.Animations
             }
 
             _stick.SetColors(0, bytes.ToArray());
-            _currentColors = currentColors.ToArray();
         }
 
         /// <summary>
@@ -111,26 +121,27 @@ namespace BlinkStickDotNet.Animations
         /// </returns>
         public Color[] GetCurrentColors()
         {
-            if(_currentColors == null || _currentColors.Length == 0)
+            if (!_stick.Connected)
             {
-                var colors = new List<Color>();
-                var bytes = new byte[3 * NrOfLeds];
-                this._stick.GetColors(out bytes);
-
-                for(var i = 0;i< NrOfLeds; i++)
-                {
-                    //format: GRB - don't ask ;-)
-                    var g = bytes[i + 0];
-                    var r = bytes[i + 1];
-                    var b = bytes[i + 2];
-
-                    colors.Add(Color.FromArgb(r, g, b)); 
-                }
-
-                return colors.ToArray();
+                _stick.OpenDevice();
             }
 
-            return _currentColors;
+            var colors = new List<Color>();
+            byte[] bytes = new byte[194];
+
+            _stick.GetColors(out bytes);
+
+            for (var i = 0; i < NrOfLeds; i++)
+            {
+                //format: GRB - don't ask ;-)
+                byte g = bytes[i * 3 + 0];
+                byte r = bytes[i * 3 + 1];
+                byte b = bytes[i * 3 + 2];
+
+                colors.Add(Color.FromArgb(r, g, b));
+            }
+
+            return colors.ToArray();
         }
     }
 }
