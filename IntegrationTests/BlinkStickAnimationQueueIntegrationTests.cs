@@ -110,6 +110,7 @@ namespace BlinkStickDotNet.IntegrationTests
             stick.TurnOff();
         }
 
+
         [TestMethod]
         public void AnimationQueue_Chase()
         {
@@ -120,7 +121,7 @@ namespace BlinkStickDotNet.IntegrationTests
 
             var q = new AnimationQueue();
             q.Chase(1000, Color.Blue.PadBlack(8));
-            q.Repeat(7);
+            q.Repeat(4);
             q.Queue(new ActionAnimation(() =>
             {
                 finished.Set();

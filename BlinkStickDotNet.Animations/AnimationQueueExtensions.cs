@@ -23,7 +23,8 @@ namespace BlinkStickDotNet.Animations
             if (queue == null)
                 throw new ArgumentNullException(nameof(queue));
 
-            var animation = new PulseAnimation(duration, colors);
+            var animation = new ActionAnimation((p) => Parallel.Animations.Pulse(p, (uint)duration, colors));
+
             queue.Queue(animation);
         }
 
@@ -32,7 +33,8 @@ namespace BlinkStickDotNet.Animations
             if (queue == null)
                 throw new ArgumentNullException(nameof(queue));
 
-            var animation = new PulseInvertedAnimation(duration, colors);
+            var animation = new ActionAnimation((p) => Parallel.Animations.PulseInverted(p, (uint)duration, colors));
+
             queue.Queue(animation);
         }
 
@@ -47,7 +49,9 @@ namespace BlinkStickDotNet.Animations
             if (queue == null)
                 throw new ArgumentNullException(nameof(queue));
 
-            var animation = new DimAnimation(duration, fractionPercentage);
+
+            var animation = new ActionAnimation((p) => Parallel.Animations.Darken(p, (uint)duration, fractionPercentage));
+
             queue.Queue(animation);
         }
 
@@ -62,7 +66,13 @@ namespace BlinkStickDotNet.Animations
             if (queue == null)
                 throw new ArgumentNullException(nameof(queue));
 
-            var animation = new ChaseAnimation(duration, colors);
+            var animation = new ActionAnimation((p) =>
+            {
+                Parallel.Animations.Morph(p, 1, colors);
+                Parallel.Animations.Chase(p, (uint)duration);
+                Parallel.Animations.Chase(p, (uint)duration, -1);
+            });
+
             queue.Queue(animation);
         }
 
@@ -120,7 +130,9 @@ namespace BlinkStickDotNet.Animations
             if (queue == null)
                 throw new ArgumentNullException(nameof(queue));
 
-            var animation = new MorphAnimation(duration, colors);
+            //var animation = new MorphAnimation(duration, colors);
+
+            var animation = new ActionAnimation((p) => Parallel.Animations.Morph(p, (uint)duration, colors));
             queue.Queue(animation);
         }
 

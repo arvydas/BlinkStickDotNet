@@ -40,20 +40,19 @@
     <Compile Include="AnimationQueue.cs" />
     <Compile Include="AnimationQueueExtensions.cs" />
     <Compile Include="IAnimationQueue.cs" />
-    <Compile Include="Implementations\BrightenAnimation.cs" />
-    <Compile Include="Implementations\ChaseAnimation.cs" />
+    <Compile Include="Implementations\ActionAnimation.cs" />
     <Compile Include="Implementations\ChaseDimmerAnimation.cs" />
-    <Compile Include="Implementations\DimAnimation.cs" />
     <Compile Include="IAnimation.cs" />
     <Compile Include="Implementations\LoopAnimation.cs" />
-    <Compile Include="Implementations\MorphAnimation.cs" />
-    <Compile Include="Implementations\PulseInvertedAnimation.cs" />
-    <Compile Include="Implementations\PulseAnimation.cs" />
     <Compile Include="Implementations\ColorPattern.cs" />
     <Compile Include="Implementations\Wait.cs" />
     <Compile Include="BlinkStickColorProcessor.cs" />
     <Compile Include="Colors\SystemColorExtensions.cs" />
     <Compile Include="IBlinkStickColorProcessor.cs" />
+    <Compile Include="ParallelAnimation.cs" />
+    <Compile Include="Parallel\Animations.cs" />
+    <Compile Include="Parallel\IParallelProcessor.cs" />
+    <Compile Include="Parallel\Led.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
