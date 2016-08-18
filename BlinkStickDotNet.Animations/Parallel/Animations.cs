@@ -21,7 +21,6 @@ namespace BlinkStickDotNet.Animations.Parallel
                     var led = processor.Leds[i];
 
                     int l = (int)(led.LedNr + direction + total) % processor.Leds.Length;
-
                     led.LedNr = (uint)l;
                 }
 

@@ -121,7 +121,9 @@ namespace BlinkStickDotNet.IntegrationTests
 
             var q = new AnimationQueue();
             q.Chase(1000, Color.Blue.PadBlack(8));
-            q.Repeat(4);
+            q.Repeat(2);
+            q.Chase(1000, -1, Color.Blue.PadBlack(8));
+            q.Repeat(2);
             q.Queue(new ActionAnimation(() =>
             {
                 finished.Set();
