@@ -26,7 +26,7 @@ namespace BlinkStickDotNet.Animations
         /// </summary>
         /// <param name="stick">The stick.</param>
         /// <param name="nrOfLeds">The nr of leds.</param>
-        public Animator(BlinkStick stick = null, uint nrOfLeds = 1) : base(null)
+        public Animator(BlinkStick stick = null, uint? nrOfLeds = null) : base(null)
         {
             if (stick != null)
             {
@@ -137,14 +137,17 @@ namespace BlinkStickDotNet.Animations
         /// </summary>
         /// <param name="stick">The stick.</param>
         /// <param name="nrOfLeds">The nr of leds.</param>
-        public void Connect(BlinkStick stick, uint nrOfLeds = 1)
+        public void Connect(BlinkStick stick, uint? nrOfLeds = null)
         {
             if (stick == null)
             {
                 throw new ArgumentNullException(nameof(stick));
             }
 
-            _processor = new ColorProcessor(stick, nrOfLeds);
+            stick.OpenDevice();
+
+            var leds = nrOfLeds.GetValueOrDefault((uint)stick.GetLedCount());
+            _processor = new ColorProcessor(stick, leds);
             _processor.ChangeColor += (sender, args) =>
             {
                 this.ChangeColor?.Invoke(this, args);

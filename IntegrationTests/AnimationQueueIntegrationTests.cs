@@ -98,7 +98,7 @@ namespace BlinkStickDotNet.IntegrationTests
                 finished.Set();
             }));
 
-            q.Connect(stick, 8);
+            q.Connect(stick);
             q.Start();
 
             finished.WaitOne();
