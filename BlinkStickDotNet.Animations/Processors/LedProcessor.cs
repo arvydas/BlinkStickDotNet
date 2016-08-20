@@ -2,12 +2,19 @@
 
 namespace BlinkStickDotNet.Animations.Processors
 {
+    /// <summary>
+    /// Implements a led processor for a single stick.
+    /// </summary>
+    /// <seealso cref="BlinkStickDotNet.Animations.Processors.ILedProcessor" />
     public class LedProcessor : ILedProcessor
     {
         private readonly object _syncRoot = new object();
+        private IColorProcessor _stick;
 
-        IColorProcessor _stick;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LedProcessor"/> class.
+        /// </summary>
+        /// <param name="stick">The stick.</param>
         public LedProcessor(IColorProcessor stick)
         {
             _stick = stick;
@@ -28,8 +35,14 @@ namespace BlinkStickDotNet.Animations.Processors
         /// <value>
         /// The synchronize root.
         /// </value>
-        public object SyncRoot { get { return _syncRoot; } } 
+        public object SyncRoot { get { return _syncRoot; } }
 
+        /// <summary>
+        /// Gets the leds.
+        /// </summary>
+        /// <value>
+        /// The leds.
+        /// </value>
         public Led[] Leds
         {
             get;

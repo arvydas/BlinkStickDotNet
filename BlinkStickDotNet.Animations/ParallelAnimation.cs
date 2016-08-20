@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace BlinkStickDotNet.Animations.Implementations
 {
+    /// <summary>
+    /// This animation queue will run its animations parallel.
+    /// </summary>
     public class ParallelAnimation : AnimationQueueBase, IAnimation
     {
         /// <summary>

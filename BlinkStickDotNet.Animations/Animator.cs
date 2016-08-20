@@ -136,4 +136,9 @@ namespace BlinkStickDotNet.Animations
             Stop();
         }
     }
+
+    [Obsolete("Please use BlinkStickDotNet.Animations.Animator")]
+    public class AnimationQueue : Animator
+    {
+    }
 }

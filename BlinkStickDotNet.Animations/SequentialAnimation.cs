@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using BlinkStickDotNet.Animations.Processors;
+﻿using BlinkStickDotNet.Animations.Processors;
 
-namespace BlinkStickDotNet.Animations.Implementations
+namespace BlinkStickDotNet.Animations
 {
     /// <summary>
-    /// Creates a sequence of animations that is executed.
+    /// This animation queue will run its animations sequential.
     /// </summary>
     public class SequentialAnimation : AnimationQueueBase, IAnimation
     {

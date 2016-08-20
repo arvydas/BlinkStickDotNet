@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BlinkStickDotNet.Animations.Implementations
+namespace BlinkStickDotNet.Animations
 {
     /// <summary>
     /// Base class for building animation queues.
