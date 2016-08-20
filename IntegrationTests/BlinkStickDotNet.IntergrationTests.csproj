@@ -52,11 +52,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="BlinkStickAnimationQueueDisconnectIntegrationTests.cs" />
-    <Compile Include="BlinkStickAnimationQueueIntegrationTests.cs" />
+    <Compile Include="AnimationQueueDisconnectIntegrationTests.cs" />
+    <Compile Include="AnimationQueueIntegrationTests.cs" />
     <Compile Include="BlinkStickColorIntegrationTests.cs" />
     <Compile Include="BlinkStickIntegrationTests.cs" />
-    <Compile Include="BlinkStickAnimationIntegrationTests.cs" />
+    <Compile Include="AnimationIntegrationTests.cs" />
     <Compile Include="MessageBox.cs" />
     <Compile Include="UsbDeviceIntegrationTests.cs" />
     <Compile Include="UsbMonitorIntegrationTest.cs" />

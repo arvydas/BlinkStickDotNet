@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace BlinkStickDotNet.Animations
+namespace BlinkStickDotNet.Animations.Processors
 {
     /// <summary>
     /// Wraps the BlinkStick into a color processor.
     /// </summary>
-    /// <seealso cref="BlinkStickDotNet.Animations.IBlinkStickColorProcessor" />
-    public class BlinkStickColorProcessor : IBlinkStickColorProcessor
+    public class ColorProcessor : IColorProcessor
     {
         private BlinkStick _stick;
         private Color[] _backup;
@@ -22,11 +21,11 @@ namespace BlinkStickDotNet.Animations
         public uint NrOfLeds { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BlinkStickColorProcessor" /> class.
+        /// Initializes a new instance of the <see cref="ColorProcessor" /> class.
         /// </summary>
         /// <param name="stick">The stick.</param>
         /// <param name="nrOfLeds">The nr of leds.</param>
-        public BlinkStickColorProcessor(BlinkStick stick, uint nrOfLeds = 1)
+        public ColorProcessor(BlinkStick stick, uint nrOfLeds = 1)
         {
             if (stick == null)
             {

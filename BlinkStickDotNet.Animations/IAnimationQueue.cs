@@ -1,44 +1,55 @@
-﻿using System.Collections.Generic;
-
-namespace BlinkStickDotNet.Animations
+﻿namespace BlinkStickDotNet.Animations
 {
-    public interface IAnimationQueue : IEnumerable<IAnimation>
+    /// <summary>
+    /// Indicates the object implements a queue with animations.
+    /// </summary>
+    public interface IAnimationQueue
     {
-        /// <summary>
-        /// Gets a value indicating whether this instance is running.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is running; otherwise, <c>false</c>.
-        /// </value>
-        bool IsRunning { get; }
-
         /// <summary>
         /// Queues the specified animation.
         /// </summary>
         /// <param name="animation">The animation.</param>
-        void Queue(IAnimation animation);
-        
-        /// <summary>
-        /// Connects the specified stick.
-        /// </summary>
-        /// <param name="stick">The stick.</param>
-        /// <param name="nrOfLeds">The nr of leds.</param>
-        void Connect(BlinkStick stick, uint nrOfLeds);
+        /// <returns>Queue for chaining.</returns>
+        IAnimationQueue Queue(IAnimation animation);
 
         /// <summary>
-        /// Clears this instance.
+        /// Begins a parallel chain.
         /// </summary>
-        void Clear();
+        /// <returns>The parallel queue for chaining.</returns>
+        IAnimationQueue BeginParallel();
 
         /// <summary>
-        /// Starts the animation.
+        /// Begins a sequencial chain.
         /// </summary>
-        void Start();
+        /// <returns>The sequencial queue for chaining.</returns>
+        IAnimationQueue BeginSequencial();
 
         /// <summary>
-        /// Stops this instance.
+        /// Returns the owner animation queue.
         /// </summary>
-        /// <param name="turnOff">if set to <c>true</c> if the stick should be turned off.</param>
-        void Stop(bool turnOff = false);
+        /// <returns>The owner queue for chaining.</returns>
+        IAnimationQueue End();
+
+        /// <summary>
+        /// Pops the specified nr of items.
+        /// </summary>
+        /// <param name="nrOfItems">The nr of items.</param>
+        /// <returns>Queue for chaining.</returns>
+        IAnimationQueue Pop(uint nrOfItems = 1);
+
+        /// Queues one or more repeats of the last animation.
+        /// </summary>
+        /// <param name="nrOfTimes">The nr of times.</param>
+        /// <returns>Queue for chaining.</returns>
+        IAnimationQueue Repeat(uint nrOfTimes = 1);
+
+        /// <summary>
+        /// Queues a repeat of the current queue.
+        /// </summary>
+        /// <param name="nrOfTimes">The nr of times.</param>
+        /// <returns>
+        /// Queue for chaining.
+        /// </returns>
+        IAnimationQueue RepeatAll(uint nrOfTimes = 1);
     }
 }

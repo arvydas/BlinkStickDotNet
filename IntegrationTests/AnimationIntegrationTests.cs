@@ -7,7 +7,7 @@ namespace BlinkStickDotNet.IntegrationTests
     /// so they can be tested synchronously.
     /// </summary>
     [TestClass]
-    public class BlinkStickAnimationIntegrationTests
+    public class AnimationIntegrationTests
     {
         [TestMethod]
         public void BlinkStick_Animation_BlinkRed5Times()

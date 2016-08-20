@@ -1,63 +1,51 @@
-﻿using BlinkStickDotNet.Animations.Parallel;
+﻿using BlinkStickDotNet.Animations.Processors;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace BlinkStickDotNet.Animations.Implementations
 {
+    /// <summary>
+    /// Wraps an action for a parallel processor.
+    /// </summary>
     public class ActionAnimation : IAnimation
     {
-        Action<IParallelProcessor> _action;
+        Action<ILedProcessor> _action;
 
-        public ActionAnimation(Action<IParallelProcessor> action)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ActionAnimation"/> class.
+        /// </summary>
+        /// <param name="action">The action.</param>
+        public ActionAnimation(Action<ILedProcessor> action)
         {
             _action = action;
         }
 
+        /// <summary>
+        /// Starts the animation.
+        /// </summary>
+        /// <param name="processor">The processor.</param>
+        public void Start(IColorProcessor processor)
+        {
+            Start(new LedProcessor(processor));
+        }
+
+        /// <summary>
+        /// Starts the animation.
+        /// </summary>
+        /// <param name="processor">The processor.</param>
+        public void Start(ILedProcessor processor)
+        {
+            _action(processor);
+        }
+
+        /// <summary>
+        /// Clones this instance.
+        /// </summary>
+        /// <returns>
+        /// The clone.
+        /// </returns>
         public IAnimation Clone()
         {
             return new ActionAnimation(_action);
-        }
-
-        public void Start(IBlinkStickColorProcessor processor)
-        {
-            _action(new Processor(processor));
-        }
-
-        class Processor : IParallelProcessor
-        {
-            IBlinkStickColorProcessor _stick;
-
-            public Processor(IBlinkStickColorProcessor stick)
-            {
-                _stick = stick;
-
-                uint i = 0;
-
-                this.Leds = stick
-                    .GetCurrentColors()
-                    .CloneArray((int)_stick.NrOfLeds)
-                    .Select(c => new Led(i++, c))
-                    .ToArray();
-
-            }
-
-            public Led[] Leds
-            {
-                get;
-                private set;
-            }
-
-            public void Process()
-            {
-                var colors = this.Leds
-                    .OrderBy(l => l.LedNr)
-                    .Select(l => l.Color)
-                    .ToArray();
-
-                _stick.ProcessColors(colors);
-            }
         }
     }
 }

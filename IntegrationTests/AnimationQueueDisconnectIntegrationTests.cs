@@ -8,12 +8,12 @@ using System.Threading;
 namespace BlinkStickDotNet.IntegrationTests
 {
     [TestClass]
-    public class BlinkStickAnimationQueueDisconnectIntegrationTests
+    public class AnimationQueueDisconnectIntegrationTests
     {
         [TestMethod]
         public void AnimationQueue_InfiniteLoop_Disconnect()
         {
-            AnimationQueue q = null;
+            Animator q = null;
 
             try
             {
@@ -31,7 +31,7 @@ namespace BlinkStickDotNet.IntegrationTests
                 stick.IgnoreDisconnectErrors = true;
 
                 //create queue
-                q = new AnimationQueue(stick);
+                q = new Animator(stick);
                 q.Color(1, Color.Red);
                 q.Morph(1000, Color.Green);
                 q.Morph(1000, Color.Blue);
