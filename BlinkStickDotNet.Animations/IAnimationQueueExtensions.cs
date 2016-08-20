@@ -395,9 +395,24 @@ namespace BlinkStickDotNet.Animations
             return queue.ChaseDimmer(duration, 1, colors);
         }
 
+        /// <summary>
+        /// Queues a Set on an event wait handle.
+        /// </summary>
+        /// <param name="queue">The queue.</param>
+        /// <param name="handle">The handle.</param>
+        /// <returns>The queue for chaining.</returns>
         public static IAnimationQueue Set(this IAnimationQueue queue, EventWaitHandle handle)
         {
             return queue.Queue(new SetEventWaitHandle(handle));
+        }
+
+        /// <summary>
+        /// Queues a loop.
+        /// </summary>
+        /// <param name="queue">The queue.</param>
+        public static void Loop(this IAnimationQueue queue)
+        {
+            queue.Queue(new LoopAnimation());
         }
     }
 }

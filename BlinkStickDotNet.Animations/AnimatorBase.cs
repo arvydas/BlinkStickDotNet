@@ -67,6 +67,9 @@ namespace BlinkStickDotNet.Animations
         /// <returns>Queue for chaining.</returns>
         public virtual IAnimationQueue Queue(IAnimation animation)
         {
+            if (animation is LoopAnimation && Animations.FirstOrDefault() == null)
+                throw new Exception("Can't loop. No animations queued.");
+
             this.Animations.Add(animation);
             return this;
         }
@@ -124,17 +127,6 @@ namespace BlinkStickDotNet.Animations
             }
 
             return this;
-        }
-
-        /// <summary>
-        /// Loops the queue.
-        /// </summary>
-        public void Loop()
-        {
-            if (Animations.FirstOrDefault() == null)
-                throw new Exception("Can't loop. No animations queued.");
-
-            Queue(new LoopAnimation());
         }
     }
 }

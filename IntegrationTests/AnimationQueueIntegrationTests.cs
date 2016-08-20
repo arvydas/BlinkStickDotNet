@@ -36,11 +36,10 @@ namespace BlinkStickDotNet.IntegrationTests
 
             using (var animator = new Animator(stick))
             {
-                var a2 = animator.BeginSequencial() as SequentialAnimation;
-
-                a2.Morph(1000, Color.Blue);
-                a2.Morph(1000, Color.Red);
-                a2.Loop();
+                animator.BeginSequencial()
+                    .Morph(1000, Color.Blue)
+                    .Morph(1000, Color.Red)
+                    .Loop();
 
                 animator.Start();
 
@@ -48,7 +47,6 @@ namespace BlinkStickDotNet.IntegrationTests
                 animator.Stop(true);
             }
         }
-
 
         [TestMethod]
         public void AnimationQueue_Morph()

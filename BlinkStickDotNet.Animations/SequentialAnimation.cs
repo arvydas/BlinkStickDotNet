@@ -9,6 +9,8 @@ namespace BlinkStickDotNet.Animations
     /// </summary>
     public class SequentialAnimation : AnimatorBase, IAnimation
     {
+        private bool loopHasBeenQueued = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SequentialAnimation"/> class.
         /// </summary>
@@ -36,7 +38,11 @@ namespace BlinkStickDotNet.Animations
             {
                 if(animation is LoopAnimation)
                 {
-                    Owner?.Queue(animation);
+                    if (!loopHasBeenQueued)
+                    {
+                        loopHasBeenQueued = true;
+                        Owner?.Queue(animation);
+                    }
                     break;
                 }
 
@@ -54,7 +60,12 @@ namespace BlinkStickDotNet.Animations
             {
                 if (animation is LoopAnimation)
                 {
-                    Owner?.Queue(animation);
+                    if (!loopHasBeenQueued)
+                    {
+                        loopHasBeenQueued = true;
+                        Owner?.Queue(animation);
+                    }
+
                     break;
                 }
 
