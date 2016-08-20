@@ -7,14 +7,26 @@ namespace BlinkStickDotNet.IntegrationTests
     [TestClass]
     public class BlinkStickIntegrationTests
     {
+        [TestMethod]
+        public void BlinkStick_LedCount()
+        {
+            using (var stick = EnsureBlinkStick())
+            {
+                stick.OpenDevice();
+                Assert.IsTrue(stick.GetLedCount() > 0);
+            }
+        }
+
         /// <summary>
         /// Tests finding the first connected BlinkStick.
         /// </summary>
         [TestMethod]
         public void BlinkStick_FindFirst()
         {
-            var stick = EnsureBlinkStick();
-            Assert.IsNotNull(stick, "No BlinkStick device found.");
+            using (var stick = EnsureBlinkStick())
+            {
+                Assert.IsNotNull(stick, "No BlinkStick device found.");
+            }
         }
 
         /// <summary>
@@ -23,12 +35,11 @@ namespace BlinkStickDotNet.IntegrationTests
         [TestMethod]
         public void BlinkStick_OpenDevice_Empty()
         {
-            EnsureDevice();
-
-            var stick = new BlinkStick();
-            stick.OpenDevice();
-
-            Assert.IsTrue(stick.Connected, "Stick is not connected.");
+            using (var stick = EnsureBlinkStick())
+            {
+                stick.OpenDevice();
+                Assert.IsTrue(stick.Connected, "Stick is not connected.");
+            }
         }
 
         /// <summary>

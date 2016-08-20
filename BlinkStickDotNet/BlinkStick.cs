@@ -732,6 +732,17 @@ namespace BlinkStickDotNet
         {
             if (Connected)
             {
+                switch (Meta.BlinkStickDevice)
+                {
+                    case BlinkStickDeviceEnum.BlinkStick:
+                        return 1;
+                    case BlinkStickDeviceEnum.BlinkStickNano:
+                        return 2;
+                    case BlinkStickDeviceEnum.BlinkStickStrip:
+                    case BlinkStickDeviceEnum.BlinkStickSquare:
+                        return 8;
+                }
+
                 byte[] data = new byte[2];
                 data[0] = 0x81;
                 _stream.GetFeature(data, 0, data.Length);
