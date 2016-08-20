@@ -13,6 +13,11 @@ namespace BlinkStickDotNet.Animations.Processors
         private Color[] _backup;
 
         /// <summary>
+        /// Occurs when the color is changed.
+        /// </summary>
+        public event EventHandler<ChangeColorEventArgs> ChangeColor;
+
+        /// <summary>
         /// Gets the nr of leds.
         /// </summary>
         /// <value>
@@ -68,7 +73,7 @@ namespace BlinkStickDotNet.Animations.Processors
         /// If there is 2 given colors, 2 leds and offset 1, the following will happen:
         /// Led0 = Color1
         /// </example>
-        public void ProcessColors(int offset, Color[] colors)
+        public void ProcessColors(uint offset, Color[] colors)
         {
             if (!_stick.Connected)
             {
@@ -93,6 +98,8 @@ namespace BlinkStickDotNet.Animations.Processors
 
             _stick.SetColors(0, bytes.ToArray());
             _backup = colors;
+
+            ChangeColor?.Invoke(this, new Processors.ChangeColorEventArgs(colors, offset));
         }
 
         /// <summary>

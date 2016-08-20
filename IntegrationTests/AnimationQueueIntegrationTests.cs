@@ -10,6 +10,38 @@ namespace BlinkStickDotNet.IntegrationTests
     public class AnimationQueueIntegrationTests
     {
         [TestMethod]
+        public void AnimationQueue_ChangeColorEvent()
+        {
+            var finished = new ManualResetEvent(false);
+            var stick = BlinkStickIntegrationTests.EnsureBlinkStick();
+
+            Color lastColor = Color.Black;
+
+            using (var q = new Animator(stick))
+            {
+                q.ChangeColor += (s, e) =>
+                {
+                    lastColor = e.Colors[0];
+                };
+
+                q
+                    .Morph(1000, Color.Red)
+                    .Morph(1000, Color.Blue)
+                    .Set(finished);
+
+                q.Start();
+
+                finished.WaitOne();
+
+                Assert.AreEqual(Color.Blue.R, lastColor.R);
+                Assert.AreEqual(Color.Blue.G, lastColor.G);
+                Assert.AreEqual(Color.Blue.B, lastColor.B);
+
+                q.Stop(true);
+            }
+        }
+
+        [TestMethod]
         public void AnimationQueue_LoopFromSequential()
         {
             var stick = BlinkStickIntegrationTests.EnsureBlinkStick();

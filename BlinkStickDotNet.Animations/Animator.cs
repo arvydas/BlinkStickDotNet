@@ -17,6 +17,11 @@ namespace BlinkStickDotNet.Animations
         private Thread _thread;
 
         /// <summary>
+        /// Occurs when the color is changed.
+        /// </summary>
+        public event EventHandler<ChangeColorEventArgs> ChangeColor;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Animator" /> class.
         /// </summary>
         /// <param name="stick">The stick.</param>
@@ -140,6 +145,10 @@ namespace BlinkStickDotNet.Animations
             }
 
             _processor = new ColorProcessor(stick, nrOfLeds);
+            _processor.ChangeColor += (sender, args) =>
+            {
+                this.ChangeColor?.Invoke(this, args);
+            };
         }
 
         /// <summary>

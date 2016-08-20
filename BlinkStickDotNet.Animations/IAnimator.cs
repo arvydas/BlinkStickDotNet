@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using BlinkStickDotNet.Animations.Processors;
+using System;
 
 namespace BlinkStickDotNet.Animations
 {
@@ -8,6 +9,11 @@ namespace BlinkStickDotNet.Animations
     /// </summary>
     public interface IAnimator : IAnimationQueue
     {
+        /// <summary>
+        /// Occurs when the color is changed.
+        /// </summary>
+        event EventHandler<ChangeColorEventArgs> ChangeColor;
+
         /// <summary>
         /// Gets a value indicating whether this instance is running.
         /// </summary>

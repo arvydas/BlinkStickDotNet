@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace BlinkStickDotNet.Animations.Processors
 {
@@ -8,6 +9,11 @@ namespace BlinkStickDotNet.Animations.Processors
     /// </summary>
     public interface IColorProcessor
     {
+        /// <summary>
+        /// Occurs when the color is changed.
+        /// </summary>
+        event EventHandler<ChangeColorEventArgs> ChangeColor;
+
         /// <summary>
         /// Gets the nr of leds.
         /// </summary>
@@ -46,7 +52,7 @@ namespace BlinkStickDotNet.Animations.Processors
         /// If there is 2 given colors, 2 leds and offset 1, the following will happen:
         /// Led0 = Color1
         /// </example>
-        void ProcessColors(int offset, params Color[] colors);
+        void ProcessColors(uint offset, params Color[] colors);
 
         /// <summary>
         /// Gets the last used current colors.

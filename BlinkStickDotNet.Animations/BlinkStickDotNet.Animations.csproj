@@ -43,6 +43,7 @@
     <Compile Include="Implementations\ActionAnimation.cs" />
     <Compile Include="IAnimation.cs" />
     <Compile Include="AnimatorBase.cs" />
+    <Compile Include="Processors\ChangeColorEventArgs.cs" />
     <Compile Include="SequentialAnimation.cs" />
     <Compile Include="ParallelAnimation.cs" />
     <Compile Include="Implementations\LoopAnimation.cs" />
