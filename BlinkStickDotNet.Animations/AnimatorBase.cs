@@ -32,7 +32,7 @@ namespace BlinkStickDotNet.Animations
         public IAnimationQueue BeginParallel()
         {
             var animation = new ParallelAnimation(this);
-            Queue(animation);
+            Animations.Add(animation);
             return animation;
         }
 
@@ -45,7 +45,7 @@ namespace BlinkStickDotNet.Animations
         public IAnimationQueue BeginSequencial()
         {
             var animation = new SequentialAnimation(this);
-            Queue(animation);
+            Animations.Add(animation);
             return animation;
         }
 
@@ -65,7 +65,7 @@ namespace BlinkStickDotNet.Animations
         /// </summary>
         /// <param name="animation">The animation.</param>
         /// <returns>Queue for chaining.</returns>
-        public IAnimationQueue Queue(IAnimation animation)
+        public virtual IAnimationQueue Queue(IAnimation animation)
         {
             this.Animations.Add(animation);
             return this;

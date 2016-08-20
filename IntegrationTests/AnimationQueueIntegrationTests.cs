@@ -1,9 +1,6 @@
 ﻿using BlinkStickDotNet.Animations;
 using BlinkStickDotNet.Animations.Implementations;
-using BlinkStickDotNet.Animations.Processors;
-using BlinkStickDotNet.Usb;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Drawing;
 using System.Threading;
 
@@ -12,6 +9,47 @@ namespace BlinkStickDotNet.IntegrationTests
     [TestClass]
     public class AnimationQueueIntegrationTests
     {
+        [TestMethod]
+        public void AnimationQueue_LoopFromSequential()
+        {
+            var stick = BlinkStickIntegrationTests.EnsureBlinkStick();
+            var list = new SequentialAnimation();
+
+            list.Morph(1000, Color.Blue);
+            list.Morph(1000, Color.Red);
+            list.Loop();
+
+            using (var q = new Animator(stick))
+            {
+                q.Queue(list);
+                q.Start();
+
+                Thread.Sleep(6000);
+                q.Stop(true);
+            }
+        }
+
+        [TestMethod]
+        public void AnimationQueue_LoopFromChainedSequential()
+        {
+            var stick = BlinkStickIntegrationTests.EnsureBlinkStick();
+
+            using (var animator = new Animator(stick))
+            {
+                var a2 = animator.BeginSequencial() as SequentialAnimation;
+
+                a2.Morph(1000, Color.Blue);
+                a2.Morph(1000, Color.Red);
+                a2.Loop();
+
+                animator.Start();
+
+                Thread.Sleep(6000);
+                animator.Stop(true);
+            }
+        }
+
+
         [TestMethod]
         public void AnimationQueue_Morph()
         {

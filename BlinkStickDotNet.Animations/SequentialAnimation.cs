@@ -1,4 +1,6 @@
-﻿using BlinkStickDotNet.Animations.Processors;
+﻿using BlinkStickDotNet.Animations.Implementations;
+using BlinkStickDotNet.Animations.Processors;
+using System.Collections.Generic;
 
 namespace BlinkStickDotNet.Animations
 {
@@ -16,12 +18,30 @@ namespace BlinkStickDotNet.Animations
         }
 
         /// <summary>
+        /// Gets the animations.
+        /// </summary>
+        /// <returns>The animations</returns>
+        public IEnumerable<IAnimation> GetAnimations()
+        {
+            return this.Animations.AsReadOnly();
+        }
+
+        /// <summary>
         /// Starts the animation.
         /// </summary>
         /// <param name="processor">The processor.</param>
         public void Start(ILedProcessor processor)
         {
-            Animations.ForEach(a => a.Start(processor));
+            foreach(var animation in Animations)
+            {
+                if(animation is LoopAnimation)
+                {
+                    Owner?.Queue(animation);
+                    break;
+                }
+
+                animation.Start(processor);
+            }
         }
 
         /// <summary>
@@ -30,7 +50,16 @@ namespace BlinkStickDotNet.Animations
         /// <param name="processor">The processor.</param>
         public void Start(IColorProcessor processor)
         {
-            Animations.ForEach(a => a.Start(processor));
+            foreach (var animation in Animations)
+            {
+                if (animation is LoopAnimation)
+                {
+                    Owner?.Queue(animation);
+                    break;
+                }
+
+                animation.Start(processor);
+            }
         }
 
         /// <summary>

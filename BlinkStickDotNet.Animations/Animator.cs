@@ -1,8 +1,6 @@
 ﻿using BlinkStickDotNet.Animations.Implementations;
 using BlinkStickDotNet.Animations.Processors;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 
@@ -40,6 +38,30 @@ namespace BlinkStickDotNet.Animations
         public bool IsRunning
         {
             get { return _thread != null; }
+        }
+
+        /// <summary>
+        /// Queues the specified animation.
+        /// </summary>
+        /// <param name="animation">The animation.</param>
+        /// <returns>
+        /// Queue for chaining.
+        /// </returns>
+        public override IAnimationQueue Queue(IAnimation animation)
+        {
+            var sequence = animation as SequentialAnimation;
+            if (sequence != null)
+            {
+                foreach(var sub in sequence.GetAnimations())
+                {
+                    Queue(sub);
+                }
+
+                return this;
+            }
+
+
+            return base.Queue(animation);
         }
 
         /// <summary>
