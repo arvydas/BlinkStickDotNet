@@ -3,12 +3,12 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BlinkStickDotNet.Animations.Implementations
+namespace BlinkStickDotNet.Animations
 {
     /// <summary>
     /// This animation queue will run its animations parallel.
     /// </summary>
-    public class ParallelAnimation : AnimationQueueBase, IAnimation
+    public class ParallelAnimation : AnimatorBase, IAnimation
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ParallelAnimation"/> class.

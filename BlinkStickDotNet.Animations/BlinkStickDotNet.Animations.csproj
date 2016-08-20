@@ -42,7 +42,7 @@
     <Compile Include="IAnimator.cs" />
     <Compile Include="Implementations\ActionAnimation.cs" />
     <Compile Include="IAnimation.cs" />
-    <Compile Include="AnimationQueueBase.cs" />
+    <Compile Include="AnimatorBase.cs" />
     <Compile Include="SequentialAnimation.cs" />
     <Compile Include="ParallelAnimation.cs" />
     <Compile Include="Implementations\LoopAnimation.cs" />

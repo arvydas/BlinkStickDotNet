@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlinkStickDotNet.Animations.Implementations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,16 +9,16 @@ namespace BlinkStickDotNet.Animations
     /// Base class for building animation queues.
     /// </summary>
     /// <seealso cref="BlinkStickDotNet.Animations.IAnimationQueue" />
-    public abstract class AnimationQueueBase : IAnimationQueue
+    public abstract class AnimatorBase : IAnimationQueue
     {
         protected readonly IAnimationQueue Owner;
         protected List<IAnimation> Animations { get; private set; } = new List<IAnimation>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AnimationQueueBase"/> class.
+        /// Initializes a new instance of the <see cref="AnimatorBase"/> class.
         /// </summary>
         /// <param name="owner">The owner.</param>
-        public AnimationQueueBase(IAnimationQueue owner)
+        public AnimatorBase(IAnimationQueue owner)
         {
             Owner = owner;
         }

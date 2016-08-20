@@ -5,7 +5,7 @@ namespace BlinkStickDotNet.Animations
     /// <summary>
     /// This animation queue will run its animations sequential.
     /// </summary>
-    public class SequentialAnimation : AnimationQueueBase, IAnimation
+    public class SequentialAnimation : AnimatorBase, IAnimation
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SequentialAnimation"/> class.
