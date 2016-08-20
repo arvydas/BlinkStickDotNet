@@ -1,4 +1,6 @@
-﻿namespace BlinkStickDotNet.Animations
+﻿using BlinkStickDotNet.Animations.Processors;
+
+namespace BlinkStickDotNet.Animations
 {
     /// <summary>
     /// Indicates the object implements an animation.
@@ -9,7 +11,13 @@
         /// Starts the animation.
         /// </summary>
         /// <param name="processor">The processor.</param>
-        void Start(IBlinkStickColorProcessor processor);
+        void Start(IColorProcessor processor);
+
+        /// <summary>
+        /// Starts the animation.
+        /// </summary>
+        /// <param name="processor">The processor.</param>
+        void Start(ILedProcessor processor);
 
         /// <summary>
         /// Clones this instance.

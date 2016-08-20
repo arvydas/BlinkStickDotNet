@@ -29,38 +29,31 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\BlinkStickDotNet.Animations.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Expression.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnimationBase.cs" />
-    <Compile Include="AnimationQueue.cs" />
-    <Compile Include="AnimationQueueExtensions.cs" />
+    <Compile Include="Animator.cs" />
+    <Compile Include="IAnimationQueueExtensions.cs" />
     <Compile Include="IAnimationQueue.cs" />
-    <Compile Include="Implementations\BrightenAnimation.cs" />
-    <Compile Include="Implementations\ChaseAnimation.cs" />
-    <Compile Include="Implementations\ChaseDimmerAnimation.cs" />
-    <Compile Include="Implementations\DimAnimation.cs" />
+    <Compile Include="IAnimator.cs" />
+    <Compile Include="Implementations\ActionAnimation.cs" />
     <Compile Include="IAnimation.cs" />
+    <Compile Include="Implementations\AnimationQueueBase.cs" />
+    <Compile Include="Implementations\SequentialAnimation.cs" />
+    <Compile Include="Implementations\ParallelAnimation.cs" />
     <Compile Include="Implementations\LoopAnimation.cs" />
-    <Compile Include="Implementations\MorphAnimation.cs" />
-    <Compile Include="Implementations\PulseInvertedAnimation.cs" />
-    <Compile Include="Implementations\PulseAnimation.cs" />
-    <Compile Include="Implementations\ColorPattern.cs" />
+    <Compile Include="Implementations\SetEventWaitHandle.cs" />
     <Compile Include="Implementations\Wait.cs" />
-    <Compile Include="BlinkStickColorProcessor.cs" />
+    <Compile Include="Processors\ColorProcessor.cs" />
     <Compile Include="Colors\SystemColorExtensions.cs" />
-    <Compile Include="IBlinkStickColorProcessor.cs" />
+    <Compile Include="Processors\IColorProcessor.cs" />
+    <Compile Include="Processors\ILedProcessor.cs" />
+    <Compile Include="Processors\Led.cs" />
+    <Compile Include="Processors\LedProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

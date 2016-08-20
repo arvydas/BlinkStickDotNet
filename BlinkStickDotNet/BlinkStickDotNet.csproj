@@ -21,6 +21,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -29,6 +31,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <DocumentationFile>bin\Release\BlinkStickDotNet.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HidSharp, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -40,6 +43,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animations\AnimationExtensions.cs" />
@@ -55,11 +59,14 @@
     <Compile Include="ReceiveColorEventHandler.cs" />
     <Compile Include="SendColorEventArgs.cs" />
     <Compile Include="SendColorEventHandler.cs" />
+    <Compile Include="Usb\CentralUsbMonitor.cs" />
     <Compile Include="Usb\DeviceModifiedArgs.cs" />
-    <Compile Include="Usb\HidDeviceAdapter.cs" />
-    <Compile Include="Usb\HidStreamAdapter.cs" />
+    <Compile Include="Usb\Devices\HidDeviceAdapter.cs" />
+    <Compile Include="Usb\Devices\HidStreamAdapter.cs" />
+    <Compile Include="Usb\Devices\IInternalUsbDevice.cs" />
     <Compile Include="Usb\IUsbDevice.cs" />
     <Compile Include="Usb\IUsbStream.cs" />
+    <Compile Include="Usb\Devices\UsbDeviceEqualityComparer.cs" />
     <Compile Include="Usb\UsbMonitor.cs" />
   </ItemGroup>
   <ItemGroup>

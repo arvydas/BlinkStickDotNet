@@ -1,24 +1,22 @@
 ﻿using BlinkStickDotNet.Animations.Processors;
-using System.Threading;
 using System;
 
 namespace BlinkStickDotNet.Animations.Implementations
 {
     /// <summary>
-    /// Waits for the specified amount of time and continues.
+    /// Wraps an action for a parallel processor.
     /// </summary>
-    /// <seealso cref="BlinkStickDotNet.Animations.AnimationBase" />
-    public class Wait : IAnimation
+    public class ActionAnimation : IAnimation
     {
-        private uint _duration;
+        Action<ILedProcessor> _action;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Wait"/> class.
+        /// Initializes a new instance of the <see cref="ActionAnimation"/> class.
         /// </summary>
-        /// <param name="duration">The duration in ms timeout.</param>
-        public Wait(uint duration)
+        /// <param name="action">The action.</param>
+        public ActionAnimation(Action<ILedProcessor> action)
         {
-            _duration = duration;
+            _action = action;
         }
 
         /// <summary>
@@ -27,10 +25,7 @@ namespace BlinkStickDotNet.Animations.Implementations
         /// <param name="processor">The processor.</param>
         public void Start(IColorProcessor processor)
         {
-            if (_duration > 0)
-            {
-                Thread.Sleep((int)_duration);
-            }
+            Start(new LedProcessor(processor));
         }
 
         /// <summary>
@@ -39,10 +34,7 @@ namespace BlinkStickDotNet.Animations.Implementations
         /// <param name="processor">The processor.</param>
         public void Start(ILedProcessor processor)
         {
-            if (_duration > 0)
-            {
-                Thread.Sleep((int)_duration);
-            }
+            _action(processor);
         }
 
         /// <summary>
@@ -53,7 +45,7 @@ namespace BlinkStickDotNet.Animations.Implementations
         /// </returns>
         public IAnimation Clone()
         {
-            return new Wait(_duration);
+            return new ActionAnimation(_action);
         }
     }
 }

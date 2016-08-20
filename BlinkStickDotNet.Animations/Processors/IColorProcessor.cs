@@ -1,12 +1,12 @@
 ﻿using System.Drawing;
 
-namespace BlinkStickDotNet.Animations
+namespace BlinkStickDotNet.Animations.Processors
 {
     /// <summary>
     /// Indicates the object implements a BlinkStick color processor. The processor processes
     /// the given colors to the leds. Hides implementation details.
     /// </summary>
-    public interface IBlinkStickColorProcessor
+    public interface IColorProcessor
     {
         /// <summary>
         /// Gets the nr of leds.

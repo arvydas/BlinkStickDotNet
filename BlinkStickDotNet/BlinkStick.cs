@@ -2,8 +2,8 @@ using BlinkStickDotNet.Animations;
 using BlinkStickDotNet.Meta;
 using BlinkStickDotNet.Usb;
 using System;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace BlinkStickDotNet
@@ -18,7 +18,6 @@ namespace BlinkStickDotNet
         public const int VendorId = 0x20A0;
         public const int ProductId = 0x41E5;
 
-        private int? _mode;
         private bool _disposed = false;
 
         private IUsbDevice _device;
@@ -26,7 +25,7 @@ namespace BlinkStickDotNet
         private BlinkStickMetaData _meta;
 
         private AnimationState animationState = new AnimationState();
- 
+
         #region Events
 
         public event SendColorEventHandler SendColor;
@@ -237,29 +236,23 @@ namespace BlinkStickDotNet
         public int SetColorDelay { get; set; }
 
         /// <summary>
-        /// Gets or sets the mode of BlinkStick device.
+        /// Gets or sets the mode of BlinkStick device. 0 - Normal, 1 - Inverse, 2 - WS2812, 3 - WS2812 mirror.
         /// </summary>
-        /// <value>The mode to set or get.</value>
-        public int Mode
+        /// <value>The mode.</value>
+        public byte? Mode
         {
-            get
-            {
-                if (_mode == null)
-                {
-                    _mode = GetMode();
-                }
-
-                return _mode.GetValueOrDefault();
-            }
-            set
-            {
-                if (_mode != value)
-                {
-                    _mode = value;
-                    SetMode((byte)_mode);
-                }
-            }
+            get { return GetMode(); }
+            set { SetMode(value.GetValueOrDefault()); }
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to ignore disconnect errors.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if disconnect errors should be ignored; otherwise, <c>false</c>.
+        /// </value>
+        public bool IgnoreDisconnectErrors { get; set; }
+
         #endregion
 
         #region Constructor/Destructor
@@ -267,14 +260,11 @@ namespace BlinkStickDotNet
         /// <summary>
         /// Initializes a new instance of the BlinkStick class.
         /// </summary>
-        public BlinkStick()
+        public BlinkStick(IUsbDevice device = null)
         {
             SetColorDelay = 0;
-        }
 
-        public BlinkStick(IUsbDevice device)
-        {
-            this._device = device;
+            _device = device;
         }
 
         /// <summary>
@@ -310,6 +300,7 @@ namespace BlinkStickDotNet
         {
             Dispose(false);
         }
+
         #endregion
 
         #region Device Open/Close functions
@@ -342,21 +333,13 @@ namespace BlinkStickDotNet
                 return false;
             }
 
-            return OpenCurrentDevice();
-        }
-
-        /// <summary>
-        /// Opens the current device.
-        /// </summary>
-        /// <returns>
-        ///   <c>true</c>, if current device was opened, <c>false</c> otherwise.
-        /// </returns>
-        private bool OpenCurrentDevice()
-        {
             //Todo: looks like the device always opens.
-
             _meta = null;
             _device.TryOpen(out _stream);
+
+            //Handle disconnects and reconnects
+            _device.Disconnect += (sender, e) => _stream = null;
+            _device.Reconnect += (sender, e) => _device.TryOpen(out _stream);
 
             return true;
         }
@@ -366,7 +349,7 @@ namespace BlinkStickDotNet
         /// </summary>
         public void CloseDevice()
         {
-            _stream.Close();
+            _stream?.Close();
             _stream = null;
             _device = null;
             _meta = null;
@@ -377,41 +360,43 @@ namespace BlinkStickDotNet
 
         internal void SetInfoBlock(byte id, byte[] data)
         {
-            if (id == 2 || id == 3)
-            {
-                if (data.Length > 32)
-                {
-                    Array.Resize(ref data, 32);
-                }
-                else if (data.Length < 32)
-                {
-                    int size = data.Length;
-
-                    Array.Resize(ref data, 32);
-
-                    //pad with zeros
-                    for (int i = size; i < 32; i++)
-                    {
-                        data[i] = 0;
-                    }
-                }
-
-                Array.Resize(ref data, 33);
-
-
-                for (int i = 32; i > 0; i--)
-                {
-                    data[i] = data[i - 1];
-                }
-
-                data[0] = id;
-
-                SetFeature(data);
-            }
-            else
+            if (id != 2 && id != 3)
             {
                 throw new Exception("Invalid info block id");
             }
+
+            if (!Connected)
+            {
+                return;
+            }
+
+            if (data.Length > 32)
+            {
+                Array.Resize(ref data, 32);
+            }
+            else if (data.Length < 32)
+            {
+                int size = data.Length;
+
+                Array.Resize(ref data, 32);
+
+                //pad with zeros
+                for (int i = size; i < 32; i++)
+                {
+                    data[i] = 0;
+                }
+            }
+
+            Array.Resize(ref data, 33);
+
+            for (int i = 32; i > 0; i--)
+            {
+                data[i] = data[i - 1];
+            }
+
+            data[0] = id;
+
+            SetFeature(data);
         }
 
         /// <summary>
@@ -422,52 +407,42 @@ namespace BlinkStickDotNet
         /// <param name="data">Data.</param>
         public bool GetInfoBlock(byte id, out byte[] data)
         {
-            if (id == 2 || id == 3)
-            {
-                data = new byte[33];
-                data[0] = id;
-
-                if (Connected)
-                {
-                    int attempt = 0;
-                    while (attempt < 5)
-                    {
-                        attempt++;
-                        try
-                        {
-                            _stream.GetFeature(data, 0, data.Length);
-                            break;
-                        }
-                        catch (System.IO.IOException e)
-                        {
-                            if (e.InnerException is System.ComponentModel.Win32Exception)
-                            {
-                                System.ComponentModel.Win32Exception win32Exception = e.InnerException as System.ComponentModel.Win32Exception;
-
-                                if (win32Exception != null && win32Exception.NativeErrorCode == 0)
-                                    return true;
-                            }
-
-                            if (attempt == 5)
-                                throw;
-
-                            if (!this.WaitThread(20))
-                                return false;
-                        }
-                    }
-
-                    return true;
-                }
-                else
-                {
-                    data = new byte[0];
-                    return false;
-                }
-            }
-            else
+            if (id != 2 && id != 3)
             {
                 throw new Exception("Invalid info block id");
             }
+
+            if (!Connected)
+            {
+                data = new byte[0];
+                return false;
+            }
+
+            data = new byte[33];
+            data[0] = id;
+
+            try
+            {
+                _stream.GetFeature(data, 0, data.Length);
+            }
+            catch (System.IO.IOException e)
+            {
+                //why?
+                var inner = e.InnerException as Win32Exception;
+                if (inner?.NativeErrorCode == 0)
+                {
+                    return true;
+                }
+
+                if (!IgnoreDisconnectErrors)
+                {
+                    throw;
+                }
+
+                return false;
+            }
+
+            return true;
         }
         #endregion
 
@@ -528,25 +503,8 @@ namespace BlinkStickDotNet
 
             if (Connected)
             {
-                int attempt = 0;
-                while (attempt < 5)
-                {
-                    attempt++;
-                    try
-                    {
-                        _stream.GetFeature(report, 0, 33);
-                        break;
-                    }
-                    catch
-                    {
-                        if (attempt == 5)
-                            throw;
-
-                        if (!this.WaitThread(20))
-                            return false;
-                    }
-                }
-
+                _stream.GetFeature(report, 0, 33);
+                 
                 r = report[1];
                 g = report[2];
                 b = report[3];
@@ -741,7 +699,7 @@ namespace BlinkStickDotNet
         /// Gets the mode on BlinkStick Pro.
         /// </summary>
         /// <param name="mode">0 - Normal, 1 - Inverse, 2 - WS2812, 3 - WS2812 mirror</param>
-        public int GetMode()
+        public byte? GetMode()
         {
             if (Connected)
             {
@@ -751,7 +709,7 @@ namespace BlinkStickDotNet
                 return data[1];
             }
 
-            return -1;
+            return null;
         }
 
         #endregion
@@ -848,60 +806,50 @@ namespace BlinkStickDotNet
 
         private void SetFeature(byte[] buffer)
         {
-            int attempt = 0;
-            while (attempt < 5)
+            if (Connected)
             {
-                attempt++;
                 try
                 {
                     _stream.SetFeature(buffer);
-                    break;
                 }
                 catch (System.IO.IOException e)
                 {
-                    if (e.InnerException is System.ComponentModel.Win32Exception)
+                    //why?
+                    var inner = e.InnerException as Win32Exception;
+                    if (inner?.NativeErrorCode == 0)
                     {
-                        System.ComponentModel.Win32Exception win32Exception = e.InnerException as System.ComponentModel.Win32Exception;
-
-                        if (win32Exception != null && win32Exception.NativeErrorCode == 0)
-                            return;
+                        return;
                     }
 
-                    if (attempt == 5)
+                    if (!IgnoreDisconnectErrors)
+                    {
                         throw;
-
-                    if (!this.WaitThread(20))
-                        return;
+                    }
                 }
             }
         }
 
         private void GetFeature(byte[] buffer)
         {
-            int attempt = 0;
-            while (attempt < 5)
+            if (Connected)
             {
-                attempt++;
                 try
                 {
                     _stream.GetFeature(buffer);
-                    break;
                 }
                 catch (System.IO.IOException e)
                 {
-                    if (e.InnerException is System.ComponentModel.Win32Exception)
+                    //why?
+                    var inner = e.InnerException as Win32Exception;
+                    if (inner?.NativeErrorCode == 0)
                     {
-                        System.ComponentModel.Win32Exception win32Exception = e.InnerException as System.ComponentModel.Win32Exception;
-
-                        if (win32Exception != null && win32Exception.NativeErrorCode == 0)
-                            return;
+                        return;
                     }
 
-                    if (attempt == 5)
+                    if (!IgnoreDisconnectErrors)
+                    {
                         throw;
-
-                    if (!this.WaitThread(20))
-                        return;
+                    }
                 }
             }
         }
