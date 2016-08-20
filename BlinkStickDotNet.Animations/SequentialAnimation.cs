@@ -1,30 +1,27 @@
 ﻿using BlinkStickDotNet.Animations.Processors;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace BlinkStickDotNet.Animations.Implementations
+namespace BlinkStickDotNet.Animations
 {
-    public class ParallelAnimation : AnimationQueueBase, IAnimation
+    /// <summary>
+    /// This animation queue will run its animations sequential.
+    /// </summary>
+    public class SequentialAnimation : AnimatorBase, IAnimation
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ParallelAnimation"/> class.
+        /// Initializes a new instance of the <see cref="SequentialAnimation"/> class.
         /// </summary>
-        public ParallelAnimation(IAnimationQueue owner): base(owner)
+        /// <param name="owner">The owner.</param>
+        public SequentialAnimation(IAnimationQueue owner) : base(owner)
         {
         }
-        
+
         /// <summary>
         /// Starts the animation.
         /// </summary>
         /// <param name="processor">The processor.</param>
         public void Start(ILedProcessor processor)
         {
-            var actions = Animations
-                .Select(a => new Action(() => a.Start(processor)))
-                .ToArray();
-
-            Parallel.Invoke(actions);
+            Animations.ForEach(a => a.Start(processor));
         }
 
         /// <summary>
@@ -33,7 +30,7 @@ namespace BlinkStickDotNet.Animations.Implementations
         /// <param name="processor">The processor.</param>
         public void Start(IColorProcessor processor)
         {
-            Start(new LedProcessor(processor));
+            Animations.ForEach(a => a.Start(processor));
         }
 
         /// <summary>
@@ -44,7 +41,7 @@ namespace BlinkStickDotNet.Animations.Implementations
         /// </returns>
         public IAnimation Clone()
         {
-            var animation = new ParallelAnimation(Owner);
+            var animation = new SequentialAnimation(Owner);
             animation.Animations.AddRange(Animations);
             return animation;
         }

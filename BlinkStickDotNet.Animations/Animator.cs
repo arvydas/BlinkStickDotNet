@@ -13,7 +13,7 @@ namespace BlinkStickDotNet.Animations
     /// Your current thread will not be bothered.
     /// </summary>
     /// <seealso cref="System.IDisposable" />
-    public class Animator : AnimationQueueBase, IDisposable
+    public class Animator : AnimatorBase, IDisposable
     {
         private IColorProcessor _processor;
         private Thread _thread;
@@ -135,5 +135,10 @@ namespace BlinkStickDotNet.Animations
         {
             Stop();
         }
+    }
+
+    [Obsolete("Please use BlinkStickDotNet.Animations.Animator")]
+    public class AnimationQueue : Animator
+    {
     }
 }

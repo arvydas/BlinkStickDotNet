@@ -1,28 +1,33 @@
-﻿using System.Collections.Generic;
-using BlinkStickDotNet.Animations.Processors;
+﻿using BlinkStickDotNet.Animations.Processors;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace BlinkStickDotNet.Animations.Implementations
+namespace BlinkStickDotNet.Animations
 {
     /// <summary>
-    /// Creates a sequence of animations that is executed.
+    /// This animation queue will run its animations parallel.
     /// </summary>
-    public class SequentialAnimation : AnimationQueueBase, IAnimation
+    public class ParallelAnimation : AnimatorBase, IAnimation
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SequentialAnimation"/> class.
+        /// Initializes a new instance of the <see cref="ParallelAnimation"/> class.
         /// </summary>
-        /// <param name="owner">The owner.</param>
-        public SequentialAnimation(IAnimationQueue owner) : base(owner)
+        public ParallelAnimation(IAnimationQueue owner): base(owner)
         {
         }
-
+        
         /// <summary>
         /// Starts the animation.
         /// </summary>
         /// <param name="processor">The processor.</param>
         public void Start(ILedProcessor processor)
         {
-            Animations.ForEach(a => a.Start(processor));
+            var actions = Animations
+                .Select(a => new Action(() => a.Start(processor)))
+                .ToArray();
+
+            Parallel.Invoke(actions);
         }
 
         /// <summary>
@@ -31,7 +36,7 @@ namespace BlinkStickDotNet.Animations.Implementations
         /// <param name="processor">The processor.</param>
         public void Start(IColorProcessor processor)
         {
-            Animations.ForEach(a => a.Start(processor));
+            Start(new LedProcessor(processor));
         }
 
         /// <summary>
@@ -42,7 +47,7 @@ namespace BlinkStickDotNet.Animations.Implementations
         /// </returns>
         public IAnimation Clone()
         {
-            var animation = new SequentialAnimation(Owner);
+            var animation = new ParallelAnimation(Owner);
             animation.Animations.AddRange(Animations);
             return animation;
         }

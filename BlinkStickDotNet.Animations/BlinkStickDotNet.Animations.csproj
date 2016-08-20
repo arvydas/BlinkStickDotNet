@@ -42,9 +42,9 @@
     <Compile Include="IAnimator.cs" />
     <Compile Include="Implementations\ActionAnimation.cs" />
     <Compile Include="IAnimation.cs" />
-    <Compile Include="Implementations\AnimationQueueBase.cs" />
-    <Compile Include="Implementations\SequentialAnimation.cs" />
-    <Compile Include="Implementations\ParallelAnimation.cs" />
+    <Compile Include="AnimatorBase.cs" />
+    <Compile Include="SequentialAnimation.cs" />
+    <Compile Include="ParallelAnimation.cs" />
     <Compile Include="Implementations\LoopAnimation.cs" />
     <Compile Include="Implementations\SetEventWaitHandle.cs" />
     <Compile Include="Implementations\Wait.cs" />
