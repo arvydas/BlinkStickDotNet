@@ -10,8 +10,8 @@ namespace BlinkStickDotNet.Animations
         /// <summary>
         /// Initializes a new instance of the <see cref="SequentialAnimation"/> class.
         /// </summary>
-        /// <param name="owner">The owner.</param>
-        public SequentialAnimation(IAnimationQueue owner) : base(owner)
+        /// <param name="owner">The owner. Used for chaining.</param>
+        public SequentialAnimation(IAnimationQueue owner = null) : base(owner)
         {
         }
 

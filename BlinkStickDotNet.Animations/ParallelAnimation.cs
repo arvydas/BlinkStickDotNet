@@ -13,7 +13,7 @@ namespace BlinkStickDotNet.Animations
         /// <summary>
         /// Initializes a new instance of the <see cref="ParallelAnimation"/> class.
         /// </summary>
-        public ParallelAnimation(IAnimationQueue owner): base(owner)
+        public ParallelAnimation(IAnimationQueue owner = null): base(owner)
         {
         }
         
