@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>BlinkStickDotNet</RootNamespace>
     <AssemblyName>BlinkStickDotNet</AssemblyName>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>BlinkStickDotNet.snk</AssemblyOriginatorKeyFile>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
@@ -21,6 +21,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -29,20 +31,50 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <DocumentationFile>bin\Release\BlinkStickDotNet.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HidSharp, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HidSharp.1.5\lib\net35\HidSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="LibUsbDotNet, Version=2.2.8.104, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LibUsbDotNet.2.2.8\lib\LibUsbDotNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Core" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Animations\AnimationExtensions.cs" />
+    <Compile Include="Animations\AnimationState.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="UsbMonitor.cs" />
-    <Compile Include="WinUsbDeviceMonitor.cs" />
-    <Compile Include="RgbColor.cs" />
-    <Compile Include="HSLColor.cs" />
+    <Compile Include="Meta\BlinkStickDeviceEnum.cs" />
+    <Compile Include="Meta\BlinkStickMetaData.cs" />
+    <Compile Include="Colors\ColorExtensions.cs" />
+    <Compile Include="Colors\HSLColor.cs" />
+    <Compile Include="Colors\RgbColor.cs" />
     <Compile Include="BlinkStick.cs" />
+    <Compile Include="ReceiveColorEventArgs.cs" />
+    <Compile Include="ReceiveColorEventHandler.cs" />
+    <Compile Include="SendColorEventArgs.cs" />
+    <Compile Include="SendColorEventHandler.cs" />
+    <Compile Include="Usb\CentralUsbMonitor.cs" />
+    <Compile Include="Usb\DeviceModifiedArgs.cs" />
+    <Compile Include="Usb\Devices\HidDeviceAdapter.cs" />
+    <Compile Include="Usb\Devices\HidStreamAdapter.cs" />
+    <Compile Include="Usb\Devices\IInternalUsbDevice.cs" />
+    <Compile Include="Usb\IUsbDevice.cs" />
+    <Compile Include="Usb\IUsbStream.cs" />
+    <Compile Include="Usb\Devices\UsbDeviceEqualityComparer.cs" />
+    <Compile Include="Usb\UsbMonitor.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="BlinkStickDotNet.nuspec" />
+    <None Include="BlinkStickDotNet.snk" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <MonoDevelop>
@@ -54,14 +86,4 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup>
-    <ProjectReference Include="..\Components\HidSharp\HidSharp.csproj">
-      <Project>{0DB86674-2A7B-4BDC-93C1-3F7DC771426C}</Project>
-      <Name>HidSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Components\LibWinUsb\LibUsbDotNet.csproj">
-      <Project>{0A78F6FF-5586-4052-8104-E23FF83A7CE1}</Project>
-      <Name>LibUsbDotNet</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

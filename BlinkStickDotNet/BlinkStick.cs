@@ -1,28 +1,10 @@
-#region License
-// Copyright 2013 by Agile Innovative Ltd
-//
-// This file is part of BlinkStick.HID library.
-//
-// BlinkStick.HID library is free software: you can redistribute it and/or modify 
-// it under the terms of the GNU General Public License as published by the Free 
-// Software Foundation, either version 3 of the License, or (at your option) any 
-// later version.
-//		
-// BlinkStick.HID library is distributed in the hope that it will be useful, but 
-// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-// FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License along with 
-// BlinkStick.HID library. If not, see http://www.gnu.org/licenses/.
-#endregion
-
+using BlinkStickDotNet.Animations;
+using BlinkStickDotNet.Meta;
+using BlinkStickDotNet.Usb;
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.Threading;
-using HidSharp;
 
 namespace BlinkStickDotNet
 {
@@ -33,31 +15,29 @@ namespace BlinkStickDotNet
     /// </summary>
 	public class BlinkStick : IDisposable
     {
-        #region Private Properties
-        protected const int VendorId = 0x20A0;
-        protected const int ProductId = 0x41E5;
+        public const int VendorId = 0x20A0;
+        public const int ProductId = 0x41E5;
 
-        private HidDevice device;
-        private HidStream stream;
+        private bool _disposed = false;
 
-        private bool disposed = false;
+        private IUsbDevice _device;
+        private IUsbStream _stream;
+        private BlinkStickMetaData _meta;
 
-        private bool stopped = false;
-
-        protected bool connectedToDriver = false;
-
-        private bool _RequiresSoftwareColorPatch = false;
-        #endregion
+        private AnimationState animationState = new AnimationState();
 
         #region Events
+
         public event SendColorEventHandler SendColor;
 
-        public Boolean OnSendColor(byte channel, byte index, byte r, byte g, byte b)
+        private bool OnSendColor(byte channel, byte index, byte r, byte g, byte b)
         {
             if (SendColor != null)
             {
-                SendColorEventArgs args = new SendColorEventArgs(channel, index, r, g, b);
+                var args = new SendColorEventArgs(channel, index, r, g, b);
+
                 SendColor(this, args);
+
                 return args.SendToDevice;
             }
 
@@ -66,33 +46,89 @@ namespace BlinkStickDotNet
 
         public event ReceiveColorEventHandler ReceiveColor;
 
-        public Boolean OnReceiveColor(byte index, out byte r, out byte g, out byte b)
+        private bool OnReceiveColor(byte index, out byte r, out byte g, out byte b)
         {
             if (ReceiveColor != null)
             {
-                ReceiveColorEventArgs args = new ReceiveColorEventArgs(index);
+                var args = new ReceiveColorEventArgs(index);
+
                 ReceiveColor(this, args);
+
                 r = args.R;
                 g = args.G;
                 b = args.B;
+
                 return true;
             }
-            r = 0;
-            g = 0;
-            b = 0;
+
+            r = g = b = 0;
+
             return false;
         }
+
+        /// <summary>
+        /// Waits the thread.
+        /// </summary>
+        /// <param name="milliseconds">The milliseconds.</param>
+        /// <returns>True if the state is not stopped.</returns>
+        internal bool WaitThread(long milliseconds)
+        {
+            //todo: why is a normal sleep not enough?
+            //could 2 things happen on the same thread? Stopped is inspected each 20ms
+
+            DateTime nextRetry = DateTime.Now + new TimeSpan(TimeSpan.TicksPerMillisecond * milliseconds);
+
+            while (nextRetry > DateTime.Now)
+            {
+                if (AnimationState.Stopped)
+                {
+                    return false;
+                }
+
+                Thread.Sleep(20);
+            }
+
+            return true;
+        }
+
         #endregion
 
         #region Device Properties
+
+        /// <summary>
+        /// Gets the meta.
+        /// </summary>
+        /// <value>
+        /// The meta.
+        /// </value>
+        public BlinkStickMetaData Meta
+        {
+            get
+            {
+                if (_device != null && _meta == null)
+                {
+                    _meta = new BlinkStickMetaData(_device, this);
+                }
+
+                return _meta;
+            }
+        }
+
+        /// <summary>
+        /// Gets the state of the animation.
+        /// </summary>
+        /// <value>
+        /// The state of the animation.
+        /// </value>
+        internal AnimationState AnimationState { get { return animationState; } }
+
         /// <summary>
         /// Gets a value indicating whether this <see cref="BlinkStickDotNet.BlinkStick"/> is connected.
         /// </summary>
         /// <value><c>true</c> if connected; otherwise, <c>false</c>.</value>
-        public Boolean Connected {
-            get {
-                return connectedToDriver;
-            }
+        public bool Connected
+        {
+            get { return _stream != null; }
         }
 
         /// <summary>
@@ -104,225 +140,131 @@ namespace BlinkStickDotNet
         /// ||  |-------- Denotes sequential number
         /// ||----------- Denotes BlinkStick device
         /// </pre>
-        /// 
         /// Software version defines the capabilities of the device
         /// </summary>
-        /// <value>Returns the serial.</value>
-        public String Serial {
-            get {
-                return device.SerialNumber;
-            }
+        /// <value>The serial.</value>
+        [Obsolete("Please use Meta.Serial.")]
+        public string Serial
+        {
+            get { return Meta?.Serial; }
         }
-
-        private int _VersionMajor = -1;
 
         /// <summary>
         /// Gets the major version number from serial number.
         /// </summary>
         /// <value>Returns the major version number.</value>
-        public int VersionMajor {
-            get {
-                if (_VersionMajor == -1)
-                {
-                    try
-                    {
-                        _VersionMajor = Convert.ToInt32(this.Serial.Substring(this.Serial.Length - 3, 1));
-                    }
-                    catch
-                    {
-                        _VersionMajor = 0;
-                    }
-                }
-
-                return _VersionMajor;
-            }
+        [Obsolete("Please use Meta.VersionMajor.")]
+        public int VersionMajor
+        {
+            get { return (Meta?.VersionMajor).GetValueOrDefault(); }
         }
-
-        private int _VersionMinor = -1;
 
         /// <summary>
         /// Gets the minor version number from serial number.
         /// </summary>
         /// <value>Returns the version minor.</value>
-        public int VersionMinor {
-            get {
-                if (_VersionMinor == -1)
-                {
-                    try
-                    {
-                        _VersionMinor = Convert.ToInt32(this.Serial.Substring(this.Serial.Length - 1, 1));
-                    }
-                    catch
-                    {
-                        _VersionMinor = 0;
-                    }
-                }
-
-                return _VersionMinor;
-            }
+        [Obsolete("Please use Meta.VersionMinor.")]
+        public int VersionMinor
+        {
+            get { return (Meta?.VersionMinor).GetValueOrDefault(); }
         }
 
         /// <summary>
         /// Gets the device type
         /// </summary>
         /// <value>Returns the device type.</value>
+        [Obsolete("Please use Meta.BlinkStickDevice.")]
         public BlinkStickDeviceEnum BlinkStickDevice
         {
-            get
-            {
-                if (VersionMajor == 1)
-                {
-                    return BlinkStickDeviceEnum.BlinkStick;
-                }
-                else if (VersionMajor == 2)
-                {
-                    return BlinkStickDeviceEnum.BlinkStickPro;
-                }
-                else if (VersionMajor == 3)
-                {
-                    if (device.ProductVersion == 0x0200)
-                    {
-                        return BlinkStickDeviceEnum.BlinkStickSquare;
-                    }
-                    else if (device.ProductVersion == 0x0201)
-                    {
-                        return BlinkStickDeviceEnum.BlinkStickStrip;
-                    }
-                    else if (device.ProductVersion == 0x0202)
-                    {
-                        return BlinkStickDeviceEnum.BlinkStickNano;
-                    }
-                    else if (device.ProductVersion == 0x0203)
-                    {
-                        return BlinkStickDeviceEnum.BlinkStickFlex;
-                    }
-                }
-
-                return BlinkStickDeviceEnum.Unknown;
-            }
-        }
-
-        public static BlinkStickDeviceEnum BlinkStickDeviceFromSerial(string serial)
-        {
-            int versionMajor = Convert.ToInt32(serial.Substring(serial.Length - 3, 1));
-
-            if (versionMajor == 1)
-            {
-                return BlinkStickDeviceEnum.BlinkStick;
-            }
-            else if (versionMajor == 2)
-            {
-                return BlinkStickDeviceEnum.BlinkStickPro;
-            }
-            else if (versionMajor == 3)
-            {
-                return BlinkStickDeviceEnum.BlinkStickSquare;
-            }
-
-            return BlinkStickDeviceEnum.Unknown;
+            get { return (Meta?.BlinkStickDevice).GetValueOrDefault(); }
         }
 
         /// <summary>
         /// Gets the name of the manufacturer.
         /// </summary>
         /// <value>Returns the name of the manufacturer.</value>
-        public String ManufacturerName {
-            get {
-                return device.Manufacturer;
-            }
+        [Obsolete("Please use Meta.ManufacturerName.")]
+        public string ManufacturerName
+        {
+            get { return Meta?.Manufacturer; }
         }
 
         /// <summary>
         /// Gets the product name of the device.
         /// </summary>
         /// <value>Returns the name of the product.</value>
-        public String ProductName {
-            get {
-                return device.ProductName;
-            }
+        [Obsolete("Please use Meta.ProductName.")]
+        public string ProductName
+        {
+            get { return Meta?.ProductName; }
         }
 
-        private String _InfoBlock1;
         /// <summary>
-        /// Gets or sets the name of the device (InfoBlock1).
+        /// Gets or sets the data of the device (InfoBlock1).
         /// </summary>
-        /// <value>String value of InfoBlock1</value>
-        public String InfoBlock1 {
-            get {
-                if (_InfoBlock1 == null) {
-                    GetInfoBlock (2, out _InfoBlock1);
-                }
-
-                return _InfoBlock1;
-            }
-            set {
-                if (_InfoBlock1 != value)
+        /// <value>String value of InfoBlock1.</value>
+        [Obsolete("Please use Meta.InfoBlock1.")]
+        public string InfoBlock1
+        {
+            get { return Meta?.InfoBlock1; }
+            set
+            {
+                if (Meta != null)
                 {
-                    _InfoBlock1 = value;
-                    SetInfoBlock(2, _InfoBlock1);
+                    Meta.InfoBlock1 = value;
                 }
             }
         }
 
-        private String _InfoBlock2;
         /// <summary>
         /// Gets or sets the data of the device (InfoBlock2).
         /// </summary>
-        /// <value>String value of InfoBlock2</value>
-        public String InfoBlock2 {
-            get {
-                if (_InfoBlock2 == null) {
-                    GetInfoBlock (3, out _InfoBlock2);
-                }
-
-                return _InfoBlock2;
-            }
-            set {
-                if (_InfoBlock2 != value)
+        /// <value>String value of InfoBlock2.</value>
+        [Obsolete("Please use Meta.InfoBlock2.")]
+        public string InfoBlock2
+        {
+            get { return Meta?.InfoBlock2; }
+            set
+            {
+                if (Meta != null)
                 {
-                    _InfoBlock2 = value;
-                    SetInfoBlock(3, _InfoBlock2);
+                    Meta.InfoBlock2 = value;
                 }
             }
         }
 
         public int SetColorDelay { get; set; }
 
-        private int _Mode = -1;
+        /// <summary>
+        /// Gets or sets the mode of BlinkStick device. 0 - Normal, 1 - Inverse, 2 - WS2812, 3 - WS2812 mirror.
+        /// </summary>
+        /// <value>The mode.</value>
+        public byte? Mode
+        {
+            get { return GetMode(); }
+            set { SetMode(value.GetValueOrDefault()); }
+        }
 
         /// <summary>
-        /// Gets or sets the mode of BlinkStick device.
+        /// Gets or sets a value indicating whether to ignore disconnect errors.
         /// </summary>
-        /// <value>The mode to set or get.</value>
-        public int Mode
-        {
-            get
-            {
-                if (_Mode == -1)
-                {
-                    _Mode = GetMode();
-                }
+        /// <value>
+        /// <c>true</c> if disconnect errors should be ignored; otherwise, <c>false</c>.
+        /// </value>
+        public bool IgnoreDisconnectErrors { get; set; }
 
-                return _Mode;
-            }
-            set 
-            {
-                if (_Mode != value)
-                {
-                    _Mode = value;
-                    SetMode((byte)_Mode);
-                }
-            }
-        }
         #endregion
 
         #region Constructor/Destructor
+
         /// <summary>
         /// Initializes a new instance of the BlinkStick class.
         /// </summary>
-        public BlinkStick()
+        public BlinkStick(IUsbDevice device = null)
         {
             SetColorDelay = 0;
+
+            _device = device;
         }
 
         /// <summary>
@@ -340,14 +282,14 @@ namespace BlinkStickDotNet
         /// <param name="disposing"></param>
         private void Dispose(bool disposing)
         {
-            if(!this.disposed)
+            if (!this._disposed)
             {
-                if(disposing)
+                if (disposing)
                 {
                     CloseDevice();
                 }
 
-                disposed = true;
+                _disposed = true;
             }
         }
 
@@ -358,60 +300,46 @@ namespace BlinkStickDotNet
         {
             Dispose(false);
         }
+
         #endregion
 
         #region Device Open/Close functions
+
         /// <summary>
         /// Attempts to connect to a BlinkStick device.
         /// 
         /// After a successful connection, a DeviceAttached event will normally be sent.
         /// </summary>
         /// <returns>True if a Blinkstick device is connected, False otherwise.</returns>
-        public bool OpenDevice ()
+        public bool OpenDevice(IUsbDevice aDevice = null)
         {
-            bool result;
-
-            this._VersionMajor = -1;
-            this._VersionMinor = -1;
-
-            if (this.device == null) {
-                HidDeviceLoader loader = new HidDeviceLoader();
-                HidDevice adevice = loader.GetDevices(VendorId, ProductId).FirstOrDefault();
-                result = OpenDevice (adevice);
-            } else {
-                result = OpenCurrentDevice();
-            }
-
-            CheckRequiresSoftwareColorPatch();
-
-            return result;
-        }
-
-        /// <summary>
-        /// Opens the device.
-        /// </summary>
-        /// <returns><c>true</c>, if device was opened, <c>false</c> otherwise.</returns>
-        /// <param name="adevice">Pass the parameter of HidDevice to open it directly</param>
-        public bool OpenDevice(HidDevice adevice)
-        {
-            if (adevice != null)
+            if (aDevice != null)
             {
-                this.device = adevice;
+                //Todo: what to do with the previously opened device?
+                if (_device != null)
+                {
+                    CloseDevice();
+                }
 
-                return OpenCurrentDevice();
+                _device = aDevice;
+            }
+            else if (_device == null)
+            {
+                _device = UsbMonitor.GetFirstDevice(VendorId, ProductId);
             }
 
-            return false;
-        }
+            if (_device == null)
+            {
+                return false;
+            }
 
-        /// <summary>
-        /// Opens the current device.
-        /// </summary>
-        /// <returns><c>true</c>, if current device was opened, <c>false</c> otherwise.</returns>
-        private bool OpenCurrentDevice()
-        {
-            connectedToDriver = true;
-            device.TryOpen(out stream);
+            //Todo: looks like the device always opens.
+            _meta = null;
+            _device.TryOpen(out _stream);
+
+            //Handle disconnects and reconnects
+            _device.Disconnect += (sender, e) => _stream = null;
+            _device.Reconnect += (sender, e) => _device.TryOpen(out _stream);
 
             return true;
         }
@@ -421,78 +349,54 @@ namespace BlinkStickDotNet
         /// </summary>
         public void CloseDevice()
         {
-            stream.Close();
-            device = null;
-            connectedToDriver = false;
+            _stream?.Close();
+            _stream = null;
+            _device = null;
+            _meta = null;
         }
         #endregion
 
         #region Helper functions for InfoBlocks
-        /// <summary>
-        /// Sets the info block.
-        /// </summary>
-        /// <param name="id">2 - InfoBlock1, 3 - InfoBlock2</param>
-        /// <param name="data">Maximum 32 bytes of data</param>
-        private void SetInfoBlock (byte id, string data)
+
+        internal void SetInfoBlock(byte id, byte[] data)
         {
-            SetInfoBlock(id, Encoding.ASCII.GetBytes(data));
-        }
-
-        private Boolean GetInfoBlock (byte id, out string data)
-        {
-            byte[] dataBytes;
-            Boolean result = GetInfoBlock (id, out dataBytes);
-
-            if (result) {
-                for (int i = 1; i < dataBytes.Length; i++) {
-                    if (dataBytes [i] == 0) {
-                        Array.Resize (ref dataBytes, i);
-                        break;
-                    }
-                }
-
-                data = Encoding.ASCII.GetString (dataBytes, 1, dataBytes.Length - 1);
-            } else {
-                data = "";
-            }
-
-            return result;
-        }
-
-        protected void SetInfoBlock (byte id, byte[] data)
-        {
-            if (id == 2 || id == 3) {
-                if (data.Length > 32)
-                {
-                    Array.Resize(ref data, 32);
-                }
-                else if (data.Length < 32)
-                {
-                    int size = data.Length;
-
-                    Array.Resize(ref data, 32);
-
-                    //pad with zeros
-                    for (int i = size; i < 32; i++)
-                    {
-                        data[i] = 0;
-                    }
-                }
-
-                Array.Resize(ref data, 33);
-
-
-                for (int i = 32; i >0; i--)
-                {
-                    data[i] = data[i-1];
-                }
-
-                data[0] = id;
-
-                SetFeature(data);
-            } else {
+            if (id != 2 && id != 3)
+            {
                 throw new Exception("Invalid info block id");
             }
+
+            if (!Connected)
+            {
+                return;
+            }
+
+            if (data.Length > 32)
+            {
+                Array.Resize(ref data, 32);
+            }
+            else if (data.Length < 32)
+            {
+                int size = data.Length;
+
+                Array.Resize(ref data, 32);
+
+                //pad with zeros
+                for (int i = size; i < 32; i++)
+                {
+                    data[i] = 0;
+                }
+            }
+
+            Array.Resize(ref data, 33);
+
+            for (int i = 32; i > 0; i--)
+            {
+                data[i] = data[i - 1];
+            }
+
+            data[0] = id;
+
+            SetFeature(data);
         }
 
         /// <summary>
@@ -501,72 +405,48 @@ namespace BlinkStickDotNet
         /// <returns><c>true</c>, if info block was received, <c>false</c> otherwise.</returns>
         /// <param name="id">Identifier.</param>
         /// <param name="data">Data.</param>
-        public Boolean GetInfoBlock (byte id, out byte[] data)
+        public bool GetInfoBlock(byte id, out byte[] data)
         {
-            if (id == 2 || id == 3) {
-                data = new byte[33];
-                data[0] = id;
-
-                if (connectedToDriver)
-                {
-                    int attempt = 0;
-                    while (attempt < 5)
-                    {
-                        attempt++;
-                        try
-                        {
-                            stream.GetFeature(data, 0, data.Length);
-                            break;
-                        }
-                        catch (System.IO.IOException e)
-                        {
-                            if (e.InnerException is System.ComponentModel.Win32Exception)
-                            {
-                                System.ComponentModel.Win32Exception win32Exception = e.InnerException as System.ComponentModel.Win32Exception;
-
-                                if (win32Exception != null && win32Exception.NativeErrorCode == 0)
-                                    return true;
-                            }
-
-                            if (attempt == 5)
-                                throw;
-
-                            if (!WaitThread(20))
-                                return false;
-                        }
-                    }
-
-                    return true;
-                }
-                else
-                {
-                    data = new byte[0];
-                    return false;
-                }
-            } else {
+            if (id != 2 && id != 3)
+            {
                 throw new Exception("Invalid info block id");
             }
+
+            if (!Connected)
+            {
+                data = new byte[0];
+                return false;
+            }
+
+            data = new byte[33];
+            data[0] = id;
+
+            try
+            {
+                _stream.GetFeature(data, 0, data.Length);
+            }
+            catch (System.IO.IOException e)
+            {
+                //why?
+                var inner = e.InnerException as Win32Exception;
+                if (inner?.NativeErrorCode == 0)
+                {
+                    return true;
+                }
+
+                if (!IgnoreDisconnectErrors)
+                {
+                    throw;
+                }
+
+                return false;
+            }
+
+            return true;
         }
         #endregion
 
         #region Color manipulation functions
-        /// <summary>
-        /// Sets the color of the led.
-        /// </summary>
-        /// <param name="color">Must be in #rrggbb format</param>
-        public void SetColor(String color)
-        {
-            SetColor(RgbColor.FromString(color));
-        }
-
-        /// <summary>
-        /// Sets the color of the led.
-        /// </summary>
-        /// <param name="color">Color as RgbColor class.</param>
-        public void SetColor(RgbColor color)
-        {
-            SetColor(color.R, color.G, color.B);
-        }
 
         /// <summary>
         /// Sets the color of the led.
@@ -579,9 +459,9 @@ namespace BlinkStickDotNet
             if (!OnSendColor(0, 0, r, g, b))
                 return;
 
-            if (connectedToDriver)
+            if (Connected)
             {
-                if (_RequiresSoftwareColorPatch)
+                if (Meta.RequiresSoftwareColorPatch)
                 {
                     byte cr, cg, cb;
                     if (GetColor(out cr, out cg, out cb))
@@ -600,7 +480,7 @@ namespace BlinkStickDotNet
                     }
                 }
 
-                SetFeature(new byte[4] {1, r, g, b});
+                SetFeature(new byte[4] { 1, r, g, b });
             }
         }
 
@@ -611,47 +491,30 @@ namespace BlinkStickDotNet
         /// <param name="r">The red component.</param>
         /// <param name="g">The green component.</param>
         /// <param name="b">The blue component.</param>
-        public Boolean GetColor (out byte r, out byte g, out byte b)
+        public bool GetColor(out byte r, out byte g, out byte b)
         {
             if (OnReceiveColor(0, out r, out g, out b))
+            {
                 return true;
+            }
 
-            byte[] report = new byte[33]; 
+            byte[] report = new byte[33];
             report[0] = 1;
 
-            if (connectedToDriver) {
-                int attempt = 0;
-                while (attempt < 5)
-                {
-                    attempt++;
-                    try
-                    {
-                        stream.GetFeature(report, 0, 33);
-                        break;
-                    }
-                    catch 
-                    {
-                        if (attempt == 5)
-                            throw;
-
-                        if (!WaitThread(20))
-                            return false;
-                    }
-                }
-
-
-                r = report [1];
-                g = report [2];
-                b = report [3];
+            if (Connected)
+            {
+                _stream.GetFeature(report, 0, 33);
+                 
+                r = report[1];
+                g = report[2];
+                b = report[3];
 
                 return true;
-            } else {
-                r = 0;
-                g = 0;
-                b = 0;
-
-                return false;
             }
+
+            r = g = b = 0;
+
+            return false;
         }
 
         /// <summary>
@@ -661,9 +524,11 @@ namespace BlinkStickDotNet
         {
             SetColor(0, 0, 0);
         }
+
         #endregion
 
         #region Color manipulation functions for BlinkStick Pro
+
         /// <summary>
         /// Sets the color of the led.
         /// </summary>
@@ -675,34 +540,14 @@ namespace BlinkStickDotNet
         public void SetColor(byte channel, byte index, byte r, byte g, byte b)
         {
             if (!OnSendColor(channel, index, r, g, b))
+            {
                 return;
+            }
 
-            if (connectedToDriver)
+            if (Connected)
             {
                 SetFeature(new byte[6] { 5, channel, index, r, g, b });
             }
-        }
-
-        /// <summary>
-        /// Sets the color of the led.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        public void SetColor(byte channel, byte index, string color)
-        {
-            SetColor(channel, index, RgbColor.FromString(color));
-        }
-
-        /// <summary>
-        /// Sets the color of the led.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Color parameter as RgbColor class instance</param>
-        public void SetColor(byte channel, byte index, RgbColor color)
-        {
-            SetColor(channel, index, color.R, color.G, color.B);
         }
 
         /// <summary>
@@ -742,7 +587,7 @@ namespace BlinkStickDotNet
                 reportId = 10;
             }
 
-            byte [] data = new byte[max_leds * 3 + 2];
+            byte[] data = new byte[max_leds * 3 + 2];
             data[0] = reportId;
             data[1] = channel; // chanel index
 
@@ -763,7 +608,7 @@ namespace BlinkStickDotNet
                 for (int i = 0; i < Math.Min(data.Length - 2, colorData.Length - 64 * 3); i++)
                 {
                     data[i + 2] = colorData[64 * 3 + i];
-                } 
+                }
 
                 for (int i = colorData.Length + 2 - 64 * 3; i < data.Length; i++)
                 {
@@ -774,34 +619,30 @@ namespace BlinkStickDotNet
 
                 SetFeature(data);
             }
-        } 
+        }
 
         /// <summary>
         /// Gets led data.
         /// </summary>
         /// <returns><c>true</c>, if led data was received, <c>false</c> otherwise.</returns>
         /// <param name="data">LED data as an array of colors [g0, r0, b0, g1, r1, b1 ...]</param>
-        public Boolean GetColors (out byte[] colorData)
+        public bool GetColors(out byte[] colorData)
         {
-            if (connectedToDriver)
+            if (Connected)
             {
                 byte[] data = new byte[3 * 8 * 8 + 2];
                 data[0] = 9;
-                stream.GetFeature(data, 0, data.Length);
+                _stream.GetFeature(data, 0, data.Length);
 
                 colorData = new byte[3 * 8 * 8];
                 Array.Copy(data, 2, colorData, 0, colorData.Length);
 
                 return true;
             }
-            else
-            {
-                colorData = new byte[0];
-                return false;
-            }
 
+            colorData = new byte[0];
+            return false;
         }
-
 
         /// <summary>
         /// Gets the color of the led.
@@ -810,10 +651,12 @@ namespace BlinkStickDotNet
         /// <param name="r">The red component.</param>
         /// <param name="g">The green component.</param>
         /// <param name="b">The blue component.</param>
-        public Boolean GetColor (byte index, out byte r, out byte g, out byte b)
+        public bool GetColor(byte index, out byte r, out byte g, out byte b)
         {
             if (OnReceiveColor(index, out r, out g, out b))
+            {
                 return true;
+            }
 
             if (index == 0)
             {
@@ -831,27 +674,24 @@ namespace BlinkStickDotNet
 
                 return true;
             }
-            else
-            {
-                r = 0;
-                g = 0;
-                b = 0;
 
-                return false;
-            }
+            r = g = b = 0;
+            return false;
         }
+
         #endregion
 
         #region BlinkStick Pro mode selection
+
         /// <summary>
         /// Sets the mode for BlinkStick Pro.
         /// </summary>
         /// <param name="mode">0 - Normal, 1 - Inverse, 2 - WS2812</param>
         public void SetMode(byte mode)
         {
-            if (connectedToDriver)
+            if (Connected)
             {
-                SetFeature(new byte[2] {4, mode});
+                SetFeature(new byte[2] { 4, mode });
             }
         }
 
@@ -859,9 +699,9 @@ namespace BlinkStickDotNet
         /// Gets the mode on BlinkStick Pro.
         /// </summary>
         /// <param name="mode">0 - Normal, 1 - Inverse, 2 - WS2812, 3 - WS2812 mirror</param>
-        public int GetMode()
+        public byte? GetMode()
         {
-            if (connectedToDriver)
+            if (Connected)
             {
                 byte[] data = new byte[2];
                 data[0] = 4;
@@ -869,380 +709,91 @@ namespace BlinkStickDotNet
                 return data[1];
             }
 
-            return -1;
+            return null;
         }
+
         #endregion
 
         #region BlinkStick Flex features
+
         public void SetLedCount(byte count)
         {
-            if (connectedToDriver)
+            if (Connected)
             {
-                SetFeature(new byte[2] {0x81, count});
+                SetFeature(new byte[2] { 0x81, count });
             }
         }
 
+        /// <summary>
+        /// Gets the led count.
+        /// </summary>
+        /// <returns>The number of leds. <c>-1</c> when no device is connected.</returns>
         public int GetLedCount()
         {
-            if (connectedToDriver)
+            if (Connected)
             {
+                switch (Meta.BlinkStickDevice)
+                {
+                    case BlinkStickDeviceEnum.BlinkStick:
+                        return 1;
+                    case BlinkStickDeviceEnum.BlinkStickNano:
+                        return 2;
+                    case BlinkStickDeviceEnum.BlinkStickStrip:
+                    case BlinkStickDeviceEnum.BlinkStickSquare:
+                        return 8;
+                }
+
                 byte[] data = new byte[2];
                 data[0] = 0x81;
-                stream.GetFeature(data, 0, data.Length);
+                _stream.GetFeature(data, 0, data.Length);
                 return data[1];
             }
             return -1;
         }
-        #endregion
 
-        #region Animation Control
-        public void Stop()
-        {
-            this.stopped = true;
-        }
-
-        public void Enable()
-        {
-            this.stopped = false;
-        }
-        #endregion
-
-        #region Blink Animation
-        /// <summary>
-        /// Blink the LED on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="r">The red component.</param>
-        /// <param name="g">The green component.</param>
-        /// <param name="b">The blue component.</param>
-        /// <param name="repeats">How many times to repeat (default 1)</param>
-        /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
-        public void Blink(byte channel, byte index, byte r, byte g, byte b, int repeats=1, int delay=500)
-        {
-            for (int i = 0; i < repeats; i++)
-            {
-                this.InternalSetColor(channel, index, r, g, b);
-
-                if (!WaitThread(delay))
-                    return;
-
-                this.InternalSetColor(channel, index, 0, 0, 0);
-
-                if (!WaitThread(delay))
-                    return;
-            }
-        }
-
-        /// <summary>
-        /// Blink the LED on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Color parameter as RgbColor class instance</param>
-        /// <param name="repeats">How many times to repeat (default 1)</param>
-        /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
-        public void Blink(byte channel, byte index, RgbColor color, int repeats=1, int delay=500)
-        {
-            this.Blink(channel, index, color.R, color.G, color.B, repeats, delay);
-        }
-
-        /// <summary>
-        /// Blink the LED on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="repeats">How many times to repeat (default 1)</param>
-        /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
-        public void Blink(byte channel, byte index, string color, int repeats=1, int delay=500)
-        {
-            this.Blink(channel, index, RgbColor.FromString(color), repeats, delay);
-        }
-
-        /// <summary>
-        /// Blink the LED.
-        /// </summary>
-        /// <param name="r">The red component.</param>
-        /// <param name="g">The green component.</param>
-        /// <param name="b">The blue component.</param>
-        /// <param name="repeats">How many times to repeat (default 1)</param>
-        /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
-        public void Blink(byte r, byte g, byte b, int repeats=1, int delay=500)
-        {
-            this.Blink(0, 0, r, g, b, repeats, delay);
-        }
-
-        /// <summary>
-        /// Blink the LED.
-        /// </summary>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="repeats">How many times to repeat (default 1)</param>
-        /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
-        public void Blink(RgbColor color, int repeats=1, int delay=500)
-        {
-            this.Blink(0, 0, color, repeats, delay);
-        }
-
-        /// <summary>
-        /// Blink the LED.
-        /// </summary>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="repeats">How many times to repeat (default 1)</param>
-        /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
-        public void Blink(string color, int repeats=1, int delay=500)
-        {
-            this.Blink(0, 0, color, repeats, delay);
-        }
-        #endregion
-
-        #region Morph Animation
-        /// <summary>
-        /// Morph from current color to new color on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="r">The red component.</param>
-        /// <param name="g">The green component.</param>
-        /// <param name="b">The blue component.</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Morph(byte channel, byte index, byte r, byte g, byte b, int duration=1000, int steps=50)
-        {
-            if (stopped)
-                return;
-
-            byte cr, cg, cb;
-            GetColor(index, out cr, out cg, out cb);
-
-            for (int i = 1; i <= steps; i++)
-            {
-                this.InternalSetColor(channel, index, 
-                    (byte)(1.0 * cr + (r - cr) / 1.0 / steps * i), 
-                    (byte)(1.0 * cg + (g - cg) / 1.0 / steps * i), 
-                    (byte)(1.0 * cb + (b - cb) / 1.0 / steps * i));
-
-                if (!WaitThread(duration / steps))
-                    return;
-            }
-        }
-
-        /// <summary>
-        /// Morph from current color to new color on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Color parameter as RgbColor class instance</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Morph(byte channel, byte index, RgbColor color, int duration=1000, int steps=50)
-        {
-            this.Morph(channel, index, color.R, color.G, color.B, duration, steps);
-        }
-
-        /// <summary>
-        /// Morph from current color to new color on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Morph(byte channel, byte index, string color, int duration=1000, int steps=50)
-        {
-            this.Morph(channel, index, RgbColor.FromString(color), duration, steps);
-        }
-
-        /// <summary>
-        /// Morph from current color to new color.
-        /// </summary>
-        /// <param name="r">The red component.</param>
-        /// <param name="g">The green component.</param>
-        /// <param name="b">The blue component.</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Morph(byte r, byte g, byte b, int duration=1000, int steps=50)
-        {
-            this.Morph(0, 0, r, g, b, duration, steps);
-        }
-
-        /// <summary>
-        /// Morph from current color to new color.
-        /// </summary>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Morph(RgbColor color, int duration=1000, int steps=50)
-        {
-            this.Morph(0, 0, color, duration, steps);
-        }
-
-        /// <summary>
-        /// Morph from current color to new color.
-        /// </summary>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Morph(string color, int duration=1000, int steps=50)
-        {
-            this.Morph(0, 0, color, duration, steps);
-        }
-        #endregion
-
-        #region Pulse Animation
-        /// <summary>
-        /// Pulse specified color on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="r">The red component.</param>
-        /// <param name="g">The green component.</param>
-        /// <param name="b">The blue component.</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Pulse(byte channel, byte index, byte r, byte g, byte b, int repeats=1, int duration=1000, int steps=50)
-        {
-            this.InternalSetColor(channel, index, 0, 0, 0);
-
-            if (this.SetColorDelay > 0)
-            {
-                if (!WaitThread(this.SetColorDelay))
-                    return;
-            }
-
-            for (int i = 0; i < repeats; i++)
-            {
-                if (this.stopped)
-                    break;
-
-                this.Morph(channel, index, r, g, b, duration, steps);
-
-                if (this.stopped)
-                    break;
-
-                this.Morph(channel, index, 0, 0, 0, duration, steps);
-            }
-        }
-
-        /// <summary>
-        /// Pulse specified color on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Color parameter as RgbColor class instance</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Pulse(byte channel, byte index, RgbColor color, int repeats=1, int duration=1000, int steps=50)
-        {
-            this.Pulse(channel, index, color.R, color.G, color.B, repeats, duration, steps);
-        }
-
-        /// <summary>
-        /// Pulse specified color on BlinkStick Pro.
-        /// </summary>
-        /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
-        /// <param name="index">Index of the LED</param>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Pulse(byte channel, byte index, string color, int repeats=1, int duration=1000, int steps=50)
-        {
-            this.Pulse(channel, index, RgbColor.FromString(color), repeats, duration, steps);
-        }
-
-        /// <summary>
-        /// Pulse specified color.
-        /// </summary>
-        /// <param name="r">The red component.</param>
-        /// <param name="g">The green component.</param>
-        /// <param name="b">The blue component.</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Pulse(byte r, byte g, byte b, int repeats=1, int duration=1000, int steps=50)
-        {
-            this.Pulse(0, 0, r, g, b, repeats, duration, steps);
-        }
-
-        /// <summary>
-        /// Pulse specified color.
-        /// </summary>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Pulse(RgbColor color, int repeats=1, int duration=1000, int steps=50)
-        {
-            this.Pulse(0, 0, color, repeats, duration, steps);
-        }
-
-        /// <summary>
-        /// Pulse specified color.
-        /// </summary>
-        /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
-        /// <param name="duration">How long should the morph last</param>
-        /// <param name="steps">How many steps for color changes</param>
-        public void Pulse(string color, int repeats=1, int duration=1000, int steps=50)
-        {
-            this.Pulse(0, 0, color, repeats, duration, steps);
-        }
         #endregion
 
         #region Static Functions to initialize BlinkSticks
+
         /// <summary>
         /// Find all BlinkStick devices.
         /// </summary>
         /// <returns>An array of BlinkStick devices</returns>
-        public static BlinkStick[] FindAll ()
-		{
-            List<BlinkStick> result = new List<BlinkStick>();
-
-            HidDeviceLoader loader = new HidDeviceLoader();
-            foreach (HidDevice adevice in loader.GetDevices(VendorId, ProductId).ToArray())
-            {
-                BlinkStick hid = new BlinkStick();
-                hid.device = adevice;
-                result.Add(hid);
-            }
-
-            return result.ToArray();      
+        public static BlinkStick[] FindAll()
+        {
+            var devices = UsbMonitor.GetAllDevices(VendorId, ProductId);
+            return devices.Select(d => new BlinkStick(d)).ToArray();
         }
 
         /// <summary>
         /// Find first BlinkStick.
         /// </summary>
-        /// <returns>BlinkStick device if found, otherwise null if no devices found</returns>
+        /// <returns>The BlinkStick device if found, otherwise <c>null</c>.</returns>
         public static BlinkStick FindFirst()
         {
-            BlinkStick[] devices = FindAll();
-
-            return devices.Length > 0 ? devices[0] : null;
+            var device = UsbMonitor.GetFirstDevice(VendorId, ProductId);
+            return device == null ? null : new BlinkStick(device);
         }
 
         /// <summary>
         /// Finds BlinkStick by serial number.
         /// </summary>
-        /// <returns>BlinkStick device if found, otherwise null if no devices found</returns>
-        /// <param name="serial">Serial number to search for</param>
-        public static BlinkStick FindBySerial(String serial)
+        /// <param name="serial">The serial.</param>
+        /// <returns>The BlinkStick device if found, otherwise <c>null</c>.</returns>
+        public static BlinkStick FindBySerial(string serial)
         {
-            foreach (BlinkStick device in FindAll())
+            if (String.IsNullOrEmpty(serial))
             {
-                if (device.Serial == serial)
-                    return device;
+                throw new ArgumentNullException(nameof(serial));
             }
 
-            return null;
+            var device = UsbMonitor.GetFirstDevice(VendorId, ProductId, serial);
+            return device == null ? null : new BlinkStick(device);
         }
+
         #endregion
 
         #region Misc helper functions
-        /// <summary>
-        /// Checks if BlinkStick requires software color patch due to hardware bug.
-        /// </summary>
-        /// <returns><c>true</c>, if requires software color patch, <c>false</c> otherwise.</returns>
-        private void CheckRequiresSoftwareColorPatch()
-        {
-            _RequiresSoftwareColorPatch = VersionMajor == 1 && VersionMinor >= 1 && VersionMinor <= 3;
-        }
 
         /// <summary>
         /// Automatically sets the color of the device using either BlinkStick or BlinkStick Pro API
@@ -1252,7 +803,7 @@ namespace BlinkStickDotNet
         /// <param name="r">The red component.</param>
         /// <param name="g">The green component.</param>
         /// <param name="b">The blue component.</param>
-        private void InternalSetColor(byte channel, byte index, byte r, byte g, byte b)
+        internal void InternalSetColor(byte channel, byte index, byte r, byte g, byte b)
         {
             if (channel == 0 && index == 0)
             {
@@ -1266,126 +817,54 @@ namespace BlinkStickDotNet
 
         private void SetFeature(byte[] buffer)
         {
-            int attempt = 0;
-            while (attempt < 5)
+            if (Connected)
             {
-                attempt++;
                 try
                 {
-                    stream.SetFeature(buffer);
-                    break;
+                    _stream.SetFeature(buffer);
                 }
                 catch (System.IO.IOException e)
                 {
-                    if (e.InnerException is System.ComponentModel.Win32Exception)
+                    //why?
+                    var inner = e.InnerException as Win32Exception;
+                    if (inner?.NativeErrorCode == 0)
                     {
-                        System.ComponentModel.Win32Exception win32Exception = e.InnerException as System.ComponentModel.Win32Exception;
-
-                        if (win32Exception != null && win32Exception.NativeErrorCode == 0)
-                            return;
+                        return;
                     }
 
-                    if (attempt == 5)
+                    if (!IgnoreDisconnectErrors)
+                    {
                         throw;
-
-                    if (!WaitThread(20))
-                        return;
+                    }
                 }
             }
         }
 
         private void GetFeature(byte[] buffer)
         {
-            int attempt = 0;
-            while (attempt < 5)
+            if (Connected)
             {
-                attempt++;
                 try
                 {
-                    stream.GetFeature(buffer);
-                    break;
+                    _stream.GetFeature(buffer);
                 }
                 catch (System.IO.IOException e)
                 {
-                    if (e.InnerException is System.ComponentModel.Win32Exception)
+                    //why?
+                    var inner = e.InnerException as Win32Exception;
+                    if (inner?.NativeErrorCode == 0)
                     {
-                        System.ComponentModel.Win32Exception win32Exception = e.InnerException as System.ComponentModel.Win32Exception;
-
-                        if (win32Exception != null && win32Exception.NativeErrorCode == 0)
-                            return;
+                        return;
                     }
 
-                    if (attempt == 5)
+                    if (!IgnoreDisconnectErrors)
+                    {
                         throw;
-
-                    if (!WaitThread(20))
-                        return;
+                    }
                 }
             }
         }
 
-        public Boolean WaitThread(long milliseconds)
-        {
-            DateTime nextRetry = DateTime.Now + new TimeSpan(TimeSpan.TicksPerMillisecond * milliseconds);
-
-            while (nextRetry > DateTime.Now)
-            {
-                if (this.stopped)
-                    return false;
-
-                Thread.Sleep(20);
-            }
-
-            return true;
-        } 
-
         #endregion
-	}
-
-    public delegate void SendColorEventHandler(object sender, SendColorEventArgs e);
-
-    public delegate void ReceiveColorEventHandler(object sender, ReceiveColorEventArgs e);
-
-    public class SendColorEventArgs: EventArgs {
-        public byte Channel;
-        public byte Index;
-        public byte R;
-        public byte G;
-        public byte B;
-        public Boolean SendToDevice;
-
-        public SendColorEventArgs(byte channel, byte index, byte r, byte g, byte b)
-        {
-            this.Channel = channel;
-            this.Index = index;
-            this.R = r;
-            this.G = g;
-            this.B = b;
-            this.SendToDevice = true;
-        }
-    }
-
-    public class ReceiveColorEventArgs: EventArgs {
-        public byte Index;
-        public byte R;
-        public byte G;
-        public byte B;
-
-        public ReceiveColorEventArgs(byte index)
-        {
-            this.Index = index;
-        }
-    }
-
-    public enum BlinkStickDeviceEnum
-    {
-        Unknown,
-        BlinkStick,
-        BlinkStickPro,
-        BlinkStickStrip,
-        BlinkStickSquare,
-        BlinkStickNano,
-        BlinkStickFlex
     }
 }
-
