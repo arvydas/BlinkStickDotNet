@@ -31,10 +31,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndexedColorFrame", "Exampl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndexedColors", "Examples\BlinkStickPro\IndexedColors\IndexedColors.csproj", "{725BBC2C-A4D3-4F67-ACC8-C65D92A3ECFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlinkStickDotNet.Animations", "BlinkStickDotNet.Animations\BlinkStickDotNet.Animations.csproj", "{8C08259B-8EA4-496B-9681-D095279A4248}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examples.Animation", "BlinkstickDotNet.Examples.Animation\Examples.Animation.csproj", "{17302773-68CB-4D88-8EB9-6889E7FDC5EF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlinkStickDotNet.IntergrationTests", "IntegrationTests\BlinkStickDotNet.IntergrationTests.csproj", "{AF1EC3AC-B7B0-43F3-86CD-102541EF206B}"
 EndProject
 Global
@@ -123,22 +119,6 @@ Global
 		{725BBC2C-A4D3-4F67-ACC8-C65D92A3ECFE}.Release|Any CPU.ActiveCfg = Release|x86
 		{725BBC2C-A4D3-4F67-ACC8-C65D92A3ECFE}.Release|x86.ActiveCfg = Release|x86
 		{725BBC2C-A4D3-4F67-ACC8-C65D92A3ECFE}.Release|x86.Build.0 = Release|x86
-		{8C08259B-8EA4-496B-9681-D095279A4248}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C08259B-8EA4-496B-9681-D095279A4248}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C08259B-8EA4-496B-9681-D095279A4248}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8C08259B-8EA4-496B-9681-D095279A4248}.Debug|x86.Build.0 = Debug|Any CPU
-		{8C08259B-8EA4-496B-9681-D095279A4248}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C08259B-8EA4-496B-9681-D095279A4248}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C08259B-8EA4-496B-9681-D095279A4248}.Release|x86.ActiveCfg = Release|Any CPU
-		{8C08259B-8EA4-496B-9681-D095279A4248}.Release|x86.Build.0 = Release|Any CPU
-		{17302773-68CB-4D88-8EB9-6889E7FDC5EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{17302773-68CB-4D88-8EB9-6889E7FDC5EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{17302773-68CB-4D88-8EB9-6889E7FDC5EF}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{17302773-68CB-4D88-8EB9-6889E7FDC5EF}.Debug|x86.Build.0 = Debug|Any CPU
-		{17302773-68CB-4D88-8EB9-6889E7FDC5EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{17302773-68CB-4D88-8EB9-6889E7FDC5EF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{17302773-68CB-4D88-8EB9-6889E7FDC5EF}.Release|x86.ActiveCfg = Release|Any CPU
-		{17302773-68CB-4D88-8EB9-6889E7FDC5EF}.Release|x86.Build.0 = Release|Any CPU
 		{AF1EC3AC-B7B0-43F3-86CD-102541EF206B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AF1EC3AC-B7B0-43F3-86CD-102541EF206B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF1EC3AC-B7B0-43F3-86CD-102541EF206B}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -164,7 +144,6 @@ Global
 		{1C9FD0B2-C8A2-4B6A-9288-5B6D2E00DED4} = {E9CD0471-DE68-4F37-91A5-9ECD760F01AE}
 		{61527D2E-C94F-4EA5-8725-02EA6247EB8B} = {1C9FD0B2-C8A2-4B6A-9288-5B6D2E00DED4}
 		{725BBC2C-A4D3-4F67-ACC8-C65D92A3ECFE} = {1C9FD0B2-C8A2-4B6A-9288-5B6D2E00DED4}
-		{17302773-68CB-4D88-8EB9-6889E7FDC5EF} = {1C9FD0B2-C8A2-4B6A-9288-5B6D2E00DED4}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Examples\BlinkStick\MonitorTest\MonitorTest.csproj
